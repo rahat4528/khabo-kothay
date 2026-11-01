@@ -140,3 +140,28 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 204/204 passing Vitest tests including 404 tests on expired sessions across all 4 accessors, input sanitization tests, and IP rate-limit tests.
 - **Commit Hash**: `92b357b`
 - **Undo Command**: `git revert 92b357b`
+
+
+## Phase 1 Fix 3: Remove Public App Token & Enforce Fail-Closed Production Behavior
+- **Status**: Completed & Verified
+- **Problem**: The string `gulshan_app_secret_token_2026` was hardcoded in multiple documentation files, mobile configs, source files, and tests; server/index.js had a hardcoded fallback that allowed unauthenticated requests unless they claimed to be mobile.
+- **Fix**:
+  - Removed every occurrence of hardcoded token and fallback value across mobile configs, server index, scripts, docs, and test configurations.
+  - Implemented fail-closed logic: in production (`NODE_ENV === 'production'`), if `APP_CLIENT_TOKEN` is unset on Render, the server logs an error and rejects mobile-claiming requests with HTTP 500 rather than silently falling back.
+  - Replaced literal strings in CI workflow (`.github/workflows/ci.yml`) and `vitest.config.js` with environment variable references.
+  - Explicitly documented across `README.md`, `README_MOBILE.md`, and `RELEASE.md` that `APP_CLIENT_TOKEN` is a build-time client identifier (soft deterrent against automated scrapers), not a user secret.
+- **Files**:
+  - `server/index.js`
+  - `mobile/app.json`
+  - `mobile/app.config.js`
+  - `mobile/src/api/client.js`
+  - `vitest.config.js`
+  - `.github/workflows/ci.yml`
+  - `scripts/smoke-test.js`
+  - `scripts/secret_scan.py`
+  - `README.md`, `README_MOBILE.md`, `RELEASE.md`
+  - `server/tests/api.test.js`
+  - `mobile/__tests__/api.test.js`
+- **Verification Result**: Verified with 205/205 passing Vitest tests (including fail-closed production test), zero credential leaks via security-check.js and secret_scan.py.
+- **Commit Hash**: `7128aaf`
+- **Undo Command**: `git revert 7128aaf`
