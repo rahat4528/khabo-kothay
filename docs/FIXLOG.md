@@ -599,6 +599,26 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Undo Command**: `git revert 8d7b887`
 
 
+## Phase 3 Fix 24: Web App Manifest Unification
+- **Status**: Completed & Verified
+- **Problem**:
+  - `public/manifest.json` and `public/manifest.webmanifest` existed concurrently in `/public` with diverging configurations (differing `short_name` and missing `maskable` icon definitions in `manifest.json`).
+- **Fix**:
+  - Unified into standard `public/manifest.webmanifest`, setting `short_name: "Khabo Kothay?"` and preserving `maskable` icon entries for modern Android home screens.
+  - Removed duplicate `public/manifest.json`.
+  - Added backward-compatible server route `GET /manifest.json` in `server/index.js` serving `manifest.webmanifest` with `application/manifest+json` content-type.
+  - Added unit test suite in `server/tests/pwa.test.js` validating manifest structure, removal of duplicate file, `public/index.html` linkage, and backward-compatible alias route.
+- **Files**:
+  - `public/manifest.webmanifest`
+  - `public/manifest.json` (removed)
+  - `server/index.js`
+  - `server/tests/pwa.test.js`
+- **Verification Result**: Verified with 265/265 passing Vitest tests (4 new tests in `server/tests/pwa.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `630581d`
+- **Undo Command**: `git revert 630581d`
+
+
+
 
 
 
