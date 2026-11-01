@@ -192,6 +192,11 @@ app.get(['/download', '/apk'], (req, res) => {
   res.sendFile(path.join(publicDir, 'download.html'));
 });
 
+// Alias /manifest.json to /manifest.webmanifest for backward compatibility
+app.get('/manifest.json', (req, res) => {
+  res.type('application/manifest+json').sendFile(path.join(publicDir, 'manifest.webmanifest'));
+});
+
 // Serve frontend static assets
 app.use(express.static(publicDir));
 
