@@ -48,7 +48,12 @@
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
         "POST_NOTIFICATIONS"
-      ]
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": ""
+        }
+      }
     },
     "plugins": [
       [
