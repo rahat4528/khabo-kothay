@@ -567,4 +567,20 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Undo Command**: `git revert bbe2caf`
 
 
+## Phase 3 Fix 22: Meal-Time Reason XSS Escaping
+- **Status**: Completed & Verified
+- **Problem**:
+  - `public/js/mealtime-ui.js` line 507 injected `r.reasons[0]` directly into innerHTML (`<p class="mealtime-reason">${r.reasons[0]}</p>`) without escaping, posing an XSS vulnerability if an attacker or unexpected API response returned malicious characters in the recommendation reason.
+- **Fix**:
+  - Wrapped `r.reasons[0]` in `esc()` (`<p class="mealtime-reason">${esc(r.reasons[0])}</p>`), harmonizing with the rest of `mealtime-ui.js`.
+  - Added unit test suite in `server/tests/xss-escaping.test.js` validating that `mealtime-ui.js` sanitizes reasons with `esc()` and verifying `esc()` properly neutralizes script tags, double/single quotes, ampersands, and HTML angle brackets.
+- **Files**:
+  - `public/js/mealtime-ui.js`
+  - `server/tests/xss-escaping.test.js`
+- **Verification Result**: Verified with 258/258 passing Vitest tests (2 new tests in `server/tests/xss-escaping.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `0043b14`
+- **Undo Command**: `git revert 0043b14`
+
+
+
 
