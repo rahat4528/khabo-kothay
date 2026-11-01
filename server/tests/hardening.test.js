@@ -30,6 +30,72 @@ describe('Admin endpoints', () => {
     const ok = await request(app).get('/api/admin/usage').set('X-Admin-Token', 'a-long-random-test-token');
     expect(ok.status).toBe(200);
   });
+
+  it('disallows loopback bypass when proxy headers are present outside production', async () => {
+    const origEnv = process.env.NODE_ENV;
+    const origToken = process.env.ADMIN_TOKEN;
+    try {
+      process.env.NODE_ENV = 'development';
+      process.env.ADMIN_TOKEN = 'test-admin-secret-token';
+
+      // Proxy header present without admin token -> must be rejected with 403
+      const res = await request(app)
+        .get('/api/admin/usage')
+        .set('X-Forwarded-For', '203.0.113.1');
+
+      expect(res.status).toBe(403);
+
+      // Proxy header present WITH valid admin token -> 200 OK
+      const resWithToken = await request(app)
+        .get('/api/admin/usage')
+        .set('X-Forwarded-For', '203.0.113.1')
+        .set('X-Admin-Token', 'test-admin-secret-token');
+
+      expect(resWithToken.status).toBe(200);
+    } finally {
+      process.env.NODE_ENV = origEnv;
+      if (origToken) process.env.ADMIN_TOKEN = origToken;
+      else delete process.env.ADMIN_TOKEN;
+    }
+  });
+
+  it('records server-side verified identity in audit logs', async () => {
+    const origEnv = process.env.NODE_ENV;
+    const origToken = process.env.ADMIN_TOKEN;
+    try {
+      process.env.NODE_ENV = 'development';
+      process.env.ADMIN_TOKEN = 'test-audit-token';
+
+      // Create release with custom client header
+      const res = await request(app)
+        .post('/api/admin/releases')
+        .set('X-Admin-Token', 'test-audit-token')
+        .set('X-Admin-Who', 'charlie')
+        .send({
+          latestVersionName: '4.5.0-test',
+          latestVersionCode: 450,
+          channel: 'stable',
+          downloadUrl: 'https://github.com/rahat4528/khabo-kothay/releases/download/v4.5.0/app.apk'
+        });
+
+      expect(res.status).toBe(201);
+      const targetId = res.body?.release?.id;
+
+      // Fetch audit logs for the specific created release to avoid parallel test race
+      const auditRes = await request(app)
+        .get('/api/admin/audit-logs?target=' + encodeURIComponent(targetId))
+        .set('X-Admin-Token', 'test-audit-token');
+
+      expect(auditRes.status).toBe(200);
+      const latest = auditRes.body.logs?.[0];
+      expect(latest).toBeDefined();
+      expect(latest.who).toBe('token:charlie');
+    } finally {
+      process.env.NODE_ENV = origEnv;
+      if (origToken) process.env.ADMIN_TOKEN = origToken;
+      else delete process.env.ADMIN_TOKEN;
+    }
+  });
 });
 
 describe('Google API key protection', () => {

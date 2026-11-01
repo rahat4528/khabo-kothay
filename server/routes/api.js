@@ -135,8 +135,21 @@ function enforceDeviceQuota(req, res) {
   return true;
 }
 
+function hasProxyHeaders(req) {
+  return Boolean(
+    req.headers['x-forwarded-for'] ||
+    req.headers['x-forwarded-host'] ||
+    req.headers['x-forwarded-proto'] ||
+    req.headers['forwarded']
+  );
+}
+
 function isLoopback(req) {
-  // Socket address, not req.ip: with trust proxy enabled req.ip comes from X-Forwarded-For.
+  // If behind a proxy or proxy headers are present, do NOT treat as loopback
+  // because socket.remoteAddress would only reflect the reverse proxy.
+  if (process.env.TRUST_PROXY || hasProxyHeaders(req)) {
+    return false;
+  }
   const addr = req.socket?.remoteAddress;
   return addr === '127.0.0.1' || addr === '::1' || addr === '::ffff:127.0.0.1';
 }
@@ -148,16 +161,28 @@ function tokensMatch(a, b) {
 }
 
 /**
- * Admin gate: X-Admin-Token must match ADMIN_TOKEN. Outside production, loopback
- * requests are also allowed so local tooling works without a token.
+ * Admin gate: X-Admin-Token must match ADMIN_TOKEN. Outside production, direct loopback
+ * requests without proxy headers are allowed for local developer tooling.
  */
 export function requireAdmin(req, res, next) {
   const configured = process.env.ADMIN_TOKEN;
   const isProd = process.env.NODE_ENV === 'production';
   const usable = configured && !(isProd && configured === 'secret_admin_token');
   const provided = req.headers['x-admin-token'];
-  if (usable && provided && tokensMatch(provided, configured)) return next();
-  if (!isProd && isLoopback(req)) return next();
+
+  if (usable && provided && tokensMatch(provided, configured)) {
+    const clientWho = typeof req.headers['x-admin-who'] === 'string'
+      ? req.headers['x-admin-who'].trim().substring(0, 40)
+      : '';
+    req.adminWho = clientWho ? `token:${clientWho}` : 'token:admin';
+    return next();
+  }
+
+  if (!isProd && isLoopback(req)) {
+    req.adminWho = 'loopback:local';
+    return next();
+  }
+
   return res.status(403).json({ error: 'Admin access denied' });
 }
 
@@ -1062,7 +1087,7 @@ router.get('/admin/feature-flags', requireAdmin, (req, res) => {
 router.patch('/admin/feature-flags/:key', requireAdmin, (req, res) => {
   try {
     const updated = updateFlag(req.params.key, req.body, {
-      who: req.headers['x-admin-who'] || 'admin',
+      who: req.adminWho || 'admin',
       ip: req.ip,
       requestId: req.id
     });
@@ -1079,7 +1104,7 @@ router.get('/admin/releases', requireAdmin, (req, res) => {
 router.post('/admin/releases', requireAdmin, (req, res) => {
   try {
     const draft = createReleaseDraft(req.body, {
-      who: req.headers['x-admin-who'] || 'admin',
+      who: req.adminWho || 'admin',
       ip: req.ip,
       requestId: req.id
     });
@@ -1092,7 +1117,7 @@ router.post('/admin/releases', requireAdmin, (req, res) => {
 router.post('/admin/releases/:id/publish', requireAdmin, (req, res) => {
   try {
     const published = publishRelease(req.params.id, {
-      who: req.headers['x-admin-who'] || 'admin',
+      who: req.adminWho || 'admin',
       ip: req.ip,
       requestId: req.id
     });
@@ -1105,7 +1130,7 @@ router.post('/admin/releases/:id/publish', requireAdmin, (req, res) => {
 router.post('/admin/releases/:id/withdraw', requireAdmin, (req, res) => {
   try {
     const withdrawn = withdrawRelease(req.params.id, {
-      who: req.headers['x-admin-who'] || 'admin',
+      who: req.adminWho || 'admin',
       ip: req.ip,
       requestId: req.id
     });
