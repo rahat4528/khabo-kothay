@@ -440,3 +440,20 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 242/242 passing Vitest tests (2 new tests in `mobile/__tests__/dependencies.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
 - **Commit Hash**: `41c858b`
 - **Undo Command**: `git revert 41c858b`
+
+
+## Phase 2 Fix 16: Play Store Readiness & Android Target API 35 Configuration
+- **Status**: Completed & Verified
+- **Problem**:
+  - Google Play Console requires new apps and app updates to target Android 15 (API level 35) or higher.
+  - `mobile/app.json` lacked explicit targetSdkVersion and compileSdkVersion build properties, defaulting to API 34.
+- **Fix**:
+  - Configured `expo-build-properties` plugin in `mobile/app.json` with `targetSdkVersion: 35`, `compileSdkVersion: 35`, and `buildToolsVersion: "35.0.0"`.
+  - Verified `mobile/eas.json` production build profile compiles to `app-bundle` (AAB format required by Google Play Console).
+  - Added unit test suite in `mobile/__tests__/target-sdk.test.js` validating target SDK 35 configuration and production AAB build type.
+- **Files**:
+  - `mobile/app.json`
+  - `mobile/__tests__/target-sdk.test.js`
+- **Verification Result**: Verified with 244/244 passing Vitest tests (2 new tests in `mobile/__tests__/target-sdk.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `69cc62d`
+- **Undo Command**: `git revert 69cc62d`
