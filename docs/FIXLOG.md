@@ -250,3 +250,22 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 214/214 passing Vitest tests (4 new tests in `mobile/__tests__/api.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
 - **Commit Hash**: `4a35fa1`
 - **Undo Command**: `git revert 4a35fa1`
+
+
+## Phase 1 Fix 8: In-Memory LRU Photo Cache, Photo Quota Guard & Per-IP Rate Limiting
+- **Status**: Completed & Verified
+- **Problem**: `/api/places/photo` was un-cached in memory, so rapid client scrolling repeatedly hit Google Places media endpoints or regenerated placeholders. Additionally, photo requests lacked per-IP rate limiting, allowing rapid bursts to exhaust daily server quota.
+- **Fix**:
+  - Implemented `PhotoCache` in `server/services/photo-cache.js` providing in-memory LRU caching with capacity (200 items / 50MB) and 1-hour TTL.
+  - Wired cache lookup in `server/routes/api.js` returning `X-Cache: HIT` for cached photos and `X-Cache: MISS` for newly fetched/generated ones.
+  - Guarded photo requests against daily Google API request cap in `quotaManager`, gracefully serving SVG placeholder with `X-Quota-Fallback: true` instead of throwing an unhandled exception or crashing.
+  - Added dedicated per-IP rate limiting (`photoLimiter`, 60 req/min) on `/api/places/photo` and bypassed `/places/photo` from the general 120/15min API limiter in `server/index.js` to ensure photo scrolling doesn't block search.
+  - Added unit and HTTP integration tests in `server/tests/photo-cache.test.js`.
+- **Files**:
+  - `server/services/photo-cache.js`
+  - `server/routes/api.js`
+  - `server/index.js`
+  - `server/tests/photo-cache.test.js`
+- **Verification Result**: Verified with 219/219 passing Vitest tests (5 new tests in `server/tests/photo-cache.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `5ff3f6d`
+- **Undo Command**: `git revert 5ff3f6d`
