@@ -1184,8 +1184,8 @@ router.post(['/diagnostics/crash', '/diagnostics/crash-reports'], diagnosticsLim
       errorCategory: req.body.errorCategory,
       message: req.body.message,
       stackTrace: req.body.stackTrace,
-      appVersion: req.headers['x-app-version-name'] || req.body.appVersion || '4.0.0',
-      versionCode: req.headers['x-app-version-code'] || req.body.versionCode || 3,
+      appVersion: req.headers['x-app-version-name'] || req.body.appVersion || '1.1.0',
+      versionCode: req.headers['x-app-version-code'] || req.body.versionCode || 4,
       deviceMeta: req.body.deviceMeta || {},
       requestId: req.headers['x-request-id'] || req.body.requestId || null
     });
@@ -1203,8 +1203,8 @@ router.post(['/diagnostics/problem', '/diagnostics/problem-reports'], diagnostic
     const report = recordProblemReport({
       category: req.body.category || 'GENERAL',
       description: req.body.description,
-      appVersion: req.headers['x-app-version-name'] || req.body.appVersion || '4.0.0',
-      versionCode: req.headers['x-app-version-code'] || req.body.versionCode || 3,
+      appVersion: req.headers['x-app-version-name'] || req.body.appVersion || '1.1.0',
+      versionCode: req.headers['x-app-version-code'] || req.body.versionCode || 4,
       requestId: req.headers['x-request-id'] || req.body.requestId || null,
       screenshotBase64: req.body.screenshotBase64 || null
     });

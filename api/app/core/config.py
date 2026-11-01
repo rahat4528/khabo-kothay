@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     app_name: str = "Khabo Kothay? API"
-    version: str = "4.0.0"
+    version: str = "1.1.0"
     timezone: str = "Asia/Dhaka"
     environment: str = "development"
     api_v1_prefix: str = "/api/v1"

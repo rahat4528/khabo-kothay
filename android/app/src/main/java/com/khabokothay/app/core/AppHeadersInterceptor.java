@@ -36,8 +36,8 @@ public final class AppHeadersInterceptor implements Interceptor {
         String installId = InstallId.get(context);
 
         Request.Builder builder = original.newBuilder()
-            .header("X-App-Version-Code", "3")
-            .header("X-App-Version-Name", "4.0.0")
+            .header("X-App-Version-Code", "4")
+            .header("X-App-Version-Name", "1.1.0")
             .header("X-App-Channel", "stable")
             .header("X-Install-Id", installId)
             .header("X-Request-Id", requestId);

@@ -54,8 +54,8 @@ public final class CrashReporter implements Thread.UncaughtExceptionHandler {
                 report.put("errorCategory", throwable.getClass().getSimpleName());
                 report.put("message", message);
                 report.put("stackTrace", stackTrace);
-                report.put("versionCode", 3);
-                report.put("appVersion", "4.0.0");
+                report.put("versionCode", 4);
+                report.put("appVersion", "1.1.0");
 
                 JSONObject deviceMeta = new JSONObject();
                 deviceMeta.put("osVersion", "Android " + Build.VERSION.RELEASE + " (API " + Build.VERSION.SDK_INT + ")");

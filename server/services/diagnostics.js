@@ -111,8 +111,8 @@ export function recordCrashReport({
   errorCategory = 'UncaughtException',
   message = '',
   stackTrace = '',
-  appVersion = '4.0.0',
-  versionCode = 3,
+  appVersion = '1.1.0',
+  versionCode = 4,
   deviceMeta = {},
   requestId = null
 }) {
@@ -145,8 +145,8 @@ export function recordCrashReport({
 export function recordProblemReport({
   category = 'GENERAL',
   description = '',
-  appVersion = '4.0.0',
-  versionCode = 3,
+  appVersion = '1.1.0',
+  versionCode = 4,
   requestId = null,
   screenshotBase64 = null
 }) {
