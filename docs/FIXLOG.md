@@ -457,3 +457,36 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 244/244 passing Vitest tests (2 new tests in `mobile/__tests__/target-sdk.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
 - **Commit Hash**: `69cc62d`
 - **Undo Command**: `git revert 69cc62d`
+
+
+## Phase 2 Fix 17: Mobile Accessibility & TalkBack Readiness
+- **Status**: Completed & Verified
+- **Problem**:
+  - Only 23 accessibility labels existed across more than 115 touchable elements (`Pressable`, `TouchableOpacity`, `TouchableHighlight`) in `mobile/src/`, creating a barrier for TalkBack and screen reader users.
+  - Buttons lacked `accessibilityRole`, `accessibilityState`, and minimum 48dp touch targets (`hitSlop`).
+- **Fix**:
+  - Enforced `accessibilityRole` (`button`, `tab`, `checkbox`) and context-aware `accessibilityLabel` across all 14 mobile component files (100% of touchables).
+  - Configured `accessibilityState` (`selected`, `checked`, `expanded`) on tabs, filter chips, and collapsible headers.
+  - Added `hitSlop` padding (min 48dp target) on mini step buttons and icons.
+  - Created automated lint script `scripts/check-a11y.js` scanning all mobile source files to guard against missing accessibility attributes.
+  - Added unit test suite in `mobile/__tests__/accessibility.test.js` validating 0 accessibility violations across all mobile components and passing 32/32 WCAG color contrast checks.
+- **Files**:
+  - `mobile/src/components/ErrorBoundary.js`
+  - `mobile/src/features/favorites/FavoritesScreen.js`
+  - `mobile/src/features/history/HistoryScreen.js`
+  - `mobile/src/features/home/HomeScreen.js`
+  - `mobile/src/features/home/MealTimeView.js`
+  - `mobile/src/features/onboarding/OnboardingScreen.js`
+  - `mobile/src/features/restaurant/CompareOptionsScreen.js`
+  - `mobile/src/features/restaurant/RestaurantDetailScreen.js`
+  - `mobile/src/features/results/ExplainBottomSheet.js`
+  - `mobile/src/features/results/FilterModal.js`
+  - `mobile/src/features/results/MapTabScreen.js`
+  - `mobile/src/features/results/ResultsScreen.js`
+  - `mobile/src/features/settings/SettingsScreen.js`
+  - `mobile/src/features/taste/TasteScreen.js`
+  - `scripts/check-a11y.js`
+  - `mobile/__tests__/accessibility.test.js`
+- **Verification Result**: Verified with 246/246 passing Vitest tests (2 new tests in `mobile/__tests__/accessibility.test.js`), `node scripts/check-a11y.js` reporting 0 violations across 32 components, passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `e205711`
+- **Undo Command**: `git revert e205711`
