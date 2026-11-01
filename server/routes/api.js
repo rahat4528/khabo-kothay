@@ -8,6 +8,7 @@ import { getLatestRelease, getPublishedReleases, getAllReleases, createReleaseDr
 import { getAuditLogs } from '../services/audit.js';
 ﻿import express from 'express';
 import rateLimit from 'express-rate-limit';
+import { getHybridRateLimitKey } from '../services/rate-limit.js';
 import { photoCache } from '../services/photo-cache.js';
 import fs from 'fs';
 import path from 'path';
@@ -574,23 +575,25 @@ function sendPlaceholderPhoto(res, seed) {
 // Google photo resource names look like places/{placeId}/photos/{photoRef}
 const GOOGLE_PHOTO_NAME = /^places\/[A-Za-z0-9_-]+\/photos\/[A-Za-z0-9_-]+$/;
 
-// Rate limiting for diagnostic reports (10 requests/hour per IP)
+// Rate limiting for diagnostic reports (10 requests/hour per client)
 export const diagnosticsLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: parseInt(process.env.DIAGNOSTICS_RATE_LIMIT_MAX || '10', 10),
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: getHybridRateLimitKey,
   message: {
     error: 'Too many diagnostic reports from this IP, please try again after an hour.'
   }
 });
 
-// Rate limiting for community reports (20 requests/hour per IP)
+// Rate limiting for community reports (20 requests/hour per client)
 export const communityWriteLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: parseInt(process.env.COMMUNITY_WRITE_RATE_LIMIT_MAX || '20', 10),
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: getHybridRateLimitKey,
   message: {
     error: 'Too many community submissions from this IP, please try again after an hour.'
   }
@@ -609,12 +612,13 @@ export function enforceBodySizeLimit(maxBytes) {
   };
 }
 
-// Per-IP rate limiting on photo requests (60 requests/minute)
+// Rate limiting on photo requests (60 requests/minute per client)
 export const photoLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: parseInt(process.env.PHOTO_RATE_LIMIT_MAX || '60', 10),
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: getHybridRateLimitKey,
   message: {
     error: 'Too many photo requests from this IP, please try again after a minute.'
   }

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
+import { getHybridRateLimitKey } from './services/rate-limit.js';
 import apiRouter, { healthHandler, readyHandler } from './routes/api.js';
 import { httpLogger, logger } from './services/logger.js';
 import { initSentry } from './services/sentry.js';
@@ -105,19 +106,35 @@ app.use(sentry.requestHandler());
 // Structured HTTP Request Logging with Request IDs (pino)
 app.use(httpLogger);
 
-// Rate Limiting: 120 requests per 15 minutes per IP (photos governed by dedicated photoLimiter)
-const limiter = rateLimit({
+// Rate Limiting: Hybrid client identifier (X-Install-ID / X-Device-ID with IP fallback)
+// prevents false 429s for Bangladesh mobile users sharing Carrier-Grade NAT (CGNAT) IPs.
+const aggregateIpLimiter = rateLimit({
+  windowMs: envConfig.rateLimit?.windowMs || 15 * 60 * 1000,
+  max: (envConfig.rateLimit?.max || 120) * 5,
+  standardHeaders: false,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.ip,
+  skip: (req) => req.path === '/places/photo' || req.path === '/api/places/photo',
+  message: {
+    error: 'Too many aggregate requests from this network gateway, please try again after 15 minutes.'
+  }
+});
+
+const clientLimiter = rateLimit({
   windowMs: envConfig.rateLimit?.windowMs || 15 * 60 * 1000,
   max: envConfig.rateLimit?.max || 120,
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: getHybridRateLimitKey,
   skip: (req) => req.path === '/places/photo' || req.path === '/api/places/photo',
   message: {
-    error: 'Too many requests from this IP, please try again after 15 minutes.'
+    error: 'Too many requests from this device or network, please try again after 15 minutes.'
   }
 });
+
 // '/api' also matches '/api/v1/*'; mounting twice would count each v1 request twice.
-app.use('/api', limiter);
+app.use('/api', aggregateIpLimiter);
+app.use('/api', clientLimiter);
 
 // Mobile client deterrent authentication token check middleware
 // Mobile client deterrent authentication token check middleware
