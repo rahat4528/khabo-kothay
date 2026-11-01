@@ -163,8 +163,8 @@ Tracking the execution and verification of Five Quality Fixes:
   - `server/tests/api.test.js`
   - `mobile/__tests__/api.test.js`
 - **Verification Result**: Verified with 205/205 passing Vitest tests (including fail-closed production test), zero credential leaks via security-check.js and secret_scan.py.
-- **Commit Hash**: `7128aaf`
-- **Undo Command**: `git revert 7128aaf`
+- **Commit Hash**: `e3d90f4`
+- **Undo Command**: `git revert e3d90f4`
 
 
 ## Phase 1 Fix 4: Patch Vulnerable Dependencies & Upgrade Vitest
@@ -182,8 +182,8 @@ Tracking the execution and verification of Five Quality Fixes:
   - `.github/workflows/ci.yml`
   - `server/services/group-mode.js`
 - **Verification Result**: Verified with 205/205 passing Vitest tests on v5.0.5, 0 npm audit vulnerabilities (`npm audit --omit=dev`), and successful security-check.js / verify-i18n-keys.js runs.
-- **Commit Hash**: `073ac66` (production deps), `02a19f8` (vitest upgrade & CI)
-- **Undo Command**: `git revert 02a19f8 && git revert 073ac66`
+- **Commit Hash**: `a75ebda` (production deps), `a98d1f9` (vitest upgrade & CI)
+- **Undo Command**: `git revert a98d1f9 && git revert a75ebda`
 
 
 ## Phase 1 Fix 5: Fix Broken APK Download Fallback, Metadata Generation, and Clean URLs
@@ -204,8 +204,8 @@ Tracking the execution and verification of Five Quality Fixes:
   - `RELEASE.md`
   - `server/tests/download-qr.test.js`
 - **Verification Result**: Verified with 207/207 passing Vitest tests (including 404 on missing `.apk` requests, verification that `/u/5/` is not leaked, and valid dynamic metadata).
-- **Commit Hash**: `240de96`
-- **Undo Command**: `git revert 240de96`
+- **Commit Hash**: `6bf924d`
+- **Undo Command**: `git revert 6bf924d`
 
 
 ## Phase 1 Fix 6: Map Tab Google Maps API Key Configuration & Accessible List Fallback
@@ -225,8 +225,8 @@ Tracking the execution and verification of Five Quality Fixes:
   - `mobile/__tests__/map-tab.test.js`
   - `vitest.config.js`
 - **Verification Result**: Verified with 210/210 passing Vitest tests (including 3 new tests in `mobile/__tests__/map-tab.test.js` testing unconfigured fallback detection, environment key detection, and app.config.js integration), passing security checks and 0 secret leaks.
-- **Commit Hash**: `5a74848`
-- **Undo Command**: `git revert 5a74848`
+- **Commit Hash**: `2e2536c`
+- **Undo Command**: `git revert 2e2536c`
 
 
 ## Phase 1 Fix 7: API Base URL Harmonization & EAS Profile Wiring
@@ -248,8 +248,8 @@ Tracking the execution and verification of Five Quality Fixes:
   - `README_MOBILE.md`
   - `docs/POLISH_AUDIT.md`
 - **Verification Result**: Verified with 214/214 passing Vitest tests (4 new tests in `mobile/__tests__/api.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
-- **Commit Hash**: `4a35fa1`
-- **Undo Command**: `git revert 4a35fa1`
+- **Commit Hash**: `68748d2`
+- **Undo Command**: `git revert 68748d2`
 
 
 ## Phase 1 Fix 8: In-Memory LRU Photo Cache, Photo Quota Guard & Per-IP Rate Limiting
@@ -267,8 +267,8 @@ Tracking the execution and verification of Five Quality Fixes:
   - `server/index.js`
   - `server/tests/photo-cache.test.js`
 - **Verification Result**: Verified with 219/219 passing Vitest tests (5 new tests in `server/tests/photo-cache.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
-- **Commit Hash**: `5ff3f6d`
-- **Undo Command**: `git revert 5ff3f6d`
+- **Commit Hash**: `2f2ccb7`
+- **Undo Command**: `git revert 2f2ccb7`
 
 
 ## Phase 1 Fix 9: Confirmed Criteria Search Engine Wiring & Feature Flags Cache Hardening
@@ -291,8 +291,8 @@ Tracking the execution and verification of Five Quality Fixes:
   - `server/services/flags.js`
   - `server/tests/phase2-ask-parser.test.js`
 - **Verification Result**: Verified with 221/221 passing Vitest tests (2 new tests in `server/tests/phase2-ask-parser.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
-- **Commit Hash**: `bbc1cf1`
-- **Undo Command**: `git revert bbc1cf1`
+- **Commit Hash**: `0609e9f`
+- **Undo Command**: `git revert 0609e9f`
 
 
 ## Phase 1 Fix 10: Unauthenticated Write Endpoint Hardening & PII Protection
@@ -318,8 +318,8 @@ Tracking the execution and verification of Five Quality Fixes:
   - `server/routes/api.js`
   - `server/tests/phase1b-diagnostics.test.js`
 - **Verification Result**: Verified with 224/224 passing Vitest tests (3 new tests in `server/tests/phase1b-diagnostics.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
-- **Commit Hash**: `84d62fd`
-- **Undo Command**: `git revert 84d62fd`
+- **Commit Hash**: `ab59562`
+- **Undo Command**: `git revert ab59562`
 
 
 ## Phase 1 Fix 13: Content Security Policy & CORS Hardening
@@ -342,5 +342,23 @@ Tracking the execution and verification of Five Quality Fixes:
   - `api/app/main.py`
   - `server/tests/security.test.js`
 - **Verification Result**: Verified with 227/227 passing Vitest tests (3 new tests in `server/tests/security.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
-- **Commit Hash**: `06dcc9f`
-- **Undo Command**: `git revert 06dcc9f`
+- **Commit Hash**: `f9e848f`
+- **Undo Command**: `git revert f9e848f`
+
+
+## Phase 1 Fix 14: Admin Gate Reverse Proxy Hardening & Audit Identity Verification
+- **Status**: Completed & Verified
+- **Problem**:
+  - Outside `NODE_ENV=production`, loopback requests skipped the admin token check based solely on `req.socket.remoteAddress === '127.0.0.1'`. When running behind a local or same-host reverse proxy, incoming proxied requests carried `remoteAddress: 127.0.0.1`, inadvertently bypassing admin authentication.
+  - Audit logging trusted client-supplied `X-Admin-Who` headers blindly without server-side verification.
+- **Fix**:
+  - Implemented `hasProxyHeaders` detection in `server/routes/api.js`; if `TRUST_PROXY` is set or proxy headers (`X-Forwarded-For`, `X-Forwarded-Host`, `X-Forwarded-Proto`, `Forwarded`) are present, loopback bypass is strictly disabled, requiring a valid `X-Admin-Token`.
+  - Server-side verified admin identity recorded as `req.adminWho` (`token:admin` or `token:<sanitizedWho>` when authenticated via token, `loopback:local` when direct local loopback).
+  - Used `req.adminWho` for all audit trail entries (`updateFlag`, `createReleaseDraft`, `publishRelease`, `withdrawRelease`).
+  - Added test coverage in `server/tests/hardening.test.js` validating proxy header 403 enforcement and verified audit log identity recording.
+- **Files**:
+  - `server/routes/api.js`
+  - `server/tests/hardening.test.js`
+- **Verification Result**: Verified with 229/229 passing Vitest tests (2 new tests in `server/tests/hardening.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `ae93028`
+- **Undo Command**: `git revert ae93028`
