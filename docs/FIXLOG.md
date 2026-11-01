@@ -546,3 +546,25 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Undo Command**: `git revert e5869d5`
 
 
+## Phase 3 Fix 20: Documentation Architecture Truth Harmonization
+- **Status**: Completed & Verified
+- **Problem**:
+  - `RELEASE.md` and `docs/ARCHITECTURE.md` had lingering obsolete claims or placeholder package names (`com.example.cafefinder`).
+  - `docs/UPGRADE_AUDIT.md` and `docs/DECISIONS.md` described `/android` (Java) as "Primary Android App" and `/api` (FastAPI) as active backend, whereas Node/Express (`/server`) is the deployed production backend on Render serving all `/api` and `/api/v1` routes, and React Native Expo (`/mobile`) is the shipped mobile app.
+- **Fix**:
+  - Harmonized `RELEASE.md`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, and `docs/UPGRADE_AUDIT.md` to designate `/mobile` and `/server` as the official production stack.
+  - Corrected Android package name in `docs/ARCHITECTURE.md` to `com.khabokothay.app`.
+  - Clarified that native Java `/android` and Python FastAPI `/api` are archived reference prototypes.
+  - Added unit test suite in `server/tests/docs-sync.test.js` validating documentation truth across release files, architecture guides, and audit manifests.
+- **Files**:
+  - `RELEASE.md`
+  - `docs/ARCHITECTURE.md`
+  - `docs/DECISIONS.md`
+  - `docs/UPGRADE_AUDIT.md`
+  - `server/tests/docs-sync.test.js`
+- **Verification Result**: Verified with 256/256 passing Vitest tests (3 new tests in `server/tests/docs-sync.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `bbe2caf`
+- **Undo Command**: `git revert bbe2caf`
+
+
+
