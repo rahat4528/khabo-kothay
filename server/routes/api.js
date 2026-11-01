@@ -549,6 +549,41 @@ function sendPlaceholderPhoto(res, seed) {
 // Google photo resource names look like places/{placeId}/photos/{photoRef}
 const GOOGLE_PHOTO_NAME = /^places\/[A-Za-z0-9_-]+\/photos\/[A-Za-z0-9_-]+$/;
 
+// Rate limiting for diagnostic reports (10 requests/hour per IP)
+export const diagnosticsLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: parseInt(process.env.DIAGNOSTICS_RATE_LIMIT_MAX || '10', 10),
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    error: 'Too many diagnostic reports from this IP, please try again after an hour.'
+  }
+});
+
+// Rate limiting for community reports (20 requests/hour per IP)
+export const communityWriteLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: parseInt(process.env.COMMUNITY_WRITE_RATE_LIMIT_MAX || '20', 10),
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    error: 'Too many community submissions from this IP, please try again after an hour.'
+  }
+});
+
+export function enforceBodySizeLimit(maxBytes) {
+  return (req, res, next) => {
+    const contentLength = req.headers['content-length'];
+    if (contentLength && parseInt(contentLength, 10) > maxBytes) {
+      return res.status(413).json({ error: `Payload too large. Maximum allowed size is ${maxBytes} bytes.` });
+    }
+    if (req.body && Buffer.byteLength(JSON.stringify(req.body)) > maxBytes) {
+      return res.status(413).json({ error: `Payload too large. Maximum allowed size is ${maxBytes} bytes.` });
+    }
+    next();
+  };
+}
+
 // Per-IP rate limiting on photo requests (60 requests/minute)
 export const photoLimiter = rateLimit({
   windowMs: 60 * 1000,
@@ -1095,7 +1130,7 @@ router.get('/admin/audit-logs', requireAdmin, (req, res) => {
 // F15: Opt-In Diagnostics & Problem Reports
 // ==========================================
 
-router.post('/diagnostics/consent', (req, res) => {
+router.post(['/diagnostics/consent', '/diagnostics/consents'], diagnosticsLimiter, enforceBodySizeLimit(16 * 1024), (req, res) => {
   try {
     const installId = req.headers['x-install-id'] || req.body.installId || 'anonymous';
     const result = recordConsent({
@@ -1112,7 +1147,7 @@ router.post('/diagnostics/consent', (req, res) => {
   }
 });
 
-router.post('/diagnostics/crash-reports', (req, res) => {
+router.post(['/diagnostics/crash', '/diagnostics/crash-reports'], diagnosticsLimiter, enforceBodySizeLimit(32 * 1024), (req, res) => {
   try {
     const report = recordCrashReport({
       errorCategory: req.body.errorCategory,
@@ -1129,7 +1164,7 @@ router.post('/diagnostics/crash-reports', (req, res) => {
   }
 });
 
-router.post('/diagnostics/problem-reports', (req, res) => {
+router.post(['/diagnostics/problem', '/diagnostics/problem-reports'], diagnosticsLimiter, enforceBodySizeLimit(100 * 1024), (req, res) => {
   try {
     if (!req.body.description || req.body.description.trim().length === 0) {
       return res.status(400).json({ error: 'Problem description is required' });
@@ -1299,7 +1334,7 @@ router.post('/fare-estimates', (req, res) => {
   }
 });
 
-router.post('/fare-reports', (req, res) => {
+router.post('/fare-reports', communityWriteLimiter, enforceBodySizeLimit(16 * 1024), (req, res) => {
   try {
     const report = addFareReport(req.body, { ip: req.ip, requestId: req.id });
     res.status(201).json({
@@ -1373,7 +1408,7 @@ router.post('/groups/:token/close', (req, res) => {
   }
 });
 
-router.post('/dish-price-reports', (req, res) => {
+router.post(['/dish-prices', '/dish-price-reports'], communityWriteLimiter, enforceBodySizeLimit(16 * 1024), (req, res) => {
   try {
     const report = addDishPriceReport(req.body);
     res.status(201).json({ success: true, report });

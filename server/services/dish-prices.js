@@ -70,9 +70,12 @@ export function addDishPriceReport({ restaurantId, restaurantName, dishName, pri
   if (!dishName || !priceBdt) {
     throw new Error('dishName and priceBdt are required');
   }
+  if (typeof dishName !== 'string' || dishName.trim().length === 0 || dishName.trim().length > 80) {
+    throw new Error('dishName must be between 1 and 80 characters');
+  }
 
   const price = Number(priceBdt);
-  if (price < 10 || price > 50000) {
+  if (!Number.isFinite(price) || price < 10 || price > 50000) {
     throw new Error('Price must be between 10 and 50000 BDT');
   }
 

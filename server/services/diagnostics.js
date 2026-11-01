@@ -18,6 +18,55 @@ if (!fs.existsSync(DATA_DIR)) {
 }
 
 // Redaction patterns for sensitive data
+export function hashIp(ip) {
+  if (!ip || ip === 'unknown') return 'unknown';
+  return crypto.createHash('sha256').update(String(ip)).digest('hex').substring(0, 16);
+}
+
+export function checkAndRotateJsonl(filePath, maxBytes = 5 * 1024 * 1024) {
+  try {
+    if (fs.existsSync(filePath)) {
+      const stats = fs.statSync(filePath);
+      if (stats.size >= maxBytes) {
+        const backupPath = `${filePath}.1`;
+        if (fs.existsSync(backupPath)) {
+          fs.unlinkSync(backupPath);
+        }
+        try {
+          fs.renameSync(filePath, backupPath);
+        } catch {
+          fs.copyFileSync(filePath, backupPath);
+          fs.unlinkSync(filePath);
+        }
+      }
+    }
+  } catch (err) {
+    logger.warn({ err: err.message, filePath }, 'Failed to rotate jsonl file');
+  }
+}
+
+export function tailLines(filePath, maxLines = 500) {
+  if (!fs.existsSync(filePath)) return [];
+  try {
+    const stats = fs.statSync(filePath);
+    if (stats.size === 0) return [];
+    const fd = fs.openSync(filePath, 'r');
+    const readSize = Math.min(stats.size, 256 * 1024);
+    const buffer = Buffer.alloc(readSize);
+    const offset = stats.size - readSize;
+    fs.readSync(fd, buffer, 0, readSize, offset);
+    fs.closeSync(fd);
+
+    const chunk = buffer.toString('utf8');
+    const lines = chunk.split('\n').filter(Boolean);
+    const completeLines = offset > 0 ? lines.slice(1) : lines;
+    return completeLines.slice(-maxLines);
+  } catch (err) {
+    logger.warn({ err: err.message, filePath }, 'Failed to tail lines from file');
+    return [];
+  }
+}
+
 const REDACT_PATTERNS = [
   { pattern: /AIza[0-9A-Za-z\-_]{20,}/g, replacement: '[REDACTED_API_KEY]' },
   { pattern: /(?:bearer|token|auth|key|secret)\s*[:=\s]\s*['"]?[0-9a-zA-Z\-_]{8,}['"]?/gi, replacement: '[REDACTED_SECRET]' },
@@ -50,9 +99,10 @@ export function recordConsent({ installId, consentType = 'crash_reporting', gran
     granted: Boolean(granted),
     textVersion,
     timestamp: timestamp || new Date().toISOString(),
-    ip
+    ipHash: hashIp(ip)
   };
 
+  checkAndRotateJsonl(CONSENT_FILE);
   fs.appendFileSync(CONSENT_FILE, JSON.stringify(record) + '\n', 'utf8');
   return record;
 }
@@ -67,7 +117,7 @@ export function recordCrashReport({
   requestId = null
 }) {
   const sanitizedMessage = sanitizeText(message).substring(0, 1000);
-  const sanitizedStack = sanitizeText(stackTrace).substring(0, 10000);
+  const sanitizedStack = sanitizeText(stackTrace).substring(0, 4000);
   const fingerprint = computeCrashFingerprint(sanitizedStack, errorCategory);
 
   const report = {
@@ -87,6 +137,7 @@ export function recordCrashReport({
     timestamp: new Date().toISOString()
   };
 
+  checkAndRotateJsonl(CRASH_FILE);
   fs.appendFileSync(CRASH_FILE, JSON.stringify(report) + '\n', 'utf8');
   return report;
 }
@@ -106,35 +157,30 @@ export function recordProblemReport({
     id: `prob-${Date.now()}`,
     referenceNumber: refCode,
     category: sanitizeText(category),
-    description: sanitizeText(description).substring(0, 2000),
+    description: sanitizeText(description).substring(0, 1000),
     appVersion,
     versionCode: Number(versionCode) || 0,
     requestId: requestId ? sanitizeText(requestId) : null,
-    hasScreenshot: Boolean(screenshotBase64),
+    hasScreenshot: Boolean(screenshotBase64 && screenshotBase64.length <= 100 * 1024),
     status: 'new', // new, triaged, fixed, wont_fix
     resolutionNotes: null,
     timestamp: new Date().toISOString()
   };
 
+  checkAndRotateJsonl(PROBLEM_FILE);
   fs.appendFileSync(PROBLEM_FILE, JSON.stringify(report) + '\n', 'utf8');
   return report;
 }
 
 export function getDiagnosticsOverview() {
   const crashes = [];
-  if (fs.existsSync(CRASH_FILE)) {
-    const lines = fs.readFileSync(CRASH_FILE, 'utf8').trim().split('\n').filter(Boolean);
-    for (const line of lines.slice(-200)) {
-      try { crashes.push(JSON.parse(line)); } catch {}
-    }
+  for (const line of tailLines(CRASH_FILE, 500)) {
+    try { crashes.push(JSON.parse(line)); } catch {}
   }
 
   const problems = [];
-  if (fs.existsSync(PROBLEM_FILE)) {
-    const lines = fs.readFileSync(PROBLEM_FILE, 'utf8').trim().split('\n').filter(Boolean);
-    for (const line of lines.slice(-200)) {
-      try { problems.push(JSON.parse(line)); } catch {}
-    }
+  for (const line of tailLines(PROBLEM_FILE, 500)) {
+    try { problems.push(JSON.parse(line)); } catch {}
   }
 
   // Aggregate crashes by fingerprint

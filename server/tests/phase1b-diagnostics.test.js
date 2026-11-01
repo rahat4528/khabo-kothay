@@ -89,5 +89,48 @@ describe('Phase 1B: Diagnostics — F15 Opt-In Crash Reports & Report a Problem'
       expect(res.body).toHaveProperty('crashes');
       expect(res.body).toHaveProperty('problems');
     });
+
+    it('hashes IP in consent records and does not store plain text IP', async () => {
+      const plainIp = '203.0.113.195';
+      const res = await request(app)
+        .post('/api/diagnostics/consent')
+        .set('X-Forwarded-For', plainIp)
+        .send({
+          installId: 'anon-test-install-123',
+          consentType: 'analytics',
+          granted: true
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.consent).toHaveProperty('ipHash');
+      expect(res.body.consent.ip).toBeUndefined();
+      expect(res.body.consent.ipHash).not.toContain(plainIp);
+      expect(res.body.consent.ipHash.length).toBe(16);
+    });
+
+    it('redacts email addresses with diverse TLD lengths in sanitizeText', () => {
+      const text = 'Contact founder@startup.io and dev@domain.app and lead@tech.ai or info@gov.bd';
+      const sanitized = sanitizeText(text);
+      expect(sanitized).not.toContain('founder@startup.io');
+      expect(sanitized).not.toContain('dev@domain.app');
+      expect(sanitized).not.toContain('lead@tech.ai');
+      expect(sanitized).not.toContain('info@gov.bd');
+      expect(sanitized).toContain('[REDACTED_EMAIL]');
+    });
+
+    it('enforces body size limit returning 413 for oversized payloads', async () => {
+      const hugeString = 'x'.repeat(20 * 1024); // 20KB exceeds 16KB limit
+      const res = await request(app)
+        .post('/api/dish-prices')
+        .send({
+          restaurantName: 'Test',
+          dishName: 'Biryani',
+          priceBdt: 300,
+          notes: hugeString
+        });
+
+      expect(res.status).toBe(413);
+      expect(res.body.error).toContain('Payload too large');
+    });
   });
 });

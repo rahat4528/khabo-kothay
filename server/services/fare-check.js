@@ -271,8 +271,11 @@ export function addFareReport(data, { ip = 'unknown', requestId = null } = {}) {
     throw new Error('Fare must be between 10 and 2000 BDT');
   }
 
-  if (!data.origin || !data.destination) {
-    throw new Error('Origin and destination are required');
+  if (!data.origin || typeof data.origin !== 'string' || data.origin.trim().length === 0 || data.origin.length > 60) {
+    throw new Error('Origin is required and must be <= 60 characters');
+  }
+  if (!data.destination || typeof data.destination !== 'string' || data.destination.trim().length === 0 || data.destination.length > 60) {
+    throw new Error('Destination is required and must be <= 60 characters');
   }
 
   const reports = loadFareReports();
