@@ -227,3 +227,26 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 210/210 passing Vitest tests (including 3 new tests in `mobile/__tests__/map-tab.test.js` testing unconfigured fallback detection, environment key detection, and app.config.js integration), passing security checks and 0 secret leaks.
 - **Commit Hash**: `5a74848`
 - **Undo Command**: `git revert 5a74848`
+
+
+## Phase 1 Fix 7: API Base URL Harmonization & EAS Profile Wiring
+- **Status**: Completed & Verified
+- **Problem**: Mobile app configs and fallbacks were referencing `https://khabo-kothay.onrender.com`. Live verification confirmed that `khabo-kothay.onrender.com/api/health` returned 404, while `https://khabo-kothay-backend.onrender.com/api/health` responded with HTTP 200 (live Render backend defined in `render.yaml`). An APK built with previous configs failed to reach the server. Furthermore, `mobile/eas.json` had no `env` variables configured for build profiles, relying solely on runtime fallbacks.
+- **Fix**:
+  - Pointed default `apiBaseUrl` in `mobile/app.json` and `mobile/app.config.js` to `https://khabo-kothay-backend.onrender.com`.
+  - Added `EXPO_PUBLIC_API_BASE_URL` to development, preview, and production profiles in `mobile/eas.json`.
+  - Updated `mobile/src/api/client.js` default fallback to the live URL and added warning detection (`isLocalhostUrl`) if pointing to localhost/loopback in production.
+  - Synchronized references across `README_MOBILE.md`, `docs/POLISH_AUDIT.md`, and `scripts/check_links.py`.
+  - Added unit tests in `mobile/__tests__/api.test.js` validating live URL defaults, localhost detection, production warning logging, and `eas.json` profile configurations.
+- **Files**:
+  - `mobile/app.json`
+  - `mobile/app.config.js`
+  - `mobile/eas.json`
+  - `mobile/src/api/client.js`
+  - `mobile/__tests__/api.test.js`
+  - `scripts/check_links.py`
+  - `README_MOBILE.md`
+  - `docs/POLISH_AUDIT.md`
+- **Verification Result**: Verified with 214/214 passing Vitest tests (4 new tests in `mobile/__tests__/api.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `4a35fa1`
+- **Undo Command**: `git revert 4a35fa1`
