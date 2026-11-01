@@ -1185,10 +1185,16 @@ router.get('/fare-reports', requireAdmin, (req, res) => {
 
 router.post('/groups', (req, res) => {
   try {
-    const session = createGroupSession(req.body);
-    res.status(201).json({ success: true, session });
+    const result = createGroupSession(req.body);
+    res.status(201).json({
+      success: true,
+      session: result.session,
+      hostKey: result.hostKey,
+      participantId: result.participantId,
+      participantSecret: result.participantSecret
+    });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(err.status || 400).json({ error: err.message });
   }
 });
 
@@ -1205,7 +1211,7 @@ router.post('/groups/:token/join', (req, res) => {
     const result = joinGroupSession(req.params.token, req.body);
     res.status(201).json({ success: true, ...result });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(err.status || 400).json({ error: err.message });
   }
 });
 
@@ -1214,7 +1220,7 @@ router.post('/groups/:token/votes', (req, res) => {
     const result = castVote(req.params.token, req.body);
     res.json(result);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(err.status || 400).json({ error: err.message });
   }
 });
 
@@ -1223,7 +1229,7 @@ router.post('/groups/:token/close', (req, res) => {
     const result = closeGroupSession(req.params.token, req.body);
     res.json({ success: true, session: result });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(err.status || 400).json({ error: err.message });
   }
 });
 

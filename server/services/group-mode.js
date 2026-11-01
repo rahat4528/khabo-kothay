@@ -11,9 +11,41 @@ const GROUPS_FILE = path.join(__dirname, '..', 'data', 'group-sessions.json');
 
 const SESSION_TTL_MS = 3 * 60 * 60 * 1000; // 3 Hours
 
-
 // Active in-memory session cache to maintain object reference parity
 const activeSessions = new Map();
+
+/**
+ * Format a session for safe public consumption (no secrets, no foreign IDs, aggregate votes)
+ */
+export function toPublicSession(session) {
+  if (!session) return null;
+  const voteCounts = {};
+  for (const candidateId of Object.values(session.votes || {})) {
+    if (candidateId) {
+      voteCounts[candidateId] = (voteCounts[candidateId] || 0) + 1;
+    }
+  }
+
+  return {
+    id: session.id,
+    token: session.token,
+    deepLink: session.deepLink,
+    creatorName: session.creatorName,
+    createdAt: session.createdAt,
+    expiresAt: session.expiresAt,
+    status: session.status,
+    participants: (session.participants || []).map(p => ({
+      name: p.name,
+      isCreator: Boolean(p.isCreator),
+      startingArea: p.startingArea,
+      joinedAt: p.joinedAt
+    })),
+    candidates: session.candidates || [],
+    voteCounts,
+    totalVotes: Object.keys(session.votes || {}).length,
+    winner: session.winner || null
+  };
+}
 
 export function loadSessions() {
   if (activeSessions.size > 0) {
@@ -49,13 +81,17 @@ export function saveSessions(sessions) {
   }
 }
 
-
 /**
  * Create a new group dining session
  */
 export function createGroupSession({ creatorName = 'Host', budget = 600, cuisinePreference = null } = {}) {
   const token = crypto.randomBytes(16).toString('hex'); // 128-bit unguessable token
   const creatorId = `user-${crypto.randomBytes(4).toString('hex')}`;
+  const hostKey = crypto.randomBytes(32).toString('hex');
+  const hostKeyHash = crypto.createHash('sha256').update(hostKey).digest('hex');
+  const creatorSecret = crypto.randomBytes(32).toString('hex');
+  const creatorSecretHash = crypto.createHash('sha256').update(creatorSecret).digest('hex');
+
   const now = new Date();
   const expiresAt = new Date(now.getTime() + SESSION_TTL_MS);
 
@@ -64,14 +100,16 @@ export function createGroupSession({ creatorName = 'Host', budget = 600, cuisine
     token,
     deepLink: `khabokothay://group/${token}`,
     creatorId,
-    creatorName,
+    hostKeyHash,
+    creatorName: String(creatorName).substring(0, 30),
     createdAt: now.toISOString(),
     expiresAt: expiresAt.toISOString(),
     status: 'open', // open, voting, closed
     participants: [
       {
         participantId: creatorId,
-        name: creatorName,
+        participantSecretHash: creatorSecretHash,
+        name: String(creatorName).substring(0, 30),
         isCreator: true,
         startingArea: 'Gulshan 2',
         budget: Number(budget) || 600,
@@ -88,7 +126,15 @@ export function createGroupSession({ creatorName = 'Host', budget = 600, cuisine
   sessions.push(session);
   saveSessions(sessions);
 
-  return session;
+  const publicSession = toPublicSession(session);
+  return {
+    ...publicSession,
+    hostKey,
+    creatorId,
+    participantId: creatorId,
+    participantSecret: creatorSecret,
+    session: publicSession
+  };
 }
 
 /**
@@ -97,17 +143,31 @@ export function createGroupSession({ creatorName = 'Host', budget = 600, cuisine
 export function joinGroupSession(token, { name = 'Guest', startingArea = 'Banani', budget = 500, dietaryPreferences = [] } = {}) {
   const sessions = loadSessions();
   const session = sessions.find(s => s.token === token);
-  if (!session) throw new Error('Session not found or expired');
-  if (session.status === 'closed') throw new Error('Session is closed');
+  if (!session) {
+    const err = new Error('Session not found or expired');
+    err.status = 404;
+    throw err;
+  }
+  if (session.status === 'closed') {
+    const err = new Error('Session is closed');
+    err.status = 400;
+    throw err;
+  }
 
   if (session.participants.length >= 12) {
-    throw new Error('Group session participant limit reached (maximum 12)');
+    const err = new Error('Group session participant limit reached (maximum 12)');
+    err.status = 400;
+    throw err;
   }
 
   const participantId = `user-${crypto.randomBytes(4).toString('hex')}`;
+  const participantSecret = crypto.randomBytes(32).toString('hex');
+  const participantSecretHash = crypto.createHash('sha256').update(participantSecret).digest('hex');
+
   const participant = {
     participantId,
-    name: name.substring(0, 30),
+    participantSecretHash,
+    name: String(name || 'Guest').substring(0, 30),
     isCreator: false,
     startingArea: startingArea || 'Banani',
     budget: Number(budget) || 500,
@@ -118,7 +178,11 @@ export function joinGroupSession(token, { name = 'Guest', startingArea = 'Banani
   session.participants.push(participant);
   saveSessions(sessions);
 
-  return { session, participantId };
+  return {
+    session: toPublicSession(session),
+    participantId,
+    participantSecret
+  };
 }
 
 /**
@@ -177,36 +241,84 @@ export function computeFairRanking(session, candidateRestaurants) {
 /**
  * Cast or change vote in group session
  */
-export function castVote(token, { participantId, candidateId }) {
+export function castVote(token, { participantId, participantSecret, candidateId }) {
   const sessions = loadSessions();
   const session = sessions.find(s => s.token === token);
-  if (!session) throw new Error('Session not found or expired');
-  if (session.status === 'closed') throw new Error('Session is closed');
+  if (!session) {
+    const err = new Error('Session not found or expired');
+    err.status = 404;
+    throw err;
+  }
+  if (session.status === 'closed') {
+    const err = new Error('Session is closed');
+    err.status = 400;
+    throw err;
+  }
 
   const participant = session.participants.find(p => p.participantId === participantId);
-  if (!participant) throw new Error('Participant not in this session');
+  if (!participant) {
+    const err = new Error('Participant not in this session');
+    err.status = 404;
+    throw err;
+  }
+
+  if (participant.participantSecretHash) {
+    if (!participantSecret || typeof participantSecret !== 'string') {
+      const err = new Error('Participant secret required to vote');
+      err.status = 403;
+      throw err;
+    }
+    const providedHash = crypto.createHash('sha256').update(String(participantSecret)).digest();
+    const storedHash = Buffer.from(participant.participantSecretHash, 'hex');
+    if (providedHash.length !== storedHash.length || !crypto.timingSafeEqual(providedHash, storedHash)) {
+      const err = new Error('Invalid participant secret: cannot vote as another participant');
+      err.status = 403;
+      throw err;
+    }
+  }
 
   session.votes[participantId] = candidateId;
   saveSessions(sessions);
 
-  return { success: true, votes: session.votes };
+  const publicSession = toPublicSession(session);
+  return { success: true, voteCounts: publicSession.voteCounts, totalVotes: publicSession.totalVotes };
 }
 
 /**
  * Close session and determine winner
  */
-export function closeGroupSession(token, { creatorId }) {
+export function closeGroupSession(token, { hostKey, creatorId } = {}) {
   const sessions = loadSessions();
   const session = sessions.find(s => s.token === token);
-  if (!session) throw new Error('Session not found or expired');
-  if (session.creatorId !== creatorId) throw new Error('Only the session creator can close the session');
+  if (!session) {
+    const err = new Error('Session not found or expired');
+    err.status = 404;
+    throw err;
+  }
+
+  let authorized = false;
+  if (hostKey && session.hostKeyHash) {
+    const providedHash = crypto.createHash('sha256').update(String(hostKey)).digest();
+    const storedHash = Buffer.from(session.hostKeyHash, 'hex');
+    if (providedHash.length === storedHash.length && crypto.timingSafeEqual(providedHash, storedHash)) {
+      authorized = true;
+    }
+  }
+
+  if (!authorized) {
+    const err = new Error('Only the session creator can close the session');
+    err.status = 403;
+    throw err;
+  }
 
   session.status = 'closed';
 
   // Count votes
   const counts = {};
-  for (const candId of Object.values(session.votes)) {
-    counts[candId] = (counts[candId] || 0) + 1;
+  for (const candId of Object.values(session.votes || {})) {
+    if (candId) {
+      counts[candId] = (counts[candId] || 0) + 1;
+    }
   }
 
   let winnerId = null;
@@ -221,11 +333,11 @@ export function closeGroupSession(token, { creatorId }) {
   session.winner = {
     candidateId: winnerId,
     votesReceived: maxVotes > 0 ? maxVotes : 0,
-    totalVotesCast: Object.keys(session.votes).length
+    totalVotesCast: Object.keys(session.votes || {}).length
   };
 
   saveSessions(sessions);
-  return session;
+  return toPublicSession(session);
 }
 
 export function getGroupSession(token) {
@@ -233,20 +345,11 @@ export function getGroupSession(token) {
   const session = sessions.find(s => s.token === token);
   if (!session) return null;
 
-  // Censor exact coordinates/personal metadata of participants for privacy (Section 7.3)
-  const sanitizedParticipants = session.participants.map(p => ({
-    name: p.name,
-    isCreator: p.isCreator,
-    startingArea: p.startingArea
-  }));
-
-  return {
-    ...session,
-    participants: sanitizedParticipants
-  };
+  return toPublicSession(session);
 }
 
 export default {
+  toPublicSession,
   createGroupSession,
   joinGroupSession,
   computeFairRanking,
