@@ -504,7 +504,7 @@ export function renderMealTimeResults({
         </div>
 
         <!-- Plain Language Reason -->
-        <p class="mealtime-reason">${r.reasons[0]}</p>
+        <p class="mealtime-reason">${esc(r.reasons[0])}</p>
 
         <!-- Flags -->
         <div class="card-flags-row">
