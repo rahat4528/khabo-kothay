@@ -5,7 +5,7 @@
 - **Version**: `1.1.0`
 - **Package Identifier**: `com.khabokothay.app`
 - **Release Date**: October 8, 2026
-- **Architecture**: Full-stack traffic-aware dining intelligence system (Express + Vanilla JS + React Native Expo)
+- **Architecture**: Full-stack traffic-aware dining intelligence system (Node.js Express backend on Render + React Native Expo mobile app). Note: Native Java (/android) and FastAPI (/api) are archived reference prototypes.
 
 ---
 

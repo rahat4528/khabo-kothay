@@ -30,14 +30,16 @@ The application serves Dhaka diners in Gulshan, Banani, Baridhara, Notun Bazar, 
      - Cost Control & Quotas (`server/services/quota.js`): Daily per-device limits and monthly global killswitch falling back to mock places.
    - **Tests**: 159 tests passing across 25 Vitest test suites (`npm test`).
 
-2. **Secondary Architecture: Python FastAPI Server (`/api`)**
+2. **Archived Reference Architecture: Python FastAPI Server (`/api`)**
+   - **Note**: Archived exploration prototype with minimal /health endpoints. Production backend is Node.js Express (/server).
    - **Runtime**: Python 3.11 / 3.13.
    - **Framework**: FastAPI with Pydantic v2, custom `AppError` handlers, and `Clock` abstraction.
    - **State**: Foundation layer created under `/api/v1` with `/health` and budget guards.
    - **Tests**: 4 tests passing in pytest with 86% code coverage.
 
 ### 2.2 Client Applications
-1. **Primary Android App: Native Java (`/android`)**
+1. **Archived Android App Prototype: Native Java (`/android`)**
+   - **Note**: Historical Java prototype. Official production mobile app is React Native Expo (/mobile).
    - **Package ID**: `com.khabokothay.app`
    - **Version**: `versionCode 3`, `versionName "4.0.0"`
    - **Target / Min SDK**: Compile SDK 34, Target SDK 34, Min SDK 24 (Android 7.0+).
@@ -48,8 +50,8 @@ The application serves Dhaka diners in Gulshan, Banani, Baridhara, Notun Bazar, 
    - **Localization**: English (`values/strings.xml`) and Bangla (`values-bn/strings.xml`), `BengaliFormatter.java`.
    - **Branding**: Indigo and Saffron Material 3 color tokens (`brand/tokens.json`).
 
-2. **Legacy Mobile Client (`/mobile`)**
-   - React Native / Expo application for cross-platform prototyping.
+2. **Official Production Mobile Client (`/mobile`)**
+   - React Native Expo SDK 52 application with EAS Build (APK & AAB), bilingual EN/BN support, offline fallback, and accessibility TalkBack readiness.
 
 3. **Legacy Web Client (`/public`)**
    - Static HTML5, CSS3, and JavaScript web client with Leaflet maps.

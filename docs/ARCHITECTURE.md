@@ -7,6 +7,14 @@ Instead of purely listing nearby places by geometric distance, it factors in rea
 
 ---
 
+
+---
+
+## Production Stack & Reference Prototypes
+- **Production Backend (`/server`)**: Node.js & Express server deployed live on Render, providing `/api` and `/api/v1` endpoints with Redis persistence and hybrid rate limiting.
+- **Production Mobile App (`/mobile`)**: React Native Expo application built via EAS Build (`com.khabokothay.app`), distributed to end users.
+- **Archived Prototypes (`/android`, `/api`)**: Native Java app and Python FastAPI stubs are archived as reference prototypes.
+
 ## High-Level Architecture Diagram
 
 ```mermaid
@@ -81,7 +89,7 @@ graph TD
    - Exposed only through `GET /api/config` for rendering Google Maps JavaScript API on the web.
    - Must be restricted in Google Cloud Console by **HTTP Referrer** (e.g. `https://your-domain.com/*` or `http://localhost:*`).
 3. **Android Maps Key (`EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_KEY`)**:
-   - Restricted in Google Cloud Console by **Android Package Name** (`com.example.cafefinder`) and **SHA-1 Certificate Fingerprint**.
+   - Restricted in Google Cloud Console by **Android Package Name** (`com.khabokothay.app`) and **SHA-1 Certificate Fingerprint**.
 4. **Mobile API Deterrent (`X-App-Token`)**:
    - A secret token (`APP_CLIENT_TOKEN`) checked by the Express server for mobile app traffic.
 5. **Content Security Policy (CSP)**:

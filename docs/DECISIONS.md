@@ -192,11 +192,11 @@
 ## 15-Features Upgrade Decisions (Phase 0: Master Audit Baseline)
 
 ### 20. Preservation of Existing Architecture & Live Production Deployment
-- **Decision**: Retain the Node.js Express backend (`server/`) as the active production server deployed on Render (`https://khabo-kothay-backend.onrender.com`), while preserving the Python FastAPI foundation (`api/`) under `/api/v1`.
+- **Decision**: Retain the Node.js Express backend (`server/`) as the active production server deployed on Render (`https://khabo-kothay-backend.onrender.com`), serving `/api` and `/api/v1` routes. The Python FastAPI stub (`api/`) is archived as a reference prototype.
 - **Rationale**: Full compliance with Section 1.1 and 1.2 (Technology Policy). Extending the existing tested, live-deployed backend eliminates deployment disruption and preserves all existing 159 Vitest tests, ranking weights, and Meal-Time scheduling algorithms.
 
 ### 21. Android Native Java MVVM Architecture Preservation
-- **Decision**: Keep the Android application in Native Java with MVVM, Room SQLite, Material 3, Retrofit 2.10, and WorkManager (`com.khabokothay.app`), preserving package identity and certificate signature continuity.
+- **Decision**: The React Native Expo application in `/mobile` is designated as the official production mobile client (`com.khabokothay.app`), with the native Java prototype in `/android` archived as a reference prototype.
 - **Rationale**: Section 1.5 strictly prohibits changing package name or signing keys to ensure seamless update installation over existing builds (`versionCode` strictly monotonic). Java code style will be consistently maintained across all new Android features.
 
 ### 22. Phase-by-Phase Delivery & Reversible Commits
