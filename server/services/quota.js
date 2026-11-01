@@ -1,6 +1,7 @@
 import thresholdsConfig from '../config/thresholds.json' with { type: 'json' };
 import featureFlags from '../config/featureFlags.js';
 import globalCache from './cache.js';
+import redisStore from './redis-store.js';
 
 const costControl = thresholdsConfig.costControl || {
   dailySearchLimitPerDevice: 50,
@@ -32,6 +33,17 @@ class QuotaAndUsageManager {
     return new Date().toISOString().slice(0, 7); // YYYY-MM
   }
 
+  async syncFromRedis() {
+    if (!redisStore.isConfigured()) return;
+    try {
+      const today = this.getCurrentDateKey();
+      const remote = await redisStore.get('google_daily_calls:' + today);
+      if (typeof remote === 'number' && remote > this.googleDailyCalls) {
+        this.googleDailyCalls = remote;
+      }
+    } catch {}
+  }
+
   /**
    * Hard daily cap on external Google Places & Routes API requests (fails closed)
    */
@@ -56,6 +68,10 @@ class QuotaAndUsageManager {
       this.googleCallsBreakdown[apiName]++;
     } else {
       this.googleCallsBreakdown[apiName] = 1;
+    }
+
+    if (redisStore.isConfigured()) {
+      redisStore.set('google_daily_calls:' + today, this.googleDailyCalls, 86400).catch?.(() => {});
     }
 
     return {

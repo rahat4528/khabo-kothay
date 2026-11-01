@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import logger from './logger.js';
 import { PRESET_LOCATIONS } from './mock.js';
+import redisStore from './redis-store.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -107,6 +108,10 @@ export function saveSessionsSync() {
       // Windows EPERM fallback: copyFileSync + unlinkSync
       fs.copyFileSync(tempFile, GROUPS_FILE);
       try { fs.unlinkSync(tempFile); } catch {}
+    }
+
+    if (redisStore.isConfigured()) {
+      redisStore.set('group_sessions:active', Array.from(activeSessions.values()), 86400).catch?.(() => {});
     }
   } catch (err) {
     logger.error({ err }, 'Failed saving group sessions atomically');

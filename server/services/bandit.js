@@ -1,5 +1,6 @@
 import banditConfig from '../config/bandit.json' with { type: 'json' };
 import featureFlags from '../config/featureFlags.js';
+import redisStore from './redis-store.js';
 
 // In-memory store for device/user bandit state. Keys come from client headers/IPs,
 // so the map is capped: Map keeps insertion order, and get/set re-inserts to keep
@@ -13,6 +14,9 @@ function storeProfile(deviceId, profile) {
   banditProfiles.set(deviceId, profile);
   if (banditProfiles.size > MAX_PROFILES) {
     banditProfiles.delete(banditProfiles.keys().next().value);
+  }
+  if (redisStore.isConfigured()) {
+    redisStore.set('bandit_profile:' + deviceId, profile, 30 * 86400).catch?.(() => {});
   }
   return profile;
 }
