@@ -122,3 +122,21 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 201/201 passing Vitest tests including 403 authorization checks on rogue session close and impersonated voting attempts.
 - **Commit Hash**: `8ea397f`
 - **Undo Command**: `git revert 8ea397f`
+
+
+## Phase 1 Fix 2: Group Session Expiry Enforcement, Input Caps, and Atomic Persistence
+- **Status**: Completed & Verified
+- **Problem**: Session expiry was checked only on cold start; expired sessions remained accessible for reads, votes, and closing; session store had no IP rate limit or session count ceiling; inputs were unvalidated; file writes were synchronous and non-atomic.
+- **Fix**:
+  - Enforced expiry check returning HTTP 404 in all accessors (`getGroupSession`, `joinGroupSession`, `castVote`, and `closeGroupSession`) and auto-purging expired entries.
+  - Implemented periodic background sweep via `.unref()` timer (`SWEEP_INTERVAL_MS = 5 min`).
+  - Added global ceiling (`MAX_TOTAL_SESSIONS = 500`) and per-IP limit (`MAX_SESSIONS_PER_IP = 10`) returning HTTP 429 when exceeded.
+  - Validated and capped inputs: `creatorName` (30), `name` (30), `startingArea` (40), `dietaryPreferences` (allowlist of 8 standard tags), and `candidateId` (non-empty string <= 64 chars).
+  - Replaced blocking direct file overwrite with atomic temp-file write + rename (`saveSessionsSync`) and debounced saves (`scheduleSave`).
+- **Files**:
+  - `server/services/group-mode.js`
+  - `server/routes/api.js`
+  - `server/tests/phase4-discovery-group.test.js`
+- **Verification Result**: Verified with 204/204 passing Vitest tests including 404 tests on expired sessions across all 4 accessors, input sanitization tests, and IP rate-limit tests.
+- **Commit Hash**: `92b357b`
+- **Undo Command**: `git revert 92b357b`
