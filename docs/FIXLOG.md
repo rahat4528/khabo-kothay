@@ -362,3 +362,26 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 229/229 passing Vitest tests (2 new tests in `server/tests/hardening.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
 - **Commit Hash**: `ae93028`
 - **Undo Command**: `git revert ae93028`
+
+
+## Phase 1 Fix 11: Render Free-Tier Persistence via Redis with In-Memory Fallback
+- **Status**: Completed & Verified
+- **Problem**:
+  - On Render free-tier instances, the environment spins down after 15 minutes of inactivity and local file disk is ephemeral.
+  - When the service restarts, in-memory counters (e.g., Google Places/Routes daily API call guards) and group sessions reset, allowing daily budget caps to be bypassed across sleep cycles.
+- **Fix**:
+  - Implemented RedisStore in server/services/redis-store.js supporting Upstash REST (UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN) and auto-deriving REST credentials from REDIS_URL.
+  - Wired quotaManager in server/services/quota.js to sync external Google API daily request counts to Redis key google_daily_calls:<YYYY-MM-DD>.
+  - Wired andit.js to persist learned recommendation weights to andit_profile:<deviceId>.
+  - Wired group-mode.js to persist active group sessions to group_sessions:active.
+  - Maintained zero-downtime, zero-error fallback to in-memory Maps when Redis is unconfigured or unreachable.
+  - Added unit test suite in server/tests/redis-persistence.test.js validating in-memory fallback, REDIS_URL auto-parsing, Upstash REST endpoints, quota sync, and session sync.
+- **Files**:
+  - server/services/redis-store.js
+  - server/services/quota.js
+  - server/services/bandit.js
+  - server/services/group-mode.js
+  - server/tests/redis-persistence.test.js
+- **Verification Result**: Verified with 235/235 passing Vitest tests (6 new tests in server/tests/redis-persistence.test.js), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: 1efb356
+- **Undo Command**: git revert 1efb356
