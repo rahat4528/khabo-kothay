@@ -96,7 +96,7 @@ export default function SettingsScreen({ theme, onThemeChange }) {
                 { backgroundColor: currentLang === 'en' ? theme.colors.primary : theme.colors.surfaceAlt }
               ]}
               onPress={() => handleLangToggle('en')}
-            >
+             accessibilityRole="checkbox" accessibilityLabel="Interactive button">
               <Text style={[styles.langBtnText, { color: currentLang === 'en' ? theme.colors.onPrimary : theme.colors.textMuted }]}>
                 English
               </Text>
@@ -108,7 +108,7 @@ export default function SettingsScreen({ theme, onThemeChange }) {
                 { backgroundColor: currentLang === 'bn' ? theme.colors.primary : theme.colors.surfaceAlt }
               ]}
               onPress={() => handleLangToggle('bn')}
-            >
+             accessibilityRole="checkbox" accessibilityLabel="Interactive button">
               <Text style={[styles.langBtnText, { color: currentLang === 'bn' ? theme.colors.onPrimary : theme.colors.textMuted }]}>
                 বাংলা (Bangla)
               </Text>
@@ -126,7 +126,7 @@ export default function SettingsScreen({ theme, onThemeChange }) {
                 { backgroundColor: currentThemeMode === 'system' ? theme.colors.primary : theme.colors.surfaceAlt }
               ]}
               onPress={() => handleThemeSelect('system')}
-            >
+             accessibilityRole="button" accessibilityLabel="Interactive button">
               <Text style={[styles.langBtnText, { color: currentThemeMode === 'system' ? theme.colors.onPrimary : theme.colors.textMuted }]}>
                 {t('settings.themeSystem')}
               </Text>
@@ -138,7 +138,7 @@ export default function SettingsScreen({ theme, onThemeChange }) {
                 { backgroundColor: currentThemeMode === 'light' ? theme.colors.primary : theme.colors.surfaceAlt }
               ]}
               onPress={() => handleThemeSelect('light')}
-            >
+             accessibilityRole="button" accessibilityLabel="Interactive button">
               <Text style={[styles.langBtnText, { color: currentThemeMode === 'light' ? theme.colors.onPrimary : theme.colors.textMuted }]}>
                 {t('settings.themeLight')}
               </Text>
@@ -150,7 +150,7 @@ export default function SettingsScreen({ theme, onThemeChange }) {
                 { backgroundColor: currentThemeMode === 'dark' ? theme.colors.primary : theme.colors.surfaceAlt }
               ]}
               onPress={() => handleThemeSelect('dark')}
-            >
+             accessibilityRole="button" accessibilityLabel="Interactive button">
               <Text style={[styles.langBtnText, { color: currentThemeMode === 'dark' ? theme.colors.onPrimary : theme.colors.textMuted }]}>
                 {t('settings.themeDark')}
               </Text>
@@ -182,13 +182,13 @@ export default function SettingsScreen({ theme, onThemeChange }) {
             {t('settings.privacyNote')}
           </Text>
 
-          <TouchableOpacity style={styles.actionBtn} onPress={handleExportData}>
+          <TouchableOpacity style={styles.actionBtn} onPress={handleExportData} accessibilityRole="button" accessibilityLabel="Export my search and taste data">
             <Text style={{ color: theme.colors.primary, fontWeight: '700' }}>
               📥 {t('settings.exportData')}
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionBtn} onPress={handleDeleteData}>
+          <TouchableOpacity style={styles.actionBtn} onPress={handleDeleteData} accessibilityRole="button" accessibilityLabel="Delete all stored local data">
             <Text style={{ color: theme.colors.danger, fontWeight: '700' }}>
               🗑️ {t('settings.deleteData')}
             </Text>

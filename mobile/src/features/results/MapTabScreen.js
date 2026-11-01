@@ -131,6 +131,7 @@ export default function MapTabScreen({ navigation, theme }) {
                   style={[styles.directionsBtn, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceAlt }]}
                   onPress={() => openNavigationDirections(item)}
                   accessibilityLabel={`Get directions to ${item.displayName}`}
+                  accessibilityRole="button"
                 >
                   <Text style={[styles.directionsBtnText, { color: theme.colors.text }]}>🧭 Directions</Text>
                 </TouchableOpacity>
@@ -138,6 +139,7 @@ export default function MapTabScreen({ navigation, theme }) {
                   style={[styles.calloutBtn, { backgroundColor: theme.colors.primary }]}
                   onPress={() => navigation?.navigate('RestaurantDetail', { restaurant: item, location })}
                   accessibilityLabel={`View details for ${item.displayName}`}
+                  accessibilityRole="button"
                 >
                   <Text style={[styles.calloutBtnText, { color: theme.colors.onPrimary }]}>View Details →</Text>
                 </TouchableOpacity>
@@ -200,6 +202,8 @@ export default function MapTabScreen({ navigation, theme }) {
         style={[styles.recenterBtn, { backgroundColor: theme.colors.card, borderColor: theme.colors.border, shadowColor: theme.colors.scrim }]}
         onPress={handleRecenter}
         accessibilityLabel="Recenter map to my location"
+        accessibilityRole="button"
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
         <Text style={{ fontSize: 18 }}>📍</Text>
       </TouchableOpacity>
@@ -223,6 +227,7 @@ export default function MapTabScreen({ navigation, theme }) {
               style={[styles.directionsBtn, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceAlt }]}
               onPress={() => openNavigationDirections(selectedPlace)}
               accessibilityLabel={`Get directions to ${selectedPlace.displayName}`}
+              accessibilityRole="button"
             >
               <Text style={[styles.directionsBtnText, { color: theme.colors.text }]}>🧭 Directions</Text>
             </TouchableOpacity>
@@ -230,6 +235,7 @@ export default function MapTabScreen({ navigation, theme }) {
               style={[styles.calloutBtn, { backgroundColor: theme.colors.primary }]}
               onPress={() => navigation?.navigate('RestaurantDetail', { restaurant: selectedPlace, location })}
               accessibilityLabel={`View details for ${selectedPlace.displayName}`}
+              accessibilityRole="button"
             >
               <Text style={[styles.calloutBtnText, { color: theme.colors.onPrimary }]}>View Details →</Text>
             </TouchableOpacity>

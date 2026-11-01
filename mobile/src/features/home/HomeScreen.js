@@ -411,7 +411,7 @@ export default function HomeScreen({ navigation, theme }) {
             <TouchableOpacity
               style={styles.pickItem}
               onPress={() => navigation.navigate('RestaurantDetail', { restaurant: topPicks.bestMatch })}
-            >
+             accessibilityRole="button" accessibilityLabel="Interactive button">
               <View style={styles.pickBadgeRow}>
                 <View style={[styles.badgePill, { backgroundColor: theme.colors.badgeBest }]}>
                   <Text style={{ color: theme.colors.badgeBestText, fontWeight: '800', fontSize: 12 }}>
@@ -435,7 +435,7 @@ export default function HomeScreen({ navigation, theme }) {
             <TouchableOpacity
               style={styles.pickItem}
               onPress={() => navigation.navigate('RestaurantDetail', { restaurant: topPicks.fastestOrNearest })}
-            >
+             accessibilityRole="button" accessibilityLabel="Interactive button">
               <View style={[styles.badgePill, { backgroundColor: theme.colors.badgeFast }]}>
                 <Text style={{ color: theme.colors.badgeFastText, fontWeight: '800', fontSize: 12 }}>
                   ⚡ {t('picks.fastestOption')}
@@ -450,7 +450,7 @@ export default function HomeScreen({ navigation, theme }) {
             <TouchableOpacity
               style={styles.pickItem}
               onPress={() => navigation.navigate('RestaurantDetail', { restaurant: topPicks.trySomethingNew })}
-            >
+             accessibilityRole="button" accessibilityLabel="Interactive button">
               <View style={[styles.badgePill, { backgroundColor: 'transparent', borderWidth: 1, borderColor: theme.colors.badgeNewBorder }]}>
                 <Text style={{ color: theme.colors.badgeNewText, fontWeight: '800', fontSize: 12 }}>
                   🎲 {t('picks.trySomethingNew')}
@@ -481,7 +481,7 @@ export default function HomeScreen({ navigation, theme }) {
                   setSelectedTimeBudget(tb.value);
                   loadRecommendations(location, selectedCuisine, selectedPriority, selectedBudget, selectedMood, false, tb.value);
                 }}
-              >
+               accessibilityRole="button" accessibilityLabel={`Time budget ${tb.label}`}>
                 <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.textMuted }]}>{tb.label}</Text>
               </TouchableOpacity>
             );
@@ -507,7 +507,7 @@ export default function HomeScreen({ navigation, theme }) {
                   setSelectedCompanion(comp.value);
                   loadRecommendations(location, selectedCuisine, selectedPriority, selectedBudget, selectedMood, false, selectedTimeBudget, comp.value);
                 }}
-              >
+               accessibilityRole="button" accessibilityLabel={`Dining with ${comp.label}`}>
                 <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.textMuted }]}>{comp.label}</Text>
               </TouchableOpacity>
             );
@@ -538,7 +538,7 @@ export default function HomeScreen({ navigation, theme }) {
                   setSelectedPreferences(updated);
                   loadRecommendations(location, selectedCuisine, selectedPriority, selectedBudget, selectedMood, false, selectedTimeBudget, selectedCompanion, updated);
                 }}
-              >
+               accessibilityRole="button" accessibilityLabel={`Dietary preference ${pref.label}`}>
                 <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.textMuted }]}>
                   {pref.label} {active ? '✓' : ''}
                 </Text>
@@ -567,7 +567,7 @@ export default function HomeScreen({ navigation, theme }) {
                   setSelectedMood(nextMood);
                   loadRecommendations(location, selectedCuisine, selectedPriority, selectedBudget, nextMood);
                 }}
-              >
+               accessibilityRole="button" accessibilityLabel={`Mood ${m}`}>
                 <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.textMuted }]}>{m}</Text>
               </TouchableOpacity>
             );
@@ -594,7 +594,7 @@ export default function HomeScreen({ navigation, theme }) {
                   setSelectedMood(null);
                   loadRecommendations(location, c, selectedPriority, selectedBudget, null);
                 }}
-              >
+               accessibilityRole="button" accessibilityLabel={`Cuisine ${c}`}>
                 <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.textMuted }]}>{c}</Text>
               </TouchableOpacity>
             );
@@ -620,7 +620,7 @@ export default function HomeScreen({ navigation, theme }) {
                   setSelectedPriority(p);
                   loadRecommendations(location, selectedCuisine, p, selectedBudget, selectedMood);
                 }}
-              >
+               accessibilityRole="button" accessibilityLabel={`Priority ${p}`}>
                 <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.textMuted }]}>{p}</Text>
               </TouchableOpacity>
             );
@@ -643,7 +643,7 @@ export default function HomeScreen({ navigation, theme }) {
                 setSelectedBudget(b);
                 loadRecommendations(location, selectedCuisine, selectedPriority, b, selectedMood);
               }}
-            >
+             accessibilityRole="button" accessibilityLabel={`Budget tier ${b}`}>
               <Text style={[styles.budgetText, { color: selectedBudget === b ? theme.colors.onPrimary : theme.colors.textMuted }]}>
                 {'৳'.repeat(b)}
               </Text>

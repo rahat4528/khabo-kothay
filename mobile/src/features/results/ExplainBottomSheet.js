@@ -27,7 +27,13 @@ export default function ExplainBottomSheet({ visible, onClose, restaurant, theme
               <Text style={[styles.title, { color: theme.colors.text }]}>Recommendation Factors</Text>
               <Text style={[styles.sub, { color: theme.colors.primary }]}>{restaurant.displayName}</Text>
             </View>
-            <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
+            <TouchableOpacity
+              onPress={onClose}
+              style={styles.closeBtn}
+              accessibilityRole="button"
+              accessibilityLabel="Close recommendation factors"
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+            >
               <Text style={{ fontSize: 20, color: theme.colors.textMuted }}>✕</Text>
             </TouchableOpacity>
           </View>

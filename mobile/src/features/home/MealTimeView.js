@@ -478,7 +478,7 @@ export default function MealTimeView({ theme, location, navigation }) {
                   setSelectedTime(mins);
                   setIsCustomTime(false);
                 }}
-              >
+               accessibilityRole="button" accessibilityLabel={`Window ${mins} minutes`}>
                 <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.text }]}>
                   {mins} min
                 </Text>
@@ -494,7 +494,7 @@ export default function MealTimeView({ theme, location, navigation }) {
               }
             ]}
             onPress={() => setIsCustomTime(true)}
-          >
+           accessibilityRole="button" accessibilityLabel="Interactive button">
             <Text style={[styles.chipText, { color: isCustomTime ? theme.colors.onPrimary : theme.colors.text }]}>
               {t('mealTime.times.custom')}
             </Text>
@@ -542,7 +542,7 @@ export default function MealTimeView({ theme, location, navigation }) {
                   }
                 ]}
                 onPress={() => handleSelectReturnDest(d.key)}
-              >
+               accessibilityRole="button" accessibilityLabel={`Dietary option ${d.label}`}>
                 <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.text }]}>
                   {d.icon} {t(d.labelKey)}
                 </Text>
@@ -588,7 +588,7 @@ export default function MealTimeView({ theme, location, navigation }) {
                   }
                 ]}
                 onPress={() => setTransport(tr.key)}
-              >
+               accessibilityRole="button" accessibilityLabel={`Transit mode ${tr.label}`}>
                 <Text style={[styles.chipText, { color: active ? theme.colors.onPrimary : theme.colors.text }]}>
                   {tr.icon} {tr.label}
                 </Text>
@@ -603,7 +603,7 @@ export default function MealTimeView({ theme, location, navigation }) {
         <TouchableOpacity
           style={[styles.accordionHeader, { borderColor: theme.colors.border }]}
           onPress={() => setShowAdvanced(!showAdvanced)}
-        >
+         accessibilityRole="button" accessibilityLabel="Toggle section">
           <Text style={[styles.accordionTitle, { color: theme.colors.text }]}>
             ⚙️ Advanced Options (Dining Style, Buffer, Leave At) {showAdvanced ? '▲' : '▼'}
           </Text>
@@ -630,7 +630,7 @@ export default function MealTimeView({ theme, location, navigation }) {
                       }
                     ]}
                     onPress={() => setDiningStyle(st.key)}
-                  >
+                   accessibilityRole="button" accessibilityLabel={`Seating ${st.label}`}>
                     <Text style={[styles.chipSmText, { color: active ? theme.colors.onPrimary : theme.colors.text }]}>
                       {st.label}
                     </Text>
@@ -659,7 +659,7 @@ export default function MealTimeView({ theme, location, navigation }) {
                       }
                     ]}
                     onPress={() => setBufferPref(bf.key)}
-                  >
+                   accessibilityRole="button" accessibilityLabel={`Buffet focus ${bf.label}`}>
                     <Text style={[styles.chipSmText, { color: active ? theme.colors.onPrimary : theme.colors.text }]}>
                       {bf.label}
                     </Text>
@@ -759,7 +759,7 @@ export default function MealTimeView({ theme, location, navigation }) {
                           executeSearch({ availableMinutes: newTime });
                         }
                       }}
-                    >
+                     accessibilityRole="button" accessibilityLabel={`Select departure slot at ${s.time}`}>
                       <Text style={[styles.altButtonText, { color: theme.colors.primary }]}>
                         {sug.label}
                       </Text>
@@ -779,7 +779,7 @@ export default function MealTimeView({ theme, location, navigation }) {
               <TouchableOpacity
                 style={styles.flexibleToggle}
                 onPress={() => setFlexibleExpanded(!flexibleExpanded)}
-              >
+               accessibilityRole="checkbox" accessibilityLabel="Interactive button">
                 <Text style={[styles.flexibleToggleText, { color: theme.colors.warning }]}>
                   ⚡ {t('mealTime.slightlyOverTitle', { mins: 5 })} ({searchResponse.flexibleResults.length}) {flexibleExpanded ? '▲' : '▼'}
                 </Text>
@@ -827,7 +827,7 @@ export default function MealTimeView({ theme, location, navigation }) {
                     }
                   ]}
                   onPress={() => setFeedbackLate(!feedbackLate)}
-                >
+                 accessibilityRole="checkbox" accessibilityLabel="Interactive button">
                   <Text style={{ color: feedbackLate ? theme.colors.danger : theme.colors.textMuted, fontWeight: '700', fontSize: 12 }}>
                     {feedbackLate ? 'Late ⚠️' : 'On-time ✓'}
                   </Text>
@@ -835,7 +835,7 @@ export default function MealTimeView({ theme, location, navigation }) {
                 <TouchableOpacity
                   style={[styles.feedbackSubmitBtn, { backgroundColor: theme.colors.primary }]}
                   onPress={() => handleSendFeedback(searchResponse.results[0])}
-                >
+                 accessibilityRole="button" accessibilityLabel="Search restaurants">
                   <Text style={{ color: theme.colors.onPrimary, fontWeight: '800', fontSize: 13 }}>
                     Send
                   </Text>
@@ -859,7 +859,7 @@ export default function MealTimeView({ theme, location, navigation }) {
               <Text style={[styles.modalTitle, { color: theme.colors.text }]}>
                 ℹ️ {t('mealTime.explainTitle')}
               </Text>
-              <TouchableOpacity onPress={() => setExplainCandidate(null)}>
+              <TouchableOpacity onPress={() => setExplainCandidate(null)} accessibilityRole="button" accessibilityLabel="Interactive button">
                 <Text style={[styles.closeModalText, { color: theme.colors.textMuted }]}>✕</Text>
               </TouchableOpacity>
             </View>

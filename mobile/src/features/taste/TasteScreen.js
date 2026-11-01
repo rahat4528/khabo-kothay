@@ -287,7 +287,7 @@ export default function TasteScreen({ theme }) {
                       active && { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }
                     ]}
                     onPress={() => handleToggleCuisine(c)}
-                  >
+                   accessibilityRole="checkbox" accessibilityLabel={`Cuisine ${c}`}>
                     <Text
                       style={[
                         styles.chipText,
@@ -317,7 +317,7 @@ export default function TasteScreen({ theme }) {
                   foodProfile.budgetMax <= 500 && { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryTint }
                 ]}
                 onPress={() => handleSetBudgetPreset(100, 500)}
-              >
+               accessibilityRole="button" accessibilityLabel="Reset options">
                 <Text style={[styles.presetText, { color: theme.colors.text }]}>Budget (≤ ৳500)</Text>
               </TouchableOpacity>
 
@@ -328,7 +328,7 @@ export default function TasteScreen({ theme }) {
                   foodProfile.budgetMin === 500 && foodProfile.budgetMax === 1200 && { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryTint }
                 ]}
                 onPress={() => handleSetBudgetPreset(500, 1200)}
-              >
+               accessibilityRole="button" accessibilityLabel="Reset options">
                 <Text style={[styles.presetText, { color: theme.colors.text }]}>Mid (৳500–1.2k)</Text>
               </TouchableOpacity>
 
@@ -339,7 +339,7 @@ export default function TasteScreen({ theme }) {
                   foodProfile.budgetMin >= 1200 && { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryTint }
                 ]}
                 onPress={() => handleSetBudgetPreset(1200, 3000)}
-              >
+               accessibilityRole="button" accessibilityLabel="Reset options">
                 <Text style={[styles.presetText, { color: theme.colors.text }]}>Premium (৳1.2k+)</Text>
               </TouchableOpacity>
             </View>
@@ -351,13 +351,13 @@ export default function TasteScreen({ theme }) {
                   <TouchableOpacity
                     style={[styles.miniBtn, { backgroundColor: theme.colors.surfaceAlt }]}
                     onPress={() => handleAdjustBudget('min', -50)}
-                  >
+                   accessibilityRole="button" accessibilityLabel="Interactive button">
                     <Text style={[styles.miniBtnText, { color: theme.colors.text }]}>-50</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.miniBtn, { backgroundColor: theme.colors.surfaceAlt }]}
                     onPress={() => handleAdjustBudget('min', 50)}
-                  >
+                   accessibilityRole="button" accessibilityLabel="Interactive button">
                     <Text style={[styles.miniBtnText, { color: theme.colors.text }]}>+50</Text>
                   </TouchableOpacity>
                 </View>
@@ -369,13 +369,13 @@ export default function TasteScreen({ theme }) {
                   <TouchableOpacity
                     style={[styles.miniBtn, { backgroundColor: theme.colors.surfaceAlt }]}
                     onPress={() => handleAdjustBudget('max', -100)}
-                  >
+                   accessibilityRole="button" accessibilityLabel="Interactive button">
                     <Text style={[styles.miniBtnText, { color: theme.colors.text }]}>-100</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.miniBtn, { backgroundColor: theme.colors.surfaceAlt }]}
                     onPress={() => handleAdjustBudget('max', 100)}
-                  >
+                   accessibilityRole="button" accessibilityLabel="Interactive button">
                     <Text style={[styles.miniBtnText, { color: theme.colors.text }]}>+100</Text>
                   </TouchableOpacity>
                 </View>
@@ -432,7 +432,7 @@ export default function TasteScreen({ theme }) {
                       active && { backgroundColor: theme.colors.danger, borderColor: theme.colors.danger }
                     ]}
                     onPress={() => handleToggleDisliked(d)}
-                  >
+                   accessibilityRole="checkbox" accessibilityLabel="Interactive button">
                     <Text
                       style={[
                         styles.chipText,
@@ -465,7 +465,7 @@ export default function TasteScreen({ theme }) {
               <TouchableOpacity
                 style={[styles.addBtn, { backgroundColor: theme.colors.primary }]}
                 onPress={handleAddCustomDislike}
-              >
+               accessibilityRole="button" accessibilityLabel="Interactive button">
                 <Text style={{ color: theme.colors.onPrimary, fontWeight: '800' }}>+ Add</Text>
               </TouchableOpacity>
             </View>
@@ -480,7 +480,7 @@ export default function TasteScreen({ theme }) {
                       key={d}
                       style={[styles.chip, { backgroundColor: theme.colors.danger, borderColor: theme.colors.danger }]}
                       onPress={() => handleToggleDisliked(d)}
-                    >
+                     accessibilityRole="checkbox" accessibilityLabel="Interactive button">
                       <Text style={[styles.chipText, { color: theme.colors.onPrimary }]}>✕ {d}</Text>
                     </TouchableOpacity>
                   ))}
@@ -562,6 +562,9 @@ export default function TasteScreen({ theme }) {
               <TouchableOpacity
                 style={styles.banditResetBtn}
                 onPress={async () => {
+                accessibilityRole="button"
+                accessibilityLabel="Reset learned recommendation weights to balanced default"
+
                   const res = await apiClient.resetBanditWeights();
                   setBanditProfile(res.profile);
                 }}
@@ -573,7 +576,7 @@ export default function TasteScreen({ theme }) {
             </View>
           )}
 
-          <TouchableOpacity style={styles.resetBtn} onPress={handleResetTasteProfile}>
+          <TouchableOpacity style={styles.resetBtn} onPress={handleResetTasteProfile} accessibilityRole="button" accessibilityLabel="Reset taste profile to default">
             <Text style={{ color: theme.colors.danger, fontWeight: '700' }}>
               🔄 {t('taste.resetBtn')}
             </Text>
@@ -592,10 +595,10 @@ export default function TasteScreen({ theme }) {
                 </View>
 
                 <View style={styles.controls}>
-                  <TouchableOpacity style={[styles.stepBtn, { backgroundColor: theme.colors.surfaceAlt }]} onPress={() => adjustScore(cuisine, -10)}>
+                  <TouchableOpacity style={[styles.stepBtn, { backgroundColor: theme.colors.surfaceAlt }]} onPress={() => adjustScore(cuisine, -10)} accessibilityRole="button" accessibilityLabel="Adjust value">
                     <Text style={[styles.stepBtnText, { color: theme.colors.text }]}>-10%</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.stepBtn, { backgroundColor: theme.colors.surfaceAlt }]} onPress={() => adjustScore(cuisine, 10)}>
+                  <TouchableOpacity style={[styles.stepBtn, { backgroundColor: theme.colors.surfaceAlt }]} onPress={() => adjustScore(cuisine, 10)} accessibilityRole="button" accessibilityLabel="Adjust value">
                     <Text style={[styles.stepBtnText, { color: theme.colors.text }]}>+10%</Text>
                   </TouchableOpacity>
                 </View>

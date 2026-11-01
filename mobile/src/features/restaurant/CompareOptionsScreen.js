@@ -103,7 +103,7 @@ export default function CompareOptionsScreen({ route, theme }) {
           <TouchableOpacity
             style={[styles.tabBtn, activeTab === 'routes' && { backgroundColor: theme.colors.primary }]}
             onPress={() => setActiveTab('routes')}
-          >
+           accessibilityRole="tab" accessibilityLabel="Interactive button">
             <Text style={[styles.tabBtnText, { color: activeTab === 'routes' ? theme.colors.onPrimary : theme.colors.text }]}>
               🔄 Route Options
             </Text>
@@ -111,7 +111,7 @@ export default function CompareOptionsScreen({ route, theme }) {
           <TouchableOpacity
             style={[styles.tabBtn, activeTab === 'places' && { backgroundColor: theme.colors.primary }]}
             onPress={() => setActiveTab('places')}
-          >
+           accessibilityRole="tab" accessibilityLabel="Interactive button">
             <Text style={[styles.tabBtnText, { color: activeTab === 'places' ? theme.colors.onPrimary : theme.colors.text }]}>
               ⚖️ Compare Places ({selectedPlaces.length})
             </Text>
@@ -211,7 +211,7 @@ export default function CompareOptionsScreen({ route, theme }) {
                       isSelected && { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }
                     ]}
                     onPress={() => toggleSelectPlace(p.id)}
-                  >
+                   accessibilityRole="checkbox" accessibilityLabel="Interactive button">
                     <Text style={[styles.pickChipText, { color: isSelected ? theme.colors.onPrimary : theme.colors.text }]}>
                       {isSelected ? '✓ ' : ''}{p.displayName}
                     </Text>
@@ -232,7 +232,7 @@ export default function CompareOptionsScreen({ route, theme }) {
                     budgetLimit === b && { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }
                   ]}
                   onPress={() => setBudgetLimit(b)}
-                >
+                 accessibilityRole="button" accessibilityLabel={`Budget tier ${b}`}>
                   <Text style={[styles.budgetChipText, { color: budgetLimit === b ? theme.colors.onPrimary : theme.colors.text }]}>
                     ≤ ৳{b}
                   </Text>
@@ -309,7 +309,7 @@ export default function CompareOptionsScreen({ route, theme }) {
 
                     {/* Traceable Menu Source */}
                     {p.menu?.sourceUrl ? (
-                      <TouchableOpacity onPress={() => Linking.openURL(p.menu.sourceUrl)} style={{ marginTop: 6 }}>
+                      <TouchableOpacity onPress={() => Linking.openURL(p.menu.sourceUrl)} style={{ marginTop: 6 }} accessibilityRole="button" accessibilityLabel="Interactive button">
                         <Text style={[styles.sourceLinkText, { color: theme.colors.primary }]} numberOfLines={1}>
                           🔗 {p.menu.sourceName || 'Menu Source'}
                         </Text>
@@ -330,7 +330,7 @@ export default function CompareOptionsScreen({ route, theme }) {
                         const destLng = p.location?.longitude || 90.4078;
                         Linking.openURL(`https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${destLat},${destLng}`);
                       }}
-                    >
+                     accessibilityRole="button" accessibilityLabel="Get navigation directions">
                       <Text style={[styles.dirBtnText, { color: theme.colors.onPrimary }]}>🧭 Directions</Text>
                     </TouchableOpacity>
                   </View>

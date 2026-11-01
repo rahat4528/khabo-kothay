@@ -20,6 +20,9 @@ export default function HistoryScreen({ navigation, theme }) {
       onPress={() => {
         navigation.navigate('Home', { rerunSearch: item });
       }}
+      accessibilityRole="button"
+      accessibilityLabel={`Re-run search for ${item.cuisine || 'All'} near ${item.locationName}`}
+      hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
     >
       <View style={styles.row}>
         <View style={{ flex: 1 }}>

@@ -22,6 +22,9 @@ export default function FavoritesScreen({ navigation, theme }) {
     <TouchableOpacity
       style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
       onPress={() => navigation.navigate('RestaurantDetail', { restaurant: item })}
+      accessibilityRole="button"
+      accessibilityLabel={`View details for ${item.displayName}`}
+      hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
     >
       <View style={styles.row}>
         <View style={{ flex: 1 }}>

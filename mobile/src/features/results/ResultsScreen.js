@@ -264,7 +264,7 @@ export default function ResultsScreen({ route, navigation, theme }) {
         style={[styles.card, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
         onPress={() => navigation.navigate('RestaurantDetail', { restaurant: item, location })}
         activeOpacity={0.85}
-      >
+       accessibilityRole="button" accessibilityLabel={`View restaurant details for ${item.displayName || "restaurant"}`}>
         <Image source={{ uri: photoUrl }} style={styles.cardPhoto} resizeMode="cover" />
 
         <View style={styles.cardContent}>
@@ -370,7 +370,7 @@ export default function ResultsScreen({ route, navigation, theme }) {
             <TouchableOpacity
               style={styles.actionBtn}
               onPress={() => setExplainItem(item)}
-            >
+             accessibilityRole="button" accessibilityLabel="Interactive button">
               <Text style={[styles.actionBtnText, { color: theme.colors.primary }]}>
                 📊 {t('restaurant.explain')}
               </Text>
@@ -379,7 +379,7 @@ export default function ResultsScreen({ route, navigation, theme }) {
             <TouchableOpacity
               style={[styles.actionBtn, { borderColor: theme.colors.border, borderWidth: 1, borderRadius: 10 }]}
               onPress={handleDirections}
-            >
+             accessibilityRole="button" accessibilityLabel="Get navigation directions">
               <Text style={[styles.actionBtnText, { color: theme.colors.primary }]}>
                 🧭 Directions
               </Text>
@@ -388,7 +388,7 @@ export default function ResultsScreen({ route, navigation, theme }) {
             <TouchableOpacity
               style={[styles.actionBtnPrimary, { backgroundColor: theme.colors.primary }]}
               onPress={() => navigation.navigate('CompareOptions', { restaurant: item, location })}
-            >
+             accessibilityRole="button" accessibilityLabel="Interactive button">
               <Text style={[styles.actionBtnPrimaryText, { color: theme.colors.onPrimary }]}>
                 🔄 {t('restaurant.compare')}
               </Text>
@@ -493,7 +493,7 @@ export default function ResultsScreen({ route, navigation, theme }) {
               ]}
               onPress={() => setFilterModalVisible(true)}
               activeOpacity={0.8}
-            >
+             accessibilityRole="button" accessibilityLabel="Interactive button">
               <Text
                 style={[
                   styles.filterTriggerText,
@@ -516,7 +516,7 @@ export default function ResultsScreen({ route, navigation, theme }) {
                   style={[styles.activeTagBadge, { backgroundColor: theme.colors.primaryTint, borderColor: theme.colors.primary }]}
                   onPress={tag.onRemove}
                   activeOpacity={0.7}
-                >
+                 accessibilityRole="button" accessibilityLabel={`Remove filter ${tag.label}`}>
                   <Text style={[styles.activeTagText, { color: theme.colors.primary }]}>{tag.label}</Text>
                   <Text style={[styles.activeTagRemove, { color: theme.colors.primary }]}>✕</Text>
                 </TouchableOpacity>
@@ -532,7 +532,7 @@ export default function ResultsScreen({ route, navigation, theme }) {
                   features: []
                 })}
                 style={styles.clearAllBtn}
-              >
+               accessibilityRole="button" accessibilityLabel="Interactive button">
                 <Text style={[styles.clearAllText, { color: theme.colors.danger }]}>Clear all</Text>
               </TouchableOpacity>
             </ScrollView>
@@ -559,7 +559,7 @@ export default function ResultsScreen({ route, navigation, theme }) {
                   active && { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }
                 ]}
                 onPress={() => setSelectedRadius(r.value)}
-              >
+               accessibilityRole="button" accessibilityLabel={`Radius ${r.label}`}>
                 <Text style={[styles.radiusChipText, { color: active ? theme.colors.onPrimary : theme.colors.text }]}>
                   {r.label}
                 </Text>

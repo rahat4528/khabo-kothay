@@ -33,6 +33,9 @@ export class ErrorBoundary extends React.Component {
           <TouchableOpacity
             style={[styles.button, { backgroundColor: theme.colors.primary }]}
             onPress={this.handleReset}
+            accessibilityRole="button"
+            accessibilityLabel="Restart Application"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Text style={[styles.buttonText, { color: theme.colors.onPrimary }]}>Restart Application</Text>
           </TouchableOpacity>

@@ -188,10 +188,10 @@ export default function FilterModal({
             </Text>
           </View>
           <View style={styles.headerActions}>
-            <TouchableOpacity onPress={handleReset} style={styles.resetBtn}>
+            <TouchableOpacity onPress={handleReset} style={styles.resetBtn} accessibilityRole="button" accessibilityLabel="Reset all filters">
               <Text style={[styles.resetText, { color: theme.colors.danger }]}>🔄 Reset</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: theme.colors.surfaceAlt }]}>
+            <TouchableOpacity onPress={onClose} style={[styles.closeBtn, { backgroundColor: theme.colors.surfaceAlt }]} accessibilityRole="button" accessibilityLabel="Close filters modal" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
               <Text style={[styles.closeText, { color: theme.colors.text }]}>✕</Text>
             </TouchableOpacity>
           </View>
@@ -220,7 +220,7 @@ export default function FilterModal({
                   isPresetActive(0, 400) && { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryTint }
                 ]}
                 onPress={() => applyPreset(0, 400)}
-              >
+               accessibilityRole="button" accessibilityLabel="Reset options">
                 <Text
                   style={[
                     styles.presetChipText,
@@ -239,7 +239,7 @@ export default function FilterModal({
                   isPresetActive(400, 1000) && { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryTint }
                 ]}
                 onPress={() => applyPreset(400, 1000)}
-              >
+               accessibilityRole="button" accessibilityLabel="Reset options">
                 <Text
                   style={[
                     styles.presetChipText,
@@ -258,7 +258,7 @@ export default function FilterModal({
                   isPresetActive(1000, 2000) && { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryTint }
                 ]}
                 onPress={() => applyPreset(1000, 2000)}
-              >
+               accessibilityRole="button" accessibilityLabel="Reset options">
                 <Text
                   style={[
                     styles.presetChipText,
@@ -277,7 +277,7 @@ export default function FilterModal({
                   isPresetActive(2000, 5000) && { borderColor: theme.colors.primary, backgroundColor: theme.colors.primaryTint }
                 ]}
                 onPress={() => applyPreset(2000, 5000)}
-              >
+               accessibilityRole="button" accessibilityLabel="Reset options">
                 <Text
                   style={[
                     styles.presetChipText,
@@ -310,13 +310,13 @@ export default function FilterModal({
                   <TouchableOpacity
                     style={[styles.stepBtn, { backgroundColor: theme.colors.surfaceAlt }]}
                     onPress={() => adjustPrice('min', -50)}
-                  >
+                   accessibilityRole="button" accessibilityLabel="Adjust value">
                     <Text style={[styles.stepBtnText, { color: theme.colors.text }]}>-50</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.stepBtn, { backgroundColor: theme.colors.surfaceAlt }]}
                     onPress={() => adjustPrice('min', 50)}
-                  >
+                   accessibilityRole="button" accessibilityLabel="Adjust value">
                     <Text style={[styles.stepBtnText, { color: theme.colors.text }]}>+50</Text>
                   </TouchableOpacity>
                 </View>
@@ -342,13 +342,13 @@ export default function FilterModal({
                   <TouchableOpacity
                     style={[styles.stepBtn, { backgroundColor: theme.colors.surfaceAlt }]}
                     onPress={() => adjustPrice('max', -100)}
-                  >
+                   accessibilityRole="button" accessibilityLabel="Adjust value">
                     <Text style={[styles.stepBtnText, { color: theme.colors.text }]}>-100</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.stepBtn, { backgroundColor: theme.colors.surfaceAlt }]}
                     onPress={() => adjustPrice('max', 100)}
-                  >
+                   accessibilityRole="button" accessibilityLabel="Adjust value">
                     <Text style={[styles.stepBtnText, { color: theme.colors.text }]}>+100</Text>
                   </TouchableOpacity>
                 </View>
@@ -362,7 +362,7 @@ export default function FilterModal({
               style={styles.collapsibleHeader}
               onPress={() => toggleSection('availability')}
               activeOpacity={0.7}
-            >
+             accessibilityRole="checkbox" accessibilityLabel="Toggle section">
               <Text style={[styles.sectionHeading, { color: theme.colors.text }]}>Availability</Text>
               <Text style={[styles.chevron, { color: theme.colors.textMuted }]}>
                 {collapsed.availability ? '▼' : '▲'}
@@ -379,7 +379,7 @@ export default function FilterModal({
                       style={styles.checkboxRow}
                       onPress={() => toggleArrayFilter('availability', opt.id)}
                       activeOpacity={0.7}
-                    >
+                     accessibilityRole="checkbox" accessibilityLabel={`Option ${opt.label}`}>
                       <View
                         style={[
                           styles.checkboxSquare,
@@ -407,7 +407,7 @@ export default function FilterModal({
               style={styles.collapsibleHeader}
               onPress={() => toggleSection('cuisine')}
               activeOpacity={0.7}
-            >
+             accessibilityRole="checkbox" accessibilityLabel="Toggle section">
               <Text style={[styles.sectionHeading, { color: theme.colors.text }]}>Cuisine</Text>
               <Text style={[styles.chevron, { color: theme.colors.textMuted }]}>
                 {collapsed.cuisine ? '▼' : '▲'}
@@ -424,7 +424,7 @@ export default function FilterModal({
                       style={styles.checkboxRow}
                       onPress={() => toggleArrayFilter('cuisines', c)}
                       activeOpacity={0.7}
-                    >
+                     accessibilityRole="checkbox" accessibilityLabel={`Cuisine ${c}`}>
                       <View
                         style={[
                           styles.checkboxSquare,
@@ -452,7 +452,7 @@ export default function FilterModal({
               style={styles.collapsibleHeader}
               onPress={() => toggleSection('restaurantType')}
               activeOpacity={0.7}
-            >
+             accessibilityRole="checkbox" accessibilityLabel="Toggle section">
               <Text style={[styles.sectionHeading, { color: theme.colors.text }]}>Restaurant Type</Text>
               <Text style={[styles.chevron, { color: theme.colors.textMuted }]}>
                 {collapsed.restaurantType ? '▼' : '▲'}
@@ -469,7 +469,7 @@ export default function FilterModal({
                       style={styles.checkboxRow}
                       onPress={() => toggleArrayFilter('restaurantTypes', rt)}
                       activeOpacity={0.7}
-                    >
+                     accessibilityRole="checkbox" accessibilityLabel={`Restaurant type ${rt}`}>
                       <View
                         style={[
                           styles.checkboxSquare,
@@ -497,7 +497,7 @@ export default function FilterModal({
               style={styles.collapsibleHeader}
               onPress={() => toggleSection('dietary')}
               activeOpacity={0.7}
-            >
+             accessibilityRole="checkbox" accessibilityLabel="Toggle section">
               <Text style={[styles.sectionHeading, { color: theme.colors.text }]}>Dietary Preferences</Text>
               <Text style={[styles.chevron, { color: theme.colors.textMuted }]}>
                 {collapsed.dietary ? '▼' : '▲'}
@@ -514,7 +514,7 @@ export default function FilterModal({
                       style={styles.checkboxRow}
                       onPress={() => toggleArrayFilter('dietary', d.id)}
                       activeOpacity={0.7}
-                    >
+                     accessibilityRole="checkbox" accessibilityLabel={`Dish type ${d.label}`}>
                       <View
                         style={[
                           styles.checkboxSquare,
@@ -542,7 +542,7 @@ export default function FilterModal({
               style={styles.collapsibleHeader}
               onPress={() => toggleSection('features')}
               activeOpacity={0.7}
-            >
+             accessibilityRole="checkbox" accessibilityLabel="Toggle section">
               <Text style={[styles.sectionHeading, { color: theme.colors.text }]}>Features & Amenities</Text>
               <Text style={[styles.chevron, { color: theme.colors.textMuted }]}>
                 {collapsed.features ? '▼' : '▲'}
@@ -559,7 +559,7 @@ export default function FilterModal({
                       style={styles.checkboxRow}
                       onPress={() => toggleArrayFilter('features', f)}
                       activeOpacity={0.7}
-                    >
+                     accessibilityRole="checkbox" accessibilityLabel={`Feature ${f}`}>
                       <View
                         style={[
                           styles.checkboxSquare,
@@ -587,6 +587,8 @@ export default function FilterModal({
           <TouchableOpacity
             style={[styles.applyBtn, { backgroundColor: theme.colors.primary }]}
             onPress={handleApply}
+            accessibilityRole="button"
+            accessibilityLabel="Apply filters to recommendations"
             activeOpacity={0.85}
           >
             <Text style={[styles.applyBtnText, { color: theme.colors.onPrimary }]}>

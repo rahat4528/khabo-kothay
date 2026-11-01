@@ -91,6 +91,10 @@ export default function OnboardingScreen({ navigation, theme }) {
                         [cuisine]: prev[cuisine] >= 75 ? 50 : 80
                       }));
                     }}
+                    accessibilityRole="checkbox"
+                    accessibilityState={{ checked: isBoosted }}
+                    accessibilityLabel={`${cuisine} preference, ${isBoosted ? 'selected' : 'unselected'}`}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   >
                     <Text style={[styles.chipText, { color: isBoosted ? theme.colors.onPrimary : theme.colors.textMuted }]}>
                       {cuisine} {isBoosted ? '❤️' : '🤍'}

@@ -105,7 +105,7 @@ export default function RestaurantDetailScreen({ route, navigation, theme }) {
             <Text style={[styles.title, { color: theme.colors.text }]}>{details.displayName}</Text>
             <Text style={[styles.cuisine, { color: theme.colors.secondary }]}>{details.cuisine}</Text>
           </View>
-          <TouchableOpacity onPress={handleToggleFav} style={styles.favBtn}>
+          <TouchableOpacity onPress={handleToggleFav} style={styles.favBtn} accessibilityRole="button" accessibilityLabel={isFav ? "Remove from favorites" : "Save to favorites"}>
             <Text style={{ fontSize: 26 }}>{isFav ? '❤️' : '🤍'}</Text>
           </TouchableOpacity>
         </View>
@@ -230,7 +230,7 @@ export default function RestaurantDetailScreen({ route, navigation, theme }) {
               <Text style={[styles.sourceLabel, { color: theme.colors.textMuted }]}>
                 Traceable Source: <Text style={{ color: theme.colors.text, fontWeight: '700' }}>{details.menu.sourceName || 'Official Listing'}</Text>
               </Text>
-              <TouchableOpacity onPress={() => Linking.openURL(details.menu.sourceUrl)}>
+              <TouchableOpacity onPress={() => Linking.openURL(details.menu.sourceUrl)} accessibilityRole="button" accessibilityLabel="Interactive button">
                 <Text style={[styles.sourceLink, { color: theme.colors.primary }]} numberOfLines={1}>
                   🔗 {details.menu.sourceUrl}
                 </Text>
@@ -258,38 +258,38 @@ export default function RestaurantDetailScreen({ route, navigation, theme }) {
           <TouchableOpacity
             style={[styles.primaryAction, { backgroundColor: theme.colors.primary }]}
             onPress={handleCall}
-          >
+           accessibilityRole="button" accessibilityLabel="Interactive button">
             <Text style={[styles.primaryActionText, { color: theme.colors.onPrimary }]}>📞 {details.nationalPhoneNumber ? t('restaurant.call') : t('restaurant.noPhone')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[styles.secondaryAction, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
             onPress={handleDirections}
-          >
+           accessibilityRole="button" accessibilityLabel="Get navigation directions">
             <Text style={[styles.secondaryActionText, { color: theme.colors.text }]}>🧭 {t('restaurant.directions')}</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.extraActions}>
           {details.websiteUri && (
-            <TouchableOpacity style={styles.textBtn} onPress={handleWebsite}>
+            <TouchableOpacity style={styles.textBtn} onPress={handleWebsite} accessibilityRole="button" accessibilityLabel="Visit restaurant website">
               <Text style={{ color: theme.colors.primary, fontWeight: '700' }}>🌐 {t('restaurant.website')}</Text>
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity style={styles.textBtn} onPress={handleShare}>
+          <TouchableOpacity style={styles.textBtn} onPress={handleShare} accessibilityRole="button" accessibilityLabel="Share restaurant details">
             <Text style={{ color: theme.colors.textMuted, fontWeight: '700' }}>📤 {t('restaurant.share')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.textBtn}
             onPress={() => navigation.navigate('CompareOptions', { restaurant: details, location })}
-          >
+           accessibilityRole="button" accessibilityLabel="Interactive button">
             <Text style={{ color: theme.colors.primary, fontWeight: '800' }}>🔄 {t('restaurant.compare')}</Text>
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.dismissBtn} onPress={handleDismiss}>
+        <TouchableOpacity style={styles.dismissBtn} onPress={handleDismiss} accessibilityRole="button" accessibilityLabel="Dismiss this recommendation">
           <Text style={{ color: theme.colors.danger, fontSize: 13, fontWeight: '600' }}>
             ✕ {t('restaurant.dismiss')}
           </Text>
