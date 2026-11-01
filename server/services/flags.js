@@ -259,8 +259,11 @@ export function computeRolloutBucket(installId, flagKey) {
 export function evaluateFlags({ installId = 'anonymous', versionCode = 0, channel = 'stable' } = {}) {
   const flags = loadFlags();
   const evaluated = {};
-  const vCode = Number(versionCode) || 0;
-  const clientChannel = (channel || 'stable').toLowerCase();
+  const safeInstallId = Array.isArray(installId) ? String(installId[0] || 'anonymous') : String(installId || 'anonymous');
+  const safeVersionCode = Array.isArray(versionCode) ? Number(versionCode[0]) || 0 : Number(versionCode) || 0;
+  const safeChannel = Array.isArray(channel) ? String(channel[0] || 'stable') : String(channel || 'stable');
+  const vCode = safeVersionCode;
+  const clientChannel = safeChannel.toLowerCase();
 
   for (const [key, cfg] of Object.entries(flags)) {
     // 1. Emergency kill switch: if not enabled, strictly false
@@ -270,7 +273,7 @@ export function evaluateFlags({ installId = 'anonymous', versionCode = 0, channe
     }
 
     // 2. Allowlist override: if installId is explicitly allowlisted, grant access
-    if (Array.isArray(cfg.allowlist) && cfg.allowlist.includes(installId)) {
+    if (Array.isArray(cfg.allowlist) && cfg.allowlist.includes(safeInstallId)) {
       evaluated[key] = true;
       continue;
     }
@@ -300,7 +303,7 @@ export function evaluateFlags({ installId = 'anonymous', versionCode = 0, channe
     } else if (pct <= 0) {
       evaluated[key] = false;
     } else {
-      const bucket = computeRolloutBucket(installId, key);
+      const bucket = computeRolloutBucket(safeInstallId, key);
       evaluated[key] = bucket < pct;
     }
   }

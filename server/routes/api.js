@@ -997,9 +997,15 @@ router.get('/app/releases', (req, res) => {
 });
 
 router.get('/app/feature-flags', (req, res) => {
-  const installId = req.headers['x-install-id'] || req.query.installId || 'anonymous';
-  const versionCode = req.headers['x-app-version-code'] || req.query.versionCode || 0;
-  const channel = req.headers['x-app-channel'] || req.query.channel || 'stable';
+  const getParam = (val) => (Array.isArray(val) ? val[0] : val);
+
+  const rawInstallId = req.headers['x-install-id'] || getParam(req.query.installId) || 'anonymous';
+  const rawVersionCode = req.headers['x-app-version-code'] || getParam(req.query.versionCode) || 0;
+  const rawChannel = req.headers['x-app-channel'] || getParam(req.query.channel) || 'stable';
+
+  const installId = String(rawInstallId);
+  const versionCode = Number(rawVersionCode) || 0;
+  const channel = String(rawChannel);
 
   const result = evaluateFlags({ installId, versionCode, channel });
 
@@ -1009,7 +1015,8 @@ router.get('/app/feature-flags', (req, res) => {
   }
 
   res.setHeader('ETag', result.etag);
-  res.setHeader('Cache-Control', 'public, max-age=21600');
+  res.setHeader('Cache-Control', 'private, max-age=60');
+  res.setHeader('Vary', 'X-Install-Id, X-App-Version-Code, X-App-Channel');
   res.json(result);
 });
 
@@ -1175,35 +1182,93 @@ router.post('/search/interpret', (req, res) => {
 router.post('/search/confirm', async (req, res, next) => {
   try {
     const { criteria, lat, lng } = req.body || {};
-    if (!criteria) {
-      return res.status(400).json({ error: 'Confirmed criteria is required' });
+    if (!criteria || typeof criteria !== 'object' || Array.isArray(criteria)) {
+      return res.status(400).json({ error: 'Confirmed criteria is required and must be an object' });
     }
 
-    // Default to Dhaka center coordinates if user has not shared GPS
-    // (Gulshan-2: 23.7925, 90.4078)
+    // Validate criteria fields
+    if (criteria.cuisine !== undefined && criteria.cuisine !== null) {
+      if (typeof criteria.cuisine !== 'string' || criteria.cuisine.length > 40) {
+        return res.status(400).json({ error: 'criteria.cuisine must be a string <= 40 characters' });
+      }
+    }
+
+    let budgetAmount = null;
+    let budgetTier = 2;
+    if (criteria.budget !== undefined && criteria.budget !== null) {
+      if (typeof criteria.budget === 'object' && !Array.isArray(criteria.budget)) {
+        if (criteria.budget.amount !== undefined && criteria.budget.amount !== null) {
+          const amt = Number(criteria.budget.amount);
+          if (!Number.isFinite(amt) || amt < 0) {
+            return res.status(400).json({ error: 'criteria.budget.amount must be a non-negative number' });
+          }
+          budgetAmount = amt;
+          budgetTier = amt < 500 ? 1 : amt < 1500 ? 2 : amt < 3000 ? 3 : 4;
+        }
+      } else if (typeof criteria.budget === 'number') {
+        if (!Number.isFinite(criteria.budget) || criteria.budget < 0) {
+          return res.status(400).json({ error: 'criteria.budget must be a non-negative number' });
+        }
+        budgetAmount = criteria.budget;
+        budgetTier = criteria.budget <= 4 ? criteria.budget : (criteria.budget < 500 ? 1 : criteria.budget < 1500 ? 2 : criteria.budget < 3000 ? 3 : 4);
+      } else {
+        return res.status(400).json({ error: 'criteria.budget must be an object or number' });
+      }
+    }
+
+    let partySize = 1;
+    if (criteria.partySize !== undefined && criteria.partySize !== null) {
+      const ps = Number(criteria.partySize);
+      if (!Number.isInteger(ps) || ps < 1 || ps > 50) {
+        return res.status(400).json({ error: 'criteria.partySize must be an integer between 1 and 50' });
+      }
+      partySize = ps;
+    }
+
+    const VALID_MEAL_TIMES = new Set(['breakfast', 'lunch', 'dinner', 'sehri', 'iftar', 'snack', 'late_night']);
+    let mealTime = undefined;
+    if (criteria.mealTime !== undefined && criteria.mealTime !== null) {
+      if (typeof criteria.mealTime !== 'string' || !VALID_MEAL_TIMES.has(criteria.mealTime.toLowerCase())) {
+        return res.status(400).json({ error: `criteria.mealTime must be one of: ${Array.from(VALID_MEAL_TIMES).join(', ')}` });
+      }
+      mealTime = criteria.mealTime.toLowerCase();
+    }
+
+    // Enforce device quota
+    if (!enforceDeviceQuota(req, res)) return;
+
+    // Default to Dhaka center coordinates if user has not shared GPS (Gulshan-2: 23.7925, 90.4078)
     const searchLat = Number(lat) || 23.7925;
     const searchLng = Number(lng) || 90.4078;
+    const cuisine = criteria.cuisine || 'All';
 
-    // Map extracted criteria into existing rankRestaurants schema
-    const options = {
-      cuisine: criteria.cuisine || undefined,
-      maxPrice: criteria.budget?.amount || undefined,
-      partySize: criteria.partySize || 1,
-      mealTime: criteria.mealTime || undefined
-    };
-
-    const results = await rankRestaurants({
+    // Search candidate restaurants
+    const candidates = await searchRestaurants({
       lat: searchLat,
       lng: searchLng,
-      options
+      cuisine,
+      budget: budgetAmount
+    });
+
+    // Rank candidates using recommendation engine
+    const ranked = rankRestaurants({
+      candidates,
+      userLocation: { lat: searchLat, lng: searchLng },
+      cuisine,
+      priority: typeof criteria.priority === 'string' ? criteria.priority : 'Best Overall',
+      budget: budgetTier
     });
 
     res.json({
       success: true,
-      appliedCriteria: criteria,
-      resultsCount: results?.candidates?.length || 0,
-      candidates: results?.candidates || [],
-      topPicks: results?.topPicks || []
+      appliedCriteria: {
+        ...criteria,
+        partySize,
+        ...(mealTime ? { mealTime } : {})
+      },
+      resultsCount: ranked.length,
+      candidates: ranked,
+      topPicks: ranked.slice(0, 3)
     });
   } catch (err) {
     next(err);

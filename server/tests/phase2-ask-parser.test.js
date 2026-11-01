@@ -122,7 +122,7 @@ describe('Phase 2: Search — F3 Ask In Your Own Words', () => {
       expect(res.body.extracted.partySize).toBe(2);
     });
 
-    it('executes confirmed criteria search via POST /api/search/confirm', async () => {
+    it('executes confirmed criteria search via POST /api/search/confirm and returns ranked candidates', async () => {
       const res = await request(app)
         .post('/api/search/confirm')
         .send({
@@ -136,6 +136,43 @@ describe('Phase 2: Search — F3 Ask In Your Own Words', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body).toHaveProperty('candidates');
+      expect(res.body.candidates.length).toBeGreaterThan(0);
+      expect(res.body.topPicks.length).toBeGreaterThan(0);
+      expect(res.body.resultsCount).toBe(res.body.candidates.length);
+    });
+
+    it('rejects invalid criteria in /search/confirm with 400', async () => {
+      // Invalid partySize
+      const res1 = await request(app)
+        .post('/api/search/confirm')
+        .send({ criteria: { partySize: 999 } });
+      expect(res1.status).toBe(400);
+      expect(res1.body.error).toContain('partySize');
+
+      // Invalid cuisine (too long)
+      const res2 = await request(app)
+        .post('/api/search/confirm')
+        .send({ criteria: { cuisine: 'a'.repeat(50) } });
+      expect(res2.status).toBe(400);
+      expect(res2.body.error).toContain('cuisine');
+
+      // Invalid mealTime
+      const res3 = await request(app)
+        .post('/api/search/confirm')
+        .send({ criteria: { mealTime: 'midnight_snack_xyz' } });
+      expect(res3.status).toBe(400);
+      expect(res3.body.error).toContain('mealTime');
+    });
+
+    it('/app/feature-flags handles array query params safely without 500 and uses private cache headers', async () => {
+      const res = await request(app)
+        .get('/api/app/feature-flags?channel=stable&channel=beta&installId=inst1&installId=inst2');
+
+      expect(res.status).toBe(200);
+      expect(res.headers['cache-control']).toContain('private');
+      expect(res.headers['vary']).toContain('X-Install-Id');
+      expect(res.body).toHaveProperty('flags');
+      expect(res.body).toHaveProperty('etag');
     });
   });
 });
