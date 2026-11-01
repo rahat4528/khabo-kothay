@@ -407,3 +407,20 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 237/237 passing Vitest tests (2 new tests in `server/tests/rate-limit.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
 - **Commit Hash**: `6fe7174`
 - **Undo Command**: `git revert 6fe7174`
+
+
+## Phase 2 Fix 15: Stack Architecture Alignment & Production Designation
+- **Status**: Completed & Verified
+- **Problem**:
+  - Documentation previously claimed `/android` (native Java app) and `/api` (Python FastAPI backend) were the active production stack, while the shipped APK is the Expo React Native app in `/mobile` built with EAS, and the production backend is the Node/Express server in `/server` deployed on Render.
+  - `/android` had no committed Gradle wrapper, unconfigured maps key, unrequested runtime permissions, and pointed to a local debug URL `10.0.2.2`. `/api` had only minimal `/health` endpoints.
+- **Fix**:
+  - Formally updated `README.md` to designate `/mobile` (Expo SDK 52 / React Native 0.76 with EAS) and `/server` (Node.js/Express on Render) as the official production stack.
+  - Formally archived `/android` (native Java prototype) and `/api` (Python FastAPI stub) as historical reference prototypes, preventing confusion.
+  - Added test suite `server/tests/stack-architecture.test.js` validating production package name (`com.khabokothay.app`), live backend URL in EAS build profiles, and architectural documentation parity.
+- **Files**:
+  - `README.md`
+  - `server/tests/stack-architecture.test.js`
+- **Verification Result**: Verified with 240/240 passing Vitest tests (3 new tests in `server/tests/stack-architecture.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `978adef`
+- **Undo Command**: `git revert 978adef`
