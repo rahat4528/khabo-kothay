@@ -582,5 +582,23 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Undo Command**: `git revert 0043b14`
 
 
+## Phase 3 Fix 23: Placeholder Photo SVG Neutrality & Area Customization
+- **Status**: Completed & Verified
+- **Problem**:
+  - `server/routes/api.js` placeholder photo SVG hardcoded the text `<text ...>Gulshan Dining Experience</text>`.
+  - When users in Banani, Baridhara, or other Dhaka neighborhoods received placeholder photos, displaying "Gulshan" was incorrect and jarring.
+- **Fix**:
+  - Updated `generatePlaceholderSvg` in `server/routes/api.js` to default to neutral `"Dhaka Dining Experience"`.
+  - Added optional `label` parameter supporting custom area branding (e.g. `?area=Banani` or `?label=...`), while sanitizing special characters to prevent SVG injection.
+  - Added unit test suite in `server/tests/photo-cache.test.js` validating default neutrality ("Dhaka Dining Experience"), dynamic query customization, and SVG attribute sanitization.
+- **Files**:
+  - `server/routes/api.js`
+  - `server/tests/photo-cache.test.js`
+- **Verification Result**: Verified with 261/261 passing Vitest tests (3 new tests in `server/tests/photo-cache.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `8d7b887`
+- **Undo Command**: `git revert 8d7b887`
+
+
+
 
 
