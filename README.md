@@ -61,22 +61,25 @@ A restaurant is feasible **only if** $\text{Spare Time} \ge 0$ **AND** the venue
 
 ## 🏛️ System Architecture
 
-Khabo Kothay? is structured across specialized modules:
-- **Native Android App (`/android`)**:
-  - Written in Java adhering strictly to MVVM (ViewModel, LiveData, Repository pattern).
-  - Persistence via Room SQLite database with exported JSON schemas.
-  - Network layer via Retrofit 2 and OkHttp with structured error interceptors.
-  - UI styled with Material Design 3, bilingual English/Bangla strings with 100% key parity, and full TalkBack accessibility compliance.
-- **Python FastAPI Backend (`/api`)**:
-  - Serves high-performance JSON endpoints under `/api/v1`.
-  - Locked to `Asia/Dhaka` timezone with injectable `Clock` / `FakeClock` for deterministic testing.
-  - Strictly typed with Pydantic v2 and PEP 561 marker (`py.typed`).
-  - OpenAPI 3.1 contract stored in `docs/openapi.json`.
-  - In-memory `UsageGuard` to protect daily Google Cloud API limits and prevent unexpected billing.
-- **Legacy Node.js Server (`/server`)**:
-  - Backwards-compatible Express server providing fallback mock routing, meal-time logic, and scoring models (159 Vitest test assertions).
-- **Legacy Expo Mobile Client (`/mobile`)**:
-  - React Native (SDK 52) prototype.
+Khabo Kothay? is structured across specialized modules, with the active production stack clearly designated:
+
+### Official Production Stack
+- **Production Mobile Client (`/mobile`)**:
+  - The official mobile application shipped and distributed to users via EAS Build (APK & AAB).
+  - Built on Expo SDK 52 (React Native 0.76) with full bilingual support (English/Bangla, 141 verified keys).
+  - Features offline local engine fallback, interactive map tab with graceful list fallback, taste profile onboarding, and group dining coordination.
+- **Production Backend Server (`/server`)**:
+  - The official production API backend deployed live on Render (`https://khabo-kothay-backend.onrender.com`).
+  - Implemented in Node.js & Express with 237 passing automated Vitest tests.
+  - Features Redis persistence (Upstash) for Render free-tier instance sleeps, hybrid `X-Install-ID` rate limiting protecting Bangladesh carrier CGNAT users, Google API cost guards, and reverse-proxy hardened admin gates.
+- **Production Web Application (`/public`)**:
+  - Progressive Web Application (PWA) companion with offline Service Worker and release download portal.
+
+### Archived Reference Prototypes
+- **Archived Native Android App (`/android`)**:
+  - Native Java/MVVM experimental prototype. Archived for architectural reference; not part of the active production build pipeline.
+- **Archived FastAPI Stub (`/api`)**:
+  - Python FastAPI exploration stub containing baseline `/health` endpoints. Archived in favor of the production Node.js backend.
 
 ---
 
