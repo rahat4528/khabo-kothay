@@ -320,3 +320,27 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 224/224 passing Vitest tests (3 new tests in `server/tests/phase1b-diagnostics.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
 - **Commit Hash**: `84d62fd`
 - **Undo Command**: `git revert 84d62fd`
+
+
+## Phase 1 Fix 13: Content Security Policy & CORS Hardening
+- **Status**: Completed & Verified
+- **Problem**:
+  - Helmet CSP permitted `'unsafe-eval'` and `'unsafe-inline'` in `script-src`.
+  - An inline script was present in `public/index.html` for theme initialization.
+  - Express CORS was wide open (`app.use(cors())`), allowing any arbitrary website to make cross-origin requests.
+  - FastAPI in `api/app/main.py` used the invalid CORS configuration `allow_origins=["*"]` combined with `allow_credentials=True`.
+- **Fix**:
+  - Removed `'unsafe-eval'` and `'unsafe-inline'` from `scriptSrc` in `server/index.js` CSP.
+  - Extracted the inline theme script into `public/js/theme-init.js` and loaded it via `<script src="/js/theme-init.js"></script>`.
+  - Restricted CORS in `server/index.js` to an env-configured origin list (`CORS_ALLOWED_ORIGINS` or live backend domain and localhost), while continuing to allow non-browser native mobile and server-to-server requests without Origin headers.
+  - Fixed FastAPI CORS in `api/app/main.py` by scoping `allow_origins` to explicitly permitted local and production origins.
+  - Added test coverage in `server/tests/security.test.js` validating strict CSP directives, lack of `'unsafe-eval'`/`'unsafe-inline'`, allowed CORS with credentials, and rejection of unauthorized origins.
+- **Files**:
+  - `server/index.js`
+  - `public/index.html`
+  - `public/js/theme-init.js`
+  - `api/app/main.py`
+  - `server/tests/security.test.js`
+- **Verification Result**: Verified with 227/227 passing Vitest tests (3 new tests in `server/tests/security.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `06dcc9f`
+- **Undo Command**: `git revert 06dcc9f`
