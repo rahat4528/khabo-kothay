@@ -105,3 +105,20 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Commit Hash**: `f624306`
 - **Tag**: `phase-7-roadmap`
 - **Undo Command**: `git revert f624306`
+
+
+## Phase 1 Fix 1: Group Session Access Control & Host Key Authentication
+- **Status**: Completed & Verified
+- **Problem**: Any participant could obtain creatorId and participantIds from public session accessors, allowing unauthorized participants to close group sessions or cast impersonated votes.
+- **Fix**:
+  - Generated unguessable 256-bit `hostKey` returned once only upon session creation, stored as a SHA-256 hash, verified with `crypto.timingSafeEqual` in `closeGroupSession`.
+  - Returned strictly public session views from `getGroupSession` and `joinGroupSession` (omitting `creatorId`, `hostKey`, foreign `participantId`s, and raw voter mappings).
+  - Issued per-participant secret on join and enforced `timingSafeEqual` secret verification in `castVote`.
+  - Aggregated votes into candidate counts (`voteCounts`) without exposing voter identities.
+- **Files**:
+  - `server/services/group-mode.js`
+  - `server/routes/api.js`
+  - `server/tests/phase4-discovery-group.test.js`
+- **Verification Result**: Verified with 201/201 passing Vitest tests including 403 authorization checks on rogue session close and impersonated voting attempts.
+- **Commit Hash**: `8ea397f`
+- **Undo Command**: `git revert 8ea397f`
