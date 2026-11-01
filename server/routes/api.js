@@ -1,20 +1,13 @@
-import { createGroupSession, joinGroupSession, computeFairRanking, castVote, closeGroupSession, getGroupSession } from '../services/group-mode.js';
-import { addDishPriceReport, getDishPrices } from '../services/dish-prices.js';
-import { estimateFareRange, compareFareQuote, addFareReport, loadFareReports } from '../services/fare-check.js';
-import { parseNaturalQuery } from '../services/ask-parser.js';
-import { recordConsent, recordCrashReport, recordProblemReport, getDiagnosticsOverview } from '../services/diagnostics.js';
-import { evaluateFlags, updateFlag, getAllFlags } from '../services/flags.js';
-import { getLatestRelease, getPublishedReleases, getAllReleases, createReleaseDraft, publishRelease, withdrawRelease, validateDownloadUrl } from '../services/releases.js';
-import { getAuditLogs } from '../services/audit.js';
-﻿import express from 'express';
-import rateLimit from 'express-rate-limit';
-import { getHybridRateLimitKey } from '../services/rate-limit.js';
-import { photoCache } from '../services/photo-cache.js';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import express from 'express';
+import rateLimit from 'express-rate-limit';
 import QRCode from 'qrcode';
 import pkg from '../../package.json' with { type: 'json' };
+
+import { getHybridRateLimitKey } from '../services/rate-limit.js';
+import { photoCache } from '../services/photo-cache.js';
 import { searchRestaurants, getPlaceDetails } from '../services/places.js';
 import { computeTravelTimes, compareRoutes } from '../services/routes.js';
 import { rankRestaurants } from '../services/recommend.js';
@@ -27,9 +20,18 @@ import logger from '../services/logger.js';
 import { getDeparturePredictions } from '../services/predictions.js';
 import { getBanditProfile, updateBanditWeights, resetBanditProfile, setBanditEnabled } from '../services/bandit.js';
 import { logEvalEvent } from '../services/eval-logger.js';
+import { searchMealTime } from '../services/mealtime.js';
+import { createGroupSession, joinGroupSession, computeFairRanking, castVote, closeGroupSession, getGroupSession } from '../services/group-mode.js';
+import { addDishPriceReport, getDishPrices } from '../services/dish-prices.js';
+import { estimateFareRange, compareFareQuote, addFareReport, loadFareReports } from '../services/fare-check.js';
+import { parseNaturalQuery } from '../services/ask-parser.js';
+import { recordConsent, recordCrashReport, recordProblemReport, getDiagnosticsOverview } from '../services/diagnostics.js';
+import { evaluateFlags, updateFlag, getAllFlags } from '../services/flags.js';
+import { getLatestRelease, getPublishedReleases, getAllReleases, createReleaseDraft, publishRelease, withdrawRelease, validateDownloadUrl } from '../services/releases.js';
+import { getAuditLogs } from '../services/audit.js';
+
 import preferencesConfig from '../config/preferences.json' with { type: 'json' };
 import featureFlags from '../config/featureFlags.js';
-import { searchMealTime } from '../services/mealtime.js';
 import { dataFile } from '../config/paths.js';
 
 const router = express.Router();
