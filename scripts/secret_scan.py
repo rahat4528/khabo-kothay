@@ -26,7 +26,6 @@ SAFE_PLACEHOLDERS = [
     "YOUR_GOOGLE_CLOUD_API_KEY",
     "YOUR_SERVER_API_KEY",
     "AIzaSyDUMMYDUMMYDUMMYDUMMYDUMMYDUMMYDUMMY",
-    "gulshan_app_secret_token_2026", # Public mock client token used across test suites
     "dummy",
     "placeholder",
     "replace_with"

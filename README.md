@@ -264,7 +264,7 @@ Open your browser at: **`http://localhost:3000`**
    USE_MOCK_DATA=false
    GOOGLE_SERVER_KEY=AIzaSy...YourServerKeyHere
    GOOGLE_BROWSER_KEY=AIzaSy...YourBrowserKeyHere
-   APP_CLIENT_TOKEN=gulshan_app_secret_token_2026
+   APP_CLIENT_TOKEN=<your_app_client_token>
    ```
 3. Restart the server:
    ```bash
@@ -359,7 +359,7 @@ To host the backend and web frontend on Render:
    - `USE_MOCK_DATA`: `true` (or `false` when using live Google Cloud keys)
    - `GOOGLE_SERVER_KEY`: `<your_google_server_key>`
    - `GOOGLE_BROWSER_KEY`: `<your_google_browser_key>`
-   - `APP_CLIENT_TOKEN`: `gulshan_app_secret_token_2026`
+   - `APP_CLIENT_TOKEN`: `<your_app_client_token>`
 6. Click **Create Web Service**. Render will build and deploy your application with an automatic HTTPS URL.
 
 ---

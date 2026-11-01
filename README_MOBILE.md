@@ -16,7 +16,7 @@ cd mobile
 # On Android Emulator: use http://10.0.2.2:3000
 # On a physical device: use http://<YOUR_LOCAL_IP>:3000 (e.g. http://192.168.0.115:3000)
 export EXPO_PUBLIC_API_BASE_URL="http://10.0.2.2:3000"
-export EXPO_PUBLIC_APP_CLIENT_TOKEN="gulshan_app_secret_token_2026"
+export EXPO_PUBLIC_APP_CLIENT_TOKEN="<your_app_client_token>"
 
 # 3. Start Expo development server
 npx expo start
@@ -40,7 +40,7 @@ Because physical mobile devices and production APKs require secure HTTPS connect
    - `USE_MOCK_DATA`: `true` (or `false` if using real Google Cloud keys)
    - `GOOGLE_SERVER_KEY`: `<your_google_server_key>`
    - `GOOGLE_BROWSER_KEY`: `<your_google_browser_key>`
-   - `APP_CLIENT_TOKEN`: `gulshan_app_secret_token_2026`
+   - `APP_CLIENT_TOKEN`: `<your_app_client_token>`
 7. Click **Deploy**. Render will generate a URL like: `https://khabo-kothay.onrender.com`.
 
 ---

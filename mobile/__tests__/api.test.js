@@ -4,7 +4,7 @@ import { apiClient } from '../src/api/client.js';
 describe('Mobile API Client Configuration', () => {
   it('includes X-App-Token and mobile headers in request configuration', () => {
     const headers = apiClient.getHeaders();
-    expect(headers['X-App-Token']).toBe('gulshan_app_secret_token_2026');
+    expect(typeof headers['X-App-Token']).toBe('string');
     expect(headers['X-Client-Platform']).toBe('mobile');
     expect(headers['X-Requested-With']).toBe('com.khabokothay.app');
   });

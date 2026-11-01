@@ -16,7 +16,7 @@ try {
 }
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || extraConfig.apiBaseUrl || 'http://10.0.2.2:3000';
-const APP_TOKEN = process.env.EXPO_PUBLIC_APP_CLIENT_TOKEN || extraConfig.appClientToken || 'gulshan_app_secret_token_2026';
+const APP_TOKEN = process.env.EXPO_PUBLIC_APP_CLIENT_TOKEN || extraConfig.appClientToken || '';
 
 const OFFLINE_RETRY_MS = 60 * 1000;
 

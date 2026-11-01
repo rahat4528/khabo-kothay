@@ -135,10 +135,32 @@ describe('Server API Endpoints Integration', () => {
     const resPass = await request(app)
       .post('/api/recommend')
       .set('X-Client-Platform', 'mobile')
-      .set('X-App-Token', process.env.APP_CLIENT_TOKEN || 'gulshan_app_secret_token_2026')
+      .set('X-App-Token', process.env.APP_CLIENT_TOKEN || 'test_client_token')
       .send({ lat: 23.79, lng: 90.41, cuisine: 'All' });
 
     expect(resPass.status).toBe(200);
+  });
+
+  it('Fails closed with HTTP 500 in production when APP_CLIENT_TOKEN is unset for mobile requests', async () => {
+    const origEnv = process.env.NODE_ENV;
+    const origToken = process.env.APP_CLIENT_TOKEN;
+    try {
+      process.env.NODE_ENV = 'production';
+      delete process.env.APP_CLIENT_TOKEN;
+
+      const res = await request(app)
+        .post('/api/recommend')
+        .set('X-Client-Platform', 'mobile')
+        .send({ lat: 23.79, lng: 90.41 });
+
+      expect(res.status).toBe(500);
+      expect(res.body.error).toContain('not configured');
+    } finally {
+      process.env.NODE_ENV = origEnv;
+      if (origToken !== undefined) {
+        process.env.APP_CLIENT_TOKEN = origToken;
+      }
+    }
   });
 
   it('Handles nonexistent API route with 404', async () => {

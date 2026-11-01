@@ -101,7 +101,9 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // Mobile client deterrent authentication token check middleware
-const authCheckMiddleware = (req, res, next) => {
+// Mobile client deterrent authentication token check middleware
+// Note: APP_CLIENT_TOKEN is a client identifier (soft deterrent against automated scrapers), not a secret credential.
+export const authCheckMiddleware = (req, res, next) => {
   // Public metadata, health, and APK download endpoints
   if (
     req.path === '/health' ||
@@ -115,15 +117,25 @@ const authCheckMiddleware = (req, res, next) => {
     return next();
   }
 
-  const appToken = process.env.APP_CLIENT_TOKEN || 'gulshan_app_secret_token_2026';
-  if (appToken) {
-    const clientToken = req.headers['x-app-token'];
-    const isMobileClient =
-      req.headers['user-agent']?.includes('Expo') ||
-      req.headers['x-requested-with'] === 'com.khabokothay.app' ||
-      req.headers['x-client-platform'] === 'mobile';
+  const isMobileClient =
+    req.headers['user-agent']?.includes('Expo') ||
+    req.headers['x-requested-with'] === 'com.khabokothay.app' ||
+    req.headers['x-client-platform'] === 'mobile';
 
-    if (isMobileClient && clientToken !== appToken) {
+  if (isMobileClient) {
+    const appToken = process.env.APP_CLIENT_TOKEN;
+    if (!appToken) {
+      if (process.env.NODE_ENV === 'production') {
+        logger.error('APP_CLIENT_TOKEN is unset in production. Failing closed for mobile request.');
+        return res.status(500).json({
+          error: 'Server configuration error: client authentication token is not configured.'
+        });
+      }
+      return next();
+    }
+
+    const clientToken = req.headers['x-app-token'];
+    if (!clientToken || clientToken !== appToken) {
       return res.status(401).json({
         error: 'Unauthorized: Invalid or missing X-App-Token header.'
       });

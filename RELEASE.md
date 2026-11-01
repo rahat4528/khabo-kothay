@@ -31,7 +31,7 @@
    - `USE_MOCK_DATA`: `true` (or `false` when connecting live Google Cloud keys)
    - `GOOGLE_SERVER_KEY`: `<your_google_cloud_server_key>`
    - `GOOGLE_BROWSER_KEY`: `<your_google_cloud_browser_key>`
-   - `APP_CLIENT_TOKEN`: `gulshan_app_secret_token_2026`
+   - `APP_CLIENT_TOKEN`: `<your_app_client_token>`
 5. Click **Apply / Deploy**. Once deployed, your service will be live at `https://khabo-kothay-backend.onrender.com`.
 6. Verify live deployment:
    ```bash

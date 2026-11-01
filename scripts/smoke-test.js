@@ -26,7 +26,7 @@ async function runSmokeTest() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-App-Token': process.env.APP_CLIENT_TOKEN || 'gulshan_app_secret_token_2026'
+        'X-App-Token': process.env.APP_CLIENT_TOKEN || ''
       },
       body: JSON.stringify(payload)
     });
