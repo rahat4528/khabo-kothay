@@ -490,3 +490,25 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 246/246 passing Vitest tests (2 new tests in `mobile/__tests__/accessibility.test.js`), `node scripts/check-a11y.js` reporting 0 violations across 32 components, passing security check, clean i18n keys parity, and 0 secret leaks.
 - **Commit Hash**: `e205711`
 - **Undo Command**: `git revert e205711`
+
+
+## Phase 3 Fix 21: Stray BOM in api.js & Import Grouping
+- **Status**: Completed & Verified
+- **Problem**:
+  - `server/routes/api.js` had a stray byte-order mark (`\ufeff`, byte 840) preceding `import express`.
+  - Service imports were placed ahead of standard Node.js libraries and third-party modules.
+- **Fix**:
+  - Removed the `\ufeff` BOM from `server/routes/api.js`.
+  - Reorganized module imports cleanly into:
+    1. Built-in Node libraries (`fs`, `path`, `crypto`).
+    2. External vendor modules (`express`, `express-rate-limit`, `qrcode`).
+    3. Package config (`pkg`).
+    4. Internal application services and route handlers.
+  - Added unit test in `server/tests/clean-syntax.test.js` validating 0 BOM characters and top-level import ordering.
+- **Files**:
+  - `server/routes/api.js`
+  - `server/tests/clean-syntax.test.js`
+- **Verification Result**: Verified with 247/247 passing Vitest tests (1 new test in `server/tests/clean-syntax.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `f91deaf`
+- **Undo Command**: `git revert f91deaf`
+
