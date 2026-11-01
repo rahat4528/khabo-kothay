@@ -35,8 +35,6 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: [
           "'self'",
-          "'unsafe-inline'",
-          "'unsafe-eval'",
           "https://maps.googleapis.com",
           "https://maps.gstatic.com",
           "https://unpkg.com"
@@ -73,8 +71,28 @@ app.use(
   })
 );
 
-// CORS for mobile app and cross-origin access
-app.use(cors());
+// CORS configuration: Allow configured origins while enabling native mobile & same-origin requests
+const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS
+  ? process.env.CORS_ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
+  : [
+      'https://khabo-kothay-backend.onrender.com',
+      'http://localhost:3000',
+      'http://127.0.0.1:3000'
+    ];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Mobile apps, native requests, curl, or same-origin requests don't send an Origin header
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(null, false);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-App-Token', 'X-Requested-With', 'X-Client-Platform', 'X-Install-Id', 'X-App-Version-Code', 'X-App-Channel', 'X-Admin-Token', 'X-Admin-Who', 'X-Device-Id', 'If-None-Match']
+}));
 
 // Body Parsers
 app.use(express.json({ limit: '1mb' }));

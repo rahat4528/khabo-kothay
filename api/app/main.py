@@ -15,10 +15,18 @@ app = FastAPI(
     description="Python FastAPI backend for Khabo Kothay? Dhaka Restaurant Finder",
 )
 
-# CORS Middleware
+# CORS Middleware - Restrict origins when credentials are enabled
+allowed_origins = [
+    "https://khabo-kothay-backend.onrender.com",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
