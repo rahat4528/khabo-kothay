@@ -2,7 +2,17 @@ import { describe, it, expect } from 'vitest';
 import request from 'supertest';
 import express from 'express';
 import apiRouter from '../routes/api.js';
-import { createGroupSession, joinGroupSession, computeFairRanking, castVote, closeGroupSession, getGroupSession } from '../services/group-mode.js';
+import {
+  createGroupSession,
+  joinGroupSession,
+  computeFairRanking,
+  castVote,
+  closeGroupSession,
+  getGroupSession,
+  purgeExpiredSessions,
+  clearSessionsForTest,
+  MAX_SESSIONS_PER_IP
+} from '../services/group-mode.js';
 import { addDishPriceReport, getDishPrices } from '../services/dish-prices.js';
 
 const app = express();
@@ -179,6 +189,109 @@ describe('Phase 4: Discovery & Group — F4 Group Mode, F5 Swipe, F6 Dish Prices
       expect(pub.votes).toBeUndefined();
       expect(pub.voteCounts['kacchi-spot']).toBe(1);
       expect(pub.totalVotes).toBe(1);
+    });
+
+    it('enforces session expiry returning 404 for get, join, vote and close', async () => {
+      const created = createGroupSession({ creatorName: 'ExpiringHost' });
+      const token = created.token;
+      const hostKey = created.hostKey;
+      const { participantId: p1, participantSecret: s1 } = joinGroupSession(token, { name: 'EarlyJoiner' });
+
+      // Expire session manually
+      const rawSession = getGroupSession(token);
+      expect(rawSession).toBeDefined();
+
+      // Set expiry timestamp to the past
+      const { default: groupService } = await import('../services/group-mode.js');
+      // Update directly via file or in-memory
+      const fs = await import('fs');
+      const path = await import('path');
+      const groupsFile = path.resolve('server/data/group-sessions.json');
+      const data = JSON.parse(fs.readFileSync(groupsFile, 'utf8'));
+      const target = data.find(s => s.token === token);
+      if (target) {
+        target.expiresAt = new Date(Date.now() - 10000).toISOString();
+        fs.writeFileSync(groupsFile, JSON.stringify(data), 'utf8');
+      }
+      // Clear in-memory to force reload from expired data
+      groupService.clearSessionsForTest();
+
+      // 1. GET returns 404
+      const getRes = await request(app).get(`/api/groups/${token}`);
+      expect(getRes.status).toBe(404);
+
+      // 2. JOIN returns 404
+      const joinRes = await request(app)
+        .post(`/api/groups/${token}/join`)
+        .send({ name: 'LateJoiner' });
+      expect(joinRes.status).toBe(404);
+
+      // 3. VOTE returns 404
+      const voteRes = await request(app)
+        .post(`/api/groups/${token}/votes`)
+        .send({ participantId: p1, participantSecret: s1, candidateId: 'candidate-A' });
+      expect(voteRes.status).toBe(404);
+
+      // 4. CLOSE returns 404
+      const closeRes = await request(app)
+        .post(`/api/groups/${token}/close`)
+        .send({ hostKey });
+      expect(closeRes.status).toBe(404);
+    });
+
+    it('validates and caps creatorName, startingArea, dietaryPreferences and candidateId', async () => {
+      const longName = 'A'.repeat(50);
+      const longArea = 'B'.repeat(60);
+      const invalidDietary = ['halal', 'malicious_injection', 'vegetarian', 'fake_diet', 'vegan'];
+
+      const res = await request(app)
+        .post('/api/groups')
+        .send({ creatorName: longName });
+      expect(res.status).toBe(201);
+      // Creator name capped at 30 chars
+      expect(res.body.session.creatorName.length).toBeLessThanOrEqual(30);
+
+      const token = res.body.session.token;
+      const joinRes = await request(app)
+        .post(`/api/groups/${token}/join`)
+        .send({
+          name: longName,
+          startingArea: longArea,
+          dietaryPreferences: invalidDietary
+        });
+      expect(joinRes.status).toBe(201);
+      const guest = joinRes.body.session.participants.find(p => !p.isCreator);
+      expect(guest.name.length).toBeLessThanOrEqual(30);
+      expect(guest.startingArea.length).toBeLessThanOrEqual(40);
+
+      // Vote validation: candidateId must be string <= 64 chars
+      const pId = joinRes.body.participantId;
+      const pSecret = joinRes.body.participantSecret;
+
+      // Empty candidateId rejected
+      const emptyVote = await request(app)
+        .post(`/api/groups/${token}/votes`)
+        .send({ participantId: pId, participantSecret: pSecret, candidateId: '' });
+      expect(emptyVote.status).toBe(400);
+
+      // Valid candidateId accepted
+      const validVote = await request(app)
+        .post(`/api/groups/${token}/votes`)
+        .send({ participantId: pId, participantSecret: pSecret, candidateId: 'valid_candidate_id_123' });
+      expect(validVote.status).toBe(200);
+      expect(validVote.body.voteCounts['valid_candidate_id_123']).toBe(1);
+    });
+
+    it('enforces per-IP session creation limits (HTTP 429)', () => {
+      const ip = '192.168.10.42';
+      // Create up to MAX_SESSIONS_PER_IP
+      for (let i = 0; i < MAX_SESSIONS_PER_IP; i++) {
+        createGroupSession({ creatorName: `Host ${i}`, clientIp: ip });
+      }
+
+      // Next creation from same IP must throw 429
+      expect(() => createGroupSession({ creatorName: 'ExcessHost', clientIp: ip }))
+        .toThrow('Rate limit exceeded');
     });
   });
 

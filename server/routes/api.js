@@ -1185,7 +1185,8 @@ router.get('/fare-reports', requireAdmin, (req, res) => {
 
 router.post('/groups', (req, res) => {
   try {
-    const result = createGroupSession(req.body);
+    const clientIp = req.ip || req.socket?.remoteAddress;
+    const result = createGroupSession({ ...req.body, clientIp });
     res.status(201).json({
       success: true,
       session: result.session,
