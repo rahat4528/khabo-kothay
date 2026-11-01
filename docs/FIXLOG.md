@@ -184,3 +184,25 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 205/205 passing Vitest tests on v5.0.5, 0 npm audit vulnerabilities (`npm audit --omit=dev`), and successful security-check.js / verify-i18n-keys.js runs.
 - **Commit Hash**: `073ac66` (production deps), `02a19f8` (vitest upgrade & CI)
 - **Undo Command**: `git revert 02a19f8 && git revert 073ac66`
+
+
+## Phase 1 Fix 5: Fix Broken APK Download Fallback, Metadata Generation, and Clean URLs
+- **Status**: Completed & Verified
+- **Problem**: Missing APK downloads (`/downloads/khabo-kothay-latest.apk`) were caught by the SPA fallback in `server/index.js`, serving `index.html` with status 200 as an APK file; APK metadata in `server/routes/api.js` was hardcoded; download.html had conflicting size fallback (61.06 MB vs 64.98 MB); Google Drive link included a fragile account-index `/u/5/`; EAS link in `RELEASE.md` was expired.
+- **Fix**:
+  - Updated SPA fallback in `server/index.js` to return HTTP 404 for any path with a file extension or matching `/api`.
+  - Created `scripts/generate-apk-metadata.js` to dynamically compute and write `server/data/apk-metadata.json` (version, size, sha256 checksum) without hardcoding.
+  - Updated `server/routes/api.js` to dynamically load `apk-metadata.json` via `loadApkMetadata` with `APK_METADATA` proxy backwards compatibility.
+  - Unified size badge in `download.html` and `download-page.js` to 64.98 MB.
+  - Stripped Google Drive account index `/u/5/` and updated `RELEASE.md` to target permanent GitHub Releases hosting.
+- **Files**:
+  - `server/index.js`
+  - `server/routes/api.js`
+  - `public/download.html`
+  - `public/js/download-page.js`
+  - `scripts/generate-apk-metadata.js`
+  - `RELEASE.md`
+  - `server/tests/download-qr.test.js`
+- **Verification Result**: Verified with 207/207 passing Vitest tests (including 404 on missing `.apk` requests, verification that `/u/5/` is not leaked, and valid dynamic metadata).
+- **Commit Hash**: `240de96`
+- **Undo Command**: `git revert 240de96`
