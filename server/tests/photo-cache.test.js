@@ -95,4 +95,28 @@ describe('Photo Cache & Quota Guard Integration', () => {
       }
     });
   });
+
+  describe('Placeholder SVG Neutrality & Area Customization', () => {
+    it('defaults to neutral Dhaka Dining Experience instead of hardcoded Gulshan', async () => {
+      const { generatePlaceholderSvg } = await import('../routes/api.js');
+      const svg = generatePlaceholderSvg('seed123');
+      expect(svg).toContain('Dhaka Dining Experience');
+      expect(svg).not.toContain('Gulshan Dining Experience');
+    });
+
+    it('customizes placeholder label when specified via area or label query', async () => {
+      const res = await request(app).get('/api/places/photo?name=places/mock_banani_photo/photos/1&area=Banani');
+      expect(res.status).toBe(200);
+      expect(res.headers['content-type']).toContain('image/svg+xml');
+      const bodyStr = res.text || (Buffer.isBuffer(res.body) ? res.body.toString('utf8') : '');
+      expect(bodyStr).toContain('Banani Dining Experience');
+    });
+
+    it('sanitizes special characters in custom placeholder label to prevent SVG injection', async () => {
+      const { generatePlaceholderSvg } = await import('../routes/api.js');
+      const svg = generatePlaceholderSvg('seed123', '<script>alert("xss")</script>');
+      expect(svg).not.toContain('<script>');
+      expect(svg).not.toContain('"xss"');
+    });
+  });
 });

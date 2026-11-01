@@ -544,12 +544,16 @@ router.get('/places/:placeId/details', async (req, res, next) => {
   }
 });
 
-export function generatePlaceholderSvg(seed) {
+export function generatePlaceholderSvg(seed, label = 'Dhaka Dining Experience') {
   const hash = String(seed || 'photo').split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
   const bgColors = ['#1E293B', '#0F172A', '#134E4A', '#312E81', '#701A75', '#7C2D12'];
   const bg = bgColors[hash % bgColors.length];
   const emojis = ['🍜', '🍣', '🍛', '☕', '🍔', '🍢', '🍰', '🍱'];
   const emoji = emojis[hash % emojis.length];
+
+  const safeLabel = String(label || 'Dhaka Dining Experience')
+    .replace(/[<>&"]/g, '')
+    .substring(0, 40);
 
   return `
     <svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
@@ -562,13 +566,13 @@ export function generatePlaceholderSvg(seed) {
       <rect width="600" height="400" fill="url(#grad)" rx="16"/>
       <circle cx="300" cy="180" r="80" fill="rgba(255,255,255,0.08)"/>
       <text x="300" y="210" font-size="72" text-anchor="middle" dominant-baseline="middle">${emoji}</text>
-      <text x="300" y="320" font-size="20" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-weight="600" fill="#94A3B8" text-anchor="middle">Gulshan Dining Experience</text>
+      <text x="300" y="320" font-size="20" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-weight="600" fill="#94A3B8" text-anchor="middle">${safeLabel}</text>
     </svg>
   `;
 }
 
-function sendPlaceholderPhoto(res, seed) {
-  const svg = generatePlaceholderSvg(seed);
+function sendPlaceholderPhoto(res, seed, label) {
+  const svg = generatePlaceholderSvg(seed, label);
   res.setHeader('Content-Type', 'image/svg+xml');
   res.setHeader('Cache-Control', 'public, max-age=86400');
   return res.send(svg);
@@ -634,7 +638,10 @@ export const photoLimiter = rateLimit({
 router.get('/places/photo', photoLimiter, async (req, res) => {
   const name = typeof req.query.name === 'string' ? req.query.name : '';
   const width = Math.min(Math.max(parseInt(req.query.maxWidth, 10) || 600, 50), 1600);
-  const cacheKey = `${name}:${width}`;
+  const label = (typeof req.query.label === 'string' && req.query.label.trim()) ||
+    (typeof req.query.area === 'string' && req.query.area.trim() ? `${req.query.area.trim()} Dining Experience` : null) ||
+    'Dhaka Dining Experience';
+  const cacheKey = `${name}:${width}:${label}`;
 
   // Check LRU cache first
   const cached = photoCache.get(cacheKey);
@@ -653,7 +660,7 @@ router.get('/places/photo', photoLimiter, async (req, res) => {
     name.startsWith('places/mock_') ||
     name.startsWith('places/trio_')
   ) {
-    const svg = generatePlaceholderSvg(name);
+    const svg = generatePlaceholderSvg(name, label);
     const buf = Buffer.from(svg, 'utf8');
     photoCache.set(cacheKey, buf, 'image/svg+xml');
     res.setHeader('Content-Type', 'image/svg+xml');
@@ -668,7 +675,7 @@ router.get('/places/photo', photoLimiter, async (req, res) => {
   } catch (err) {
     logger.warn({ err: err.message, name }, 'Google daily API cap exceeded for photo request, serving placeholder fallback');
     res.setHeader('X-Quota-Fallback', 'true');
-    const svg = generatePlaceholderSvg(name);
+    const svg = generatePlaceholderSvg(name, label);
     return res.status(200).type('image/svg+xml').send(svg);
   }
 
@@ -680,7 +687,7 @@ router.get('/places/photo', photoLimiter, async (req, res) => {
     });
     const contentType = googleRes.headers.get('content-type') || '';
     if (!googleRes.ok || !contentType.startsWith('image/')) {
-      const svg = generatePlaceholderSvg(name);
+      const svg = generatePlaceholderSvg(name, label);
       return res.status(200).type('image/svg+xml').send(svg);
     }
 
@@ -694,7 +701,7 @@ router.get('/places/photo', photoLimiter, async (req, res) => {
     return res.send(buffer);
   } catch (err) {
     logger.warn({ err: err.message }, 'Photo proxy failed, serving placeholder');
-    return sendPlaceholderPhoto(res, name);
+    return sendPlaceholderPhoto(res, name, label);
   }
 });
 
