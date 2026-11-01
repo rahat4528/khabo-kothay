@@ -825,29 +825,58 @@ router.post('/meal-time/feedback', (req, res) => {
   }
 });
 
-export const APK_METADATA = {
-  appName: 'KHABO KOTHAY?',
-  appNameBn: 'খাবো কোথায়?',
-  version: pkg.version || '1.1.0',
-  apkSize: '64.98 MB',
-  apkSizeBytes: 68135777,
-  sha256: 'E5E8D00B8DA110EC7390A57315C76DA1AFD1C8C9B1FC5E54178272CA17D31353',
-  packageId: 'com.khabokothay.app',
-  googleDriveFolderUrl: 'https://drive.google.com/drive/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu',
-  googleDriveUserUrl: 'https://drive.google.com/drive/u/5/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu',
-  directDownloadUrl: '/downloads/khabo-kothay-latest.apk',
-  qrDownloadUrl: '/downloads/khabo-kothay-qr.png',
-  qrDriveUrl: '/downloads/khabo-kothay-drive-qr.png',
-  minAndroidVersion: 'Android 8.0+ (Oreo)',
-  targetSdk: 'Android 14 (API 34)'
-};
+const APK_METADATA_FILE = path.join(__dirname, '..', 'data', 'apk-metadata.json');
+
+export function loadApkMetadata() {
+  try {
+    if (fs.existsSync(APK_METADATA_FILE)) {
+      return JSON.parse(fs.readFileSync(APK_METADATA_FILE, 'utf8'));
+    }
+  } catch (err) {
+    logger.warn({ err }, 'Failed reading apk-metadata.json; falling back to dynamic default');
+  }
+  return {
+    appName: 'KHABO KOTHAY?',
+    appNameBn: 'খাবো কোথায়?',
+    version: pkg.version || '1.1.0',
+    apkSize: '64.98 MB',
+    apkSizeBytes: 68135777,
+    sha256: 'E5E8D00B8DA110EC7390A57315C76DA1AFD1C8C9B1FC5E54178272CA17D31353',
+    packageId: 'com.khabokothay.app',
+    googleDriveFolderUrl: 'https://drive.google.com/drive/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu',
+    directDownloadUrl: '/downloads/khabo-kothay-latest.apk',
+    qrDownloadUrl: '/downloads/khabo-kothay-qr.png',
+    qrDriveUrl: '/downloads/khabo-kothay-drive-qr.png',
+    minAndroidVersion: 'Android 8.0+ (Oreo)',
+    targetSdk: 'Android 14 (API 34)'
+  };
+}
+
+export const APK_METADATA = new Proxy({}, {
+  get(target, prop) {
+    const meta = loadApkMetadata();
+    return meta[prop];
+  },
+  has(target, prop) {
+    const meta = loadApkMetadata();
+    return prop in meta;
+  },
+  ownKeys() {
+    const meta = loadApkMetadata();
+    return Reflect.ownKeys(meta);
+  },
+  getOwnPropertyDescriptor(target, prop) {
+    const meta = loadApkMetadata();
+    return Reflect.getOwnPropertyDescriptor(meta, prop);
+  }
+});
 
 /**
  * GET /api/download-info (or /api/apk/meta)
- * Returns APK version, size, checksums, and hosting links
+ * Returns APK version, size, checksums, and hosting links dynamically generated from release data
  */
 router.get(['/download-info', '/apk/meta'], (req, res) => {
-  res.json(APK_METADATA);
+  res.json(loadApkMetadata());
 });
 
 /**

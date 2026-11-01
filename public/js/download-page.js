@@ -4,12 +4,12 @@ const DEFAULT_METADATA = {
   appName: 'KHABO KOTHAY?',
   appNameBn: 'খাবো কোথায়?',
   version: '1.1.0',
-  apkSize: '61.06 MB',
+  apkSize: '64.98 MB',
   apkSizeBytes: 64024956,
   sha256: '40238FEF2107530877B65E76B7444E4F5A3C2F93CC7DF0A6E69AFFF319F62C3C',
   packageId: 'com.khabokothay.app',
   googleDriveFolderUrl: 'https://drive.google.com/drive/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu',
-  googleDriveUserUrl: 'https://drive.google.com/drive/u/5/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu',
+  googleDriveUserUrl: 'https://drive.google.com/drive/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu',
   directDownloadUrl: '/downloads/khabo-kothay-latest.apk'
 };
 
@@ -18,7 +18,7 @@ const I18N = {
     backToApp: '← Back to App',
     tagline: 'Dhaka Traffic-Aware Dining Recommendation Engine & Personal Food Assistant',
     badgeRelease: 'v1.1.0 Release',
-    badgeSize: '61.06 MB',
+    badgeSize: '64.98 MB',
     badgeAndroid: 'Android 8.0+',
     badgeVerified: 'Verified SHA-256',
     driveTitle: 'Official Google Drive Hosting',
@@ -179,7 +179,7 @@ async function loadMetadata() {
 
   const sizeBadge = document.getElementById('sizeBadge');
   if (sizeBadge) {
-    sizeBadge.textContent = appMeta.apkSize || '61.06 MB';
+    sizeBadge.textContent = appMeta.apkSize || '64.98 MB';
   }
 }
 

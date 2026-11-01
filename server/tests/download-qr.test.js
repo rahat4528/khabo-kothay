@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const publicDir = path.join(__dirname, '..', '..', 'public');
 
-// Create test app mounting static and api
+// Create test app mounting static, api, and SPA fallback matching server/index.js
 const app = express();
 app.use(express.json());
 app.get(['/download', '/apk'], (req, res) => {
@@ -18,6 +18,14 @@ app.get(['/download', '/apk'], (req, res) => {
 });
 app.use(express.static(publicDir));
 app.use('/api', apiRouter);
+
+// Match server/index.js SPA fallback
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api') || path.extname(req.path)) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+  res.sendFile(path.join(publicDir, 'index.html'));
+});
 
 describe('APK Download & QR Code Sharing System', () => {
   it('GET /api/download-info returns valid APK metadata and verified Google Drive URL', async () => {
@@ -35,6 +43,21 @@ describe('APK Download & QR Code Sharing System', () => {
     const res = await request(app).get('/api/apk/meta');
     expect(res.status).toBe(200);
     expect(res.body.version).toBe('1.1.0');
+  });
+
+  it('does not leak account-index /u/5/ in download metadata or landing page', async () => {
+    const apiRes = await request(app).get('/api/download-info');
+    expect(JSON.stringify(apiRes.body)).not.toContain('/u/5/');
+
+    const pageRes = await request(app).get('/download');
+    expect(pageRes.text).not.toContain('/u/5/');
+  });
+
+  it('returns HTTP 404 for missing .apk download requests instead of serving index.html', async () => {
+    const res = await request(app).get('/downloads/nonexistent-file.apk');
+    expect(res.status).toBe(404);
+    // Must NOT be HTML / index.html
+    expect(res.headers['content-type']).not.toContain('text/html');
   });
 
   it('GET /api/qr generates SVG QR code', async () => {

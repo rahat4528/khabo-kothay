@@ -51,8 +51,8 @@
 - **EAS Account**: `rahat69x`
 - **Build ID**: `091a2cdf-69dd-4d26-ba02-c92959f1d82e`
 - **Build Page**: https://expo.dev/accounts/rahat69x/projects/khabo-kothay/builds/091a2cdf-69dd-4d26-ba02-c92959f1d82e
-- **Direct Download URL**: https://expo.dev/artifacts/eas/DHzaB51RVCEYMJKU62vs-3_0vGxv21tl1m1NyQs1qTo.apk
-- **Expiration Date**: 2026-10-24T16:18:29.000Z
+- **Direct Download URL**: https://github.com/rahat4528/khabo-kothay/releases/latest/download/khabo-kothay.apk
+- **Hosting**: Permanent release asset via GitHub Releases
 - **Updates Channel**: `preview` (Update ID: `01a12717-1059-70d9-b3a5-f42698503503`)
 
 ---

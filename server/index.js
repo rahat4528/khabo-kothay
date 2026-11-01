@@ -164,9 +164,10 @@ app.use('/api/v1', apiRouter);
 app.use('/api', apiRouter);
 
 // Fallback for SPA routing to index.html
+// Return 404 for missing static assets/file downloads instead of serving index.html
 app.get('*', (req, res) => {
-  if (req.path.startsWith('/api')) {
-    return res.status(404).json({ error: 'Endpoint not found' });
+  if (req.path.startsWith('/api') || path.extname(req.path)) {
+    return res.status(404).json({ error: 'Not found' });
   }
   res.sendFile(path.join(publicDir, 'index.html'));
 });
