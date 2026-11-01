@@ -424,3 +424,19 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 240/240 passing Vitest tests (3 new tests in `server/tests/stack-architecture.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
 - **Commit Hash**: `978adef`
 - **Undo Command**: `git revert 978adef`
+
+
+## Phase 2 Fix 18: Remove Unused fs-extra Dependency from Mobile Client
+- **Status**: Completed & Verified
+- **Problem**:
+  - `mobile/package.json` had `"fs-extra": "^11.4.1"` declared in `dependencies`.
+  - `fs-extra` is a Node.js filesystem module incompatible with and unused by the React Native client runtime, unnecessarily inflating dependencies.
+- **Fix**:
+  - Removed `"fs-extra"` from `mobile/package.json`.
+  - Added unit test in `mobile/__tests__/dependencies.test.js` verifying that `fs-extra` is absent and essential mobile runtime packages (`expo`, `react-native`, `react`, `react-native-maps`) are present.
+- **Files**:
+  - `mobile/package.json`
+  - `mobile/__tests__/dependencies.test.js`
+- **Verification Result**: Verified with 242/242 passing Vitest tests (2 new tests in `mobile/__tests__/dependencies.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `41c858b`
+- **Undo Command**: `git revert 41c858b`
