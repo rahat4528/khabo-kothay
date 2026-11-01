@@ -618,6 +618,24 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Undo Command**: `git revert 630581d`
 
 
+## Phase 3 Fix 25: Service Worker Precache List Expansion & Cache Bump
+- **Status**: Completed & Verified
+- **Problem**:
+  - `public/sw.js` precache list (`APP_SHELL`) was missing several newer client modules: `i18n.js`, `group-planner.js`, `meal-estimator.js`, `download-page.js`, `theme-init.js`, `download.html`, and `download.css`.
+  - When users accessed the web application offline, these modules were unavailable, breaking offline functionality.
+- **Fix**:
+  - Added all missing web assets and modules to `APP_SHELL` in `public/sw.js`.
+  - Bumped service worker cache name to `khabo-kothay-v1.3` to trigger client cache refresh.
+  - Added unit test suite in `server/tests/sw-cache.test.js` validating that modern JS modules are declared in `APP_SHELL` and verifying that 100% of declared cache assets physically exist on disk in `/public`.
+- **Files**:
+  - `public/sw.js`
+  - `server/tests/sw-cache.test.js`
+- **Verification Result**: Verified with 267/267 passing Vitest tests (2 new tests in `server/tests/sw-cache.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `72cacaa`
+- **Undo Command**: `git revert 72cacaa`
+
+
+
 
 
 
