@@ -293,3 +293,30 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 221/221 passing Vitest tests (2 new tests in `server/tests/phase2-ask-parser.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
 - **Commit Hash**: `bbc1cf1`
 - **Undo Command**: `git revert bbc1cf1`
+
+
+## Phase 1 Fix 10: Unauthenticated Write Endpoint Hardening & PII Protection
+- **Status**: Completed & Verified
+- **Problem**:
+  - `POST /api/diagnostics/crash`, `POST /api/diagnostics/problem`, `POST /api/dish-prices`, and `POST /api/fare-reports` were unauthenticated write endpoints lacking endpoint-specific rate limiting and body size boundaries, exposing the server to disk-fill and denial-of-service vectors.
+  - Problem reports accepted unbounded `description`, crash reports accepted unbounded `stackTrace`, and `screenshotBase64` lacked size caps.
+  - `getDiagnosticsOverview` read entire `.jsonl` files synchronously into memory.
+  - Consent records stored raw client IP in plain text on disk.
+  - `redactSensitiveText` in `diagnostics.js` contained an email regex typo (`[A-Z|a-z]{2,}`) failing on short or modern TLDs.
+- **Fix**:
+  - Configured dedicated rate limiters: `diagnosticsLimiter` (10 req/hr per IP) on consent and problem/crash reports; `communityWriteLimiter` (20 req/hr per IP) on dish prices and fare reports.
+  - Implemented `enforceBodySizeLimit` middleware enforcing 16KB for dish prices and fare reports, 32KB for crash reports, and 100KB for problem reports (returning HTTP 413 for oversized payloads).
+  - Capped string fields: `description <= 1000` chars, `stackTrace <= 4000` chars, `dishName <= 80` chars, `origin` and `destination` `<= 60` chars, and dropped `screenshotBase64` exceeding 100KB.
+  - Implemented `tailLines` to stream-read only the latest 500 lines rather than reading whole `.jsonl` files synchronously into memory, and added automatic file rotation at 5MB (`checkAndRotateJsonl`).
+  - Pseudonymized IPs in consent records using truncated SHA-256 (`ipHash`) rather than persisting plain-text IPs.
+  - Fixed email redaction regex to `/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/g`.
+  - Added test coverage in `server/tests/phase1b-diagnostics.test.js` validating IP hashing, email redaction, 413 payload rejections, and string caps.
+- **Files**:
+  - `server/services/diagnostics.js`
+  - `server/services/dish-prices.js`
+  - `server/services/fare-check.js`
+  - `server/routes/api.js`
+  - `server/tests/phase1b-diagnostics.test.js`
+- **Verification Result**: Verified with 224/224 passing Vitest tests (3 new tests in `server/tests/phase1b-diagnostics.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `84d62fd`
+- **Undo Command**: `git revert 84d62fd`
