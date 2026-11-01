@@ -101,7 +101,13 @@ export function saveSessionsSync() {
     const tempFile = `${GROUPS_FILE}.tmp.${crypto.randomBytes(6).toString('hex')}`;
     const payload = JSON.stringify(Array.from(activeSessions.values()), null, 2);
     fs.writeFileSync(tempFile, payload, 'utf8');
-    fs.renameSync(tempFile, GROUPS_FILE);
+    try {
+      fs.renameSync(tempFile, GROUPS_FILE);
+    } catch (renameErr) {
+      // Windows EPERM fallback: copyFileSync + unlinkSync
+      fs.copyFileSync(tempFile, GROUPS_FILE);
+      try { fs.unlinkSync(tempFile); } catch {}
+    }
   } catch (err) {
     logger.error({ err }, 'Failed saving group sessions atomically');
   }
