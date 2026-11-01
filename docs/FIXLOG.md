@@ -206,3 +206,24 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 207/207 passing Vitest tests (including 404 on missing `.apk` requests, verification that `/u/5/` is not leaked, and valid dynamic metadata).
 - **Commit Hash**: `240de96`
 - **Undo Command**: `git revert 240de96`
+
+
+## Phase 1 Fix 6: Map Tab Google Maps API Key Configuration & Accessible List Fallback
+- **Status**: Completed & Verified
+- **Problem**: `android.config.googleMaps.apiKey` was missing from `mobile/app.json` and `mobile/app.config.js`. Without this key configured during native build, `react-native-maps` renders a blank/gray screen on Android devices. Additionally, MapTabScreen had no fallback UI if the key was omitted.
+- **Fix**:
+  - Added `android.config.googleMaps.apiKey` and `extra.googleMapsApiKey` to `mobile/app.config.js` reading from `EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_KEY` or `GOOGLE_MAPS_ANDROID_KEY`.
+  - Added template configuration to `mobile/app.json`.
+  - Created `mobile/src/services/mapsConfig.js` to detect whether Google Maps SDK for Android is configured.
+  - Updated `mobile/src/features/results/MapTabScreen.js` to detect key configuration and gracefully display an accessible, proximity-ranked list view with direction buttons and accessibility labels instead of a blank screen when the key is omitted.
+  - Added Vitest configuration parameter `testTimeout: 10000` to prevent worker pool contention timeouts on Windows.
+- **Files**:
+  - `mobile/app.config.js`
+  - `mobile/app.json`
+  - `mobile/src/services/mapsConfig.js`
+  - `mobile/src/features/results/MapTabScreen.js`
+  - `mobile/__tests__/map-tab.test.js`
+  - `vitest.config.js`
+- **Verification Result**: Verified with 210/210 passing Vitest tests (including 3 new tests in `mobile/__tests__/map-tab.test.js` testing unconfigured fallback detection, environment key detection, and app.config.js integration), passing security checks and 0 secret leaks.
+- **Commit Hash**: `5a74848`
+- **Undo Command**: `git revert 5a74848`
