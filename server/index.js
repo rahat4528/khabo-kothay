@@ -87,12 +87,13 @@ app.use(sentry.requestHandler());
 // Structured HTTP Request Logging with Request IDs (pino)
 app.use(httpLogger);
 
-// Rate Limiting: 120 requests per 15 minutes per IP
+// Rate Limiting: 120 requests per 15 minutes per IP (photos governed by dedicated photoLimiter)
 const limiter = rateLimit({
   windowMs: envConfig.rateLimit?.windowMs || 15 * 60 * 1000,
   max: envConfig.rateLimit?.max || 120,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.path === '/places/photo' || req.path === '/api/places/photo',
   message: {
     error: 'Too many requests from this IP, please try again after 15 minutes.'
   }

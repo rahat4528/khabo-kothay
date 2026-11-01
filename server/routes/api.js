@@ -7,6 +7,8 @@ import { evaluateFlags, updateFlag, getAllFlags } from '../services/flags.js';
 import { getLatestRelease, getPublishedReleases, getAllReleases, createReleaseDraft, publishRelease, withdrawRelease, validateDownloadUrl } from '../services/releases.js';
 import { getAuditLogs } from '../services/audit.js';
 ﻿import express from 'express';
+import rateLimit from 'express-rate-limit';
+import { photoCache } from '../services/photo-cache.js';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
@@ -514,15 +516,14 @@ router.get('/places/:placeId/details', async (req, res, next) => {
   }
 });
 
-function sendPlaceholderPhoto(res, seed) {
-  // Clean, appetizing SVG illustration for mock / fallback
+export function generatePlaceholderSvg(seed) {
   const hash = String(seed || 'photo').split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
   const bgColors = ['#1E293B', '#0F172A', '#134E4A', '#312E81', '#701A75', '#7C2D12'];
   const bg = bgColors[hash % bgColors.length];
   const emojis = ['🍜', '🍣', '🍛', '☕', '🍔', '🍢', '🍰', '🍱'];
   const emoji = emojis[hash % emojis.length];
 
-  const svg = `
+  return `
     <svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
       <defs>
         <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -536,7 +537,10 @@ function sendPlaceholderPhoto(res, seed) {
       <text x="300" y="320" font-size="20" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-weight="600" fill="#94A3B8" text-anchor="middle">Gulshan Dining Experience</text>
     </svg>
   `;
+}
 
+function sendPlaceholderPhoto(res, seed) {
+  const svg = generatePlaceholderSvg(seed);
   res.setHeader('Content-Type', 'image/svg+xml');
   res.setHeader('Cache-Control', 'public, max-age=86400');
   return res.send(svg);
@@ -545,16 +549,37 @@ function sendPlaceholderPhoto(res, seed) {
 // Google photo resource names look like places/{placeId}/photos/{photoRef}
 const GOOGLE_PHOTO_NAME = /^places\/[A-Za-z0-9_-]+\/photos\/[A-Za-z0-9_-]+$/;
 
+// Per-IP rate limiting on photo requests (60 requests/minute)
+export const photoLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: parseInt(process.env.PHOTO_RATE_LIMIT_MAX || '60', 10),
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    error: 'Too many photo requests from this IP, please try again after a minute.'
+  }
+});
+
 /**
  * GET /api/places/photo
- * Photo proxy endpoint - Streams Google photo without exposing GOOGLE_SERVER_KEY
+ * Photo proxy endpoint - Streams Google photo without exposing GOOGLE_SERVER_KEY.
+ * Cached in-memory via PhotoCache (LRU) to save quota.
  */
-router.get('/places/photo', async (req, res) => {
+router.get('/places/photo', photoLimiter, async (req, res) => {
   const name = typeof req.query.name === 'string' ? req.query.name : '';
   const width = Math.min(Math.max(parseInt(req.query.maxWidth, 10) || 600, 50), 1600);
+  const cacheKey = `${name}:${width}`;
 
-  // Anything that isn't a real Google photo name never reaches Google, so the server
-  // key can't be attached to a client-shaped URL.
+  // Check LRU cache first
+  const cached = photoCache.get(cacheKey);
+  if (cached) {
+    res.setHeader('Content-Type', cached.contentType);
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.setHeader('X-Cache', 'HIT');
+    return res.send(cached.buffer);
+  }
+
+  // Anything that isn't a real Google photo name never reaches Google
   if (
     !process.env.GOOGLE_SERVER_KEY ||
     process.env.USE_MOCK_DATA === 'true' ||
@@ -562,11 +587,26 @@ router.get('/places/photo', async (req, res) => {
     name.startsWith('places/mock_') ||
     name.startsWith('places/trio_')
   ) {
-    return sendPlaceholderPhoto(res, name);
+    const svg = generatePlaceholderSvg(name);
+    const buf = Buffer.from(svg, 'utf8');
+    photoCache.set(cacheKey, buf, 'image/svg+xml');
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.setHeader('X-Cache', 'MISS');
+    return res.send(buf);
+  }
+
+  // Check quota before hitting Google API
+  try {
+    quotaManager.checkAndRecordGoogleApiCall('photos');
+  } catch (err) {
+    logger.warn({ err: err.message, name }, 'Google daily API cap exceeded for photo request, serving placeholder fallback');
+    res.setHeader('X-Quota-Fallback', 'true');
+    const svg = generatePlaceholderSvg(name);
+    return res.status(200).type('image/svg+xml').send(svg);
   }
 
   try {
-    quotaManager.checkAndRecordGoogleApiCall('photos');
     const googlePhotoUrl = `https://places.googleapis.com/v1/${name}/media?maxWidthPx=${width}`;
     const googleRes = await fetch(googlePhotoUrl, {
       headers: { 'X-Goog-Api-Key': process.env.GOOGLE_SERVER_KEY },
@@ -574,16 +614,21 @@ router.get('/places/photo', async (req, res) => {
     });
     const contentType = googleRes.headers.get('content-type') || '';
     if (!googleRes.ok || !contentType.startsWith('image/')) {
-      return sendPlaceholderPhoto(res, name);
+      const svg = generatePlaceholderSvg(name);
+      return res.status(200).type('image/svg+xml').send(svg);
     }
+
+    const arrayBuf = await googleRes.arrayBuffer();
+    const buffer = Buffer.from(arrayBuf);
+    photoCache.set(cacheKey, buffer, contentType);
 
     res.setHeader('Content-Type', contentType);
     res.setHeader('Cache-Control', 'public, max-age=86400');
-    const buffer = await googleRes.arrayBuffer();
-    res.send(Buffer.from(buffer));
+    res.setHeader('X-Cache', 'MISS');
+    return res.send(buffer);
   } catch (err) {
     logger.warn({ err: err.message }, 'Photo proxy failed, serving placeholder');
-    sendPlaceholderPhoto(res, name);
+    return sendPlaceholderPhoto(res, name);
   }
 });
 
