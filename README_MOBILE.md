@@ -41,7 +41,7 @@ Because physical mobile devices and production APKs require secure HTTPS connect
    - `GOOGLE_SERVER_KEY`: `<your_google_server_key>`
    - `GOOGLE_BROWSER_KEY`: `<your_google_browser_key>`
    - `APP_CLIENT_TOKEN`: `<your_app_client_token>`
-7. Click **Deploy**. Render will generate a URL like: `https://khabo-kothay.onrender.com`.
+7. Click **Deploy**. Render will generate a URL like: `https://khabo-kothay-backend.onrender.com`.
 
 ---
 

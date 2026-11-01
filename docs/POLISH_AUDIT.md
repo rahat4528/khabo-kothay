@@ -120,10 +120,10 @@
 ## 5. Inventory 4: Every URL and Intent
 
 ### A. Configured URLs (to be placed in `res/values/links.xml`)
-1. `app_website_url`: `https://khabo-kothay.onrender.com`
-2. `privacy_policy_url`: `https://khabo-kothay.onrender.com/privacy`
-3. `terms_of_service_url`: `https://khabo-kothay.onrender.com/terms`
-4. `support_page_url`: `https://khabo-kothay.onrender.com/support`
+1. `app_website_url`: `https://khabo-kothay-backend.onrender.com`
+2. `privacy_policy_url`: `https://khabo-kothay-backend.onrender.com/privacy`
+3. `terms_of_service_url`: `https://khabo-kothay-backend.onrender.com/terms`
+4. `support_page_url`: `https://khabo-kothay-backend.onrender.com/support`
 5. `support_email`: `support@khabokothay.com`
 6. `play_store_url`: `https://play.google.com/store/apps/details?id=com.khabokothay.app`
 7. `google_drive_apk_url`: `https://drive.google.com/drive/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu`

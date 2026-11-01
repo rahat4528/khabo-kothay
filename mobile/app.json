@@ -83,7 +83,7 @@
       "eas": {
         "projectId": "096074ea-0a29-4eef-af66-d76b22212b86"
       },
-      "apiBaseUrl": "https://khabo-kothay.onrender.com",
+      "apiBaseUrl": "https://khabo-kothay-backend.onrender.com",
       "appClientToken": ""
     }
   }

@@ -15,8 +15,17 @@ try {
   // In pure Node/test environments where native Expo modules aren't linked
 }
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || extraConfig.apiBaseUrl || 'http://10.0.2.2:3000';
+export const isLocalhostUrl = (url) => {
+  return /localhost|127\.0\.0\.1|10\.0\.2\.2/i.test(url || '');
+};
+
+const DEFAULT_PROD_URL = 'https://khabo-kothay-backend.onrender.com';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || extraConfig.apiBaseUrl || DEFAULT_PROD_URL;
 const APP_TOKEN = process.env.EXPO_PUBLIC_APP_CLIENT_TOKEN || extraConfig.appClientToken || '';
+
+if (process.env.NODE_ENV === 'production' && isLocalhostUrl(API_BASE_URL)) {
+  console.warn('[ApiClient] Warning: API_BASE_URL points to localhost/emulator loopback in production build:', API_BASE_URL);
+}
 
 const OFFLINE_RETRY_MS = 60 * 1000;
 
@@ -25,6 +34,9 @@ class MobileApiClient {
     this.baseUrl = baseUrl.replace(/\/$/, '');
     this.token = token;
     this.offlineUntil = 0;
+    if (process.env.NODE_ENV === 'production' && isLocalhostUrl(this.baseUrl)) {
+      console.warn('[ApiClient] Warning: API base URL points to localhost in production build:', this.baseUrl);
+    }
   }
 
   // Offline mode is a cooldown, not a permanent switch: a single cold-start timeout or
@@ -330,5 +342,6 @@ class MobileApiClient {
 }
 
 export const apiClient = new MobileApiClient();
+export { MobileApiClient };
 export default apiClient;
 

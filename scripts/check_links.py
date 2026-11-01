@@ -18,10 +18,10 @@ LINKS_XML_PATH = os.path.join(ROOT_DIR, "android", "app", "src", "main", "res", 
 PLACEHOLDER_DOMAINS = ["example.com", "your-domain", "localhost", "10.0.2.2"]
 
 DEFAULT_LINKS = {
-    "app_website_url": "https://khabo-kothay.onrender.com",
-    "privacy_policy_url": "https://khabo-kothay.onrender.com/privacy",
-    "terms_of_service_url": "https://khabo-kothay.onrender.com/terms",
-    "support_page_url": "https://khabo-kothay.onrender.com/support",
+    "app_website_url": "https://khabo-kothay-backend.onrender.com",
+    "privacy_policy_url": "https://khabo-kothay-backend.onrender.com/privacy",
+    "terms_of_service_url": "https://khabo-kothay-backend.onrender.com/terms",
+    "support_page_url": "https://khabo-kothay-backend.onrender.com/support",
     "support_email": "support@khabokothay.com",
     "play_store_url": "https://play.google.com/store/apps/details?id=com.khabokothay.app",
     "google_drive_apk_url": "https://drive.google.com/drive/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu"
