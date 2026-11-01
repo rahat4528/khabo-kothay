@@ -269,3 +269,27 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 219/219 passing Vitest tests (5 new tests in `server/tests/photo-cache.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
 - **Commit Hash**: `5ff3f6d`
 - **Undo Command**: `git revert 5ff3f6d`
+
+
+## Phase 1 Fix 9: Confirmed Criteria Search Engine Wiring & Feature Flags Cache Hardening
+- **Status**: Completed & Verified
+- **Problem**:
+  - `POST /api/search/confirm` was calling `rankRestaurants({ lat, lng, options })` with no `candidates` and without `userLocation`, causing `rankRestaurants` to immediately exit and return empty `[]` every time.
+  - `/search/confirm` did not call `enforceDeviceQuota`, bypassing daily search limit controls.
+  - `/search/confirm` did not validate criteria types or ranges (allowing unbounded party sizes, invalid mealtimes, and oversized strings).
+  - `/api/app/feature-flags` returned `Cache-Control: public, max-age=21600` for user-evaluated flags (`installId`, `versionCode`, `channel`), potentially leaking or caching user-specific feature flags across shared caches.
+  - `/api/app/feature-flags` crashed with HTTP 500 when query parameters were passed as arrays (e.g. `?channel=a&channel=b`).
+- **Fix**:
+  - Validated criteria fields in `server/routes/api.js`: cuisine string max 40 chars, budget amount non-negative finite number, partySize integer between 1 and 50, mealTime in allowlist.
+  - Enforced `enforceDeviceQuota` on confirmed searches.
+  - Retrived candidates via `searchRestaurants` and passed `{ candidates, userLocation: { lat, lng }, cuisine, priority, budget }` to `rankRestaurants`, returning ranked candidates and top picks.
+  - Coerced query and header parameters (`installId`, `versionCode`, `channel`) to primitives before passing to `evaluateFlags`, and hardened `evaluateFlags` in `server/services/flags.js` against non-string/array arguments.
+  - Replaced public cache header on `/api/app/feature-flags` with `Cache-Control: private, max-age=60` and `Vary: X-Install-Id, X-App-Version-Code, X-App-Channel`.
+  - Added tests in `server/tests/phase2-ask-parser.test.js` validating ranked results return, 400 schema rejections, array query resilience, and private cache headers.
+- **Files**:
+  - `server/routes/api.js`
+  - `server/services/flags.js`
+  - `server/tests/phase2-ask-parser.test.js`
+- **Verification Result**: Verified with 221/221 passing Vitest tests (2 new tests in `server/tests/phase2-ask-parser.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `bbc1cf1`
+- **Undo Command**: `git revert bbc1cf1`
