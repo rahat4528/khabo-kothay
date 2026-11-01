@@ -165,3 +165,22 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 205/205 passing Vitest tests (including fail-closed production test), zero credential leaks via security-check.js and secret_scan.py.
 - **Commit Hash**: `7128aaf`
 - **Undo Command**: `git revert 7128aaf`
+
+
+## Phase 1 Fix 4: Patch Vulnerable Dependencies & Upgrade Vitest
+- **Status**: Completed & Verified
+- **Problem**: Production dependencies `body-parser` (high DoS, trailing bytes) and `qs` (moderate DoS, non-callable toString) had unpatched vulnerabilities; dev dependency `tinypool` (critical RCE via prototype pollution in worker options) was bundled via legacy `vitest` 2.x; CI workflow included deprecated EOL Node 18.x and lacked automated production vulnerability gating.
+- **Fix**:
+  - Ran `npm audit fix` patching `body-parser` to 1.20.9 and `qs` to 6.16.2 (`found 0 vulnerabilities` in production dependencies).
+  - Upgraded `vitest` and `@vitest/coverage-v8` to 5.0.5, resolving critical `tinypool` vulnerability.
+  - Added `npm audit --omit=dev --audit-level=high` step to `.github/workflows/ci.yml`.
+  - Removed EOL Node 18.x from GitHub Actions CI matrix, retaining active LTS versions (20.x, 22.x).
+  - Added Windows EPERM file-lock fallback in `saveSessionsSync`.
+- **Files**:
+  - `package.json`
+  - `package-lock.json`
+  - `.github/workflows/ci.yml`
+  - `server/services/group-mode.js`
+- **Verification Result**: Verified with 205/205 passing Vitest tests on v5.0.5, 0 npm audit vulnerabilities (`npm audit --omit=dev`), and successful security-check.js / verify-i18n-keys.js runs.
+- **Commit Hash**: `073ac66` (production deps), `02a19f8` (vitest upgrade & CI)
+- **Undo Command**: `git revert 02a19f8 && git revert 073ac66`
