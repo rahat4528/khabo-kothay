@@ -385,3 +385,25 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Verified with 235/235 passing Vitest tests (6 new tests in server/tests/redis-persistence.test.js), passing security check, clean i18n keys parity, and 0 secret leaks.
 - **Commit Hash**: 1efb356
 - **Undo Command**: git revert 1efb356
+
+
+## Phase 1 Fix 12: Hybrid Rate Limiting for Bangladesh Mobile Carrier-Grade NAT (CGNAT)
+- **Status**: Completed & Verified
+- **Problem**:
+  - In Bangladesh, major cellular operators (Grameenphone, Robi, Banglalink) place mobile users behind Carrier-Grade NAT (CGNAT), where thousands of mobile subscribers share a pool of public IPs.
+  - Rate limiting purely by `req.ip` caused innocent users sharing cell towers to hit false 429 "Too many requests" errors.
+- **Fix**:
+  - Implemented `getHybridRateLimitKey` in `server/services/rate-limit.js` that checks for `X-Install-ID` or `X-Device-ID` headers (sanitized alphanumeric string) and falls back to `ip:<req.ip>` for web browsers.
+  - Implemented dual-layer rate limiting in `server/index.js`:
+    1. Client-level limiter: 120 req / 15 min keyed by `getHybridRateLimitKey`.
+    2. Aggregate IP burst ceiling: 600 req / 15 min (5x) keyed strictly by `req.ip` to guard against bot attacks spoofing arbitrary install IDs.
+  - Updated `diagnosticsLimiter`, `communityWriteLimiter`, and `photoLimiter` in `server/routes/api.js` to utilize `getHybridRateLimitKey`.
+  - Added unit test suite in `server/tests/rate-limit.test.js` validating key derivation, header sanitization, IP fallback, and non-colliding buckets for multiple devices on the same IP.
+- **Files**:
+  - `server/services/rate-limit.js`
+  - `server/index.js`
+  - `server/routes/api.js`
+  - `server/tests/rate-limit.test.js`
+- **Verification Result**: Verified with 237/237 passing Vitest tests (2 new tests in `server/tests/rate-limit.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `6fe7174`
+- **Undo Command**: `git revert 6fe7174`
