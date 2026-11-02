@@ -768,3 +768,25 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: 294/294 Vitest tests passing (5 new tests in `server/tests/logo-sharpness.test.js`), 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
 - **Commit Hash**: PENDING
 - **Undo Command**: `git revert <hash>`
+
+
+## Phase 4 Fix 31: Modernized Hero Section & Dynamic Dining Intelligence Preview Card
+- **Status**: Completed & Verified
+- **Problem**:
+  - The hero section on the web previously showcased a static, generic architectural sculpture JPEG that did not convey the core value proposition of the app (real-time traffic travel times, Rickshaw & CNG transit fare estimation, and smart dining recommendations).
+- **Fix**:
+  - Redesigned `public/index.html` hero section with an editorial two-column composition featuring a live pulsing status badge, high-contrast typography, and an interactive **Live Dining Intelligence Radar Card**.
+  - Replaced the static JPEG sculpture with live metric displays highlighting:
+    - Traffic-buffered travel times (12–18 min)
+    - Local calibrated Rickshaw & CNG transit fares (৳40–৳70)
+    - 98% Smart Match algorithm fit score
+    - 118 Dhaka neighborhood coverage indicator
+  - Styled with theme CSS variables in `public/css/style.css` passing 100% of WCAG AAA/AA contrast checks with 0 raw hex color violations.
+  - Added automated test suite `server/tests/hero-modernization.test.js` (4 tests) verifying modern hero markup, radar composition, responsive CSS tokens, and CTA button scroll targeting.
+- **Files**:
+  - `public/index.html`
+  - `public/css/style.css`
+  - `server/tests/hero-modernization.test.js`
+- **Verification Result**: 298/298 Vitest tests passing (4 new tests in `server/tests/hero-modernization.test.js`), 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
+- **Commit Hash**: PENDING
+- **Undo Command**: `git revert <hash>`

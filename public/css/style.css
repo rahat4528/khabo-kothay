@@ -265,35 +265,195 @@ body {
   background: var(--color-primary-tint);
 }
 
-.hero-sculpture-col {
+.hero-live-pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  box-shadow: 0 0 0 0 var(--color-primary-tint);
+  animation: pulseLive 2s infinite ease-in-out;
+  flex-shrink: 0;
+}
+
+@keyframes pulseLive {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(255, 87, 34, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 87, 34, 0);
+  }
+}
+
+.hero-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-on-primary);
+  background-color: var(--color-primary);
+  text-decoration: none;
+  padding: 12px 22px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 14px rgba(255, 87, 34, 0.3);
+  transition: all 0.2s ease;
+}
+
+.hero-cta-btn:hover {
+  background-color: var(--color-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 87, 34, 0.4);
+}
+
+.hero-cta-arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+  font-size: 1.05rem;
+}
+
+.hero-cta-btn:hover .hero-cta-arrow {
+  transform: translateY(2px);
+}
+
+.hero-preview-col {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.hero-sculpture-wrap {
+.hero-radar-card {
   width: 100%;
-  max-width: 520px;
-  position: relative;
-}
-
-.hero-sculpture-img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: var(--radius-md);
+  max-width: 480px;
+  background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.12);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-[data-theme="dark"] .hero-sculpture-img {
-  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.6);
+[data-theme="dark"] .hero-radar-card {
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
 }
 
-.hero-sculpture-img:hover {
-  transform: scale(1.015);
+.hero-radar-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.18);
+}
+
+.radar-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.radar-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.radar-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-success);
+}
+
+.radar-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.radar-live-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-tint);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.radar-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.radar-metric-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  transition: border-color 0.2s;
+}
+
+.radar-metric-box:hover {
+  border-color: var(--color-primary);
+}
+
+.radar-metric-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.radar-metric-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.radar-metric-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-muted);
+}
+
+.radar-metric-value {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-ink);
+}
+
+.radar-metric-sub {
+  font-size: 0.72rem;
+  color: var(--color-muted);
+}
+
+.radar-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.76rem;
+  color: var(--color-muted);
+}
+
+.radar-footer-icon {
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
 .hero-meta-row {
