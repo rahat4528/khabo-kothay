@@ -862,3 +862,5 @@ Tracking the execution and verification of Five Quality Fixes:
     - Item 18: Clickable, validly formatted `tel:+8801711522244` and `mailto:support@khabokothay.com` links.
     - Item 20: Comprehensive site cleanup.
   - **Verification**: Created 16-test automated verification suite in `server/tests/site-wide-fixes.test.js`. All 315/315 Vitest tests pass across 51 test files.
+- **Commit Hash**: `38f0994`
+- **Undo Command**: `git revert 38f0994`
