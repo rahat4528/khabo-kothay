@@ -766,8 +766,8 @@ Tracking the execution and verification of Five Quality Fixes:
   - `mobile/assets/logo-dark.svg`
   - `server/tests/logo-sharpness.test.js`
 - **Verification Result**: 294/294 Vitest tests passing (5 new tests in `server/tests/logo-sharpness.test.js`), 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
-- **Commit Hash**: PENDING
-- **Undo Command**: `git revert <hash>`
+- **Commit Hash**: `0c3fe51`
+- **Undo Command**: `git revert 0c3fe51`
 
 
 ## Phase 4 Fix 31: Modernized Hero Section & Dynamic Dining Intelligence Preview Card
@@ -788,5 +788,25 @@ Tracking the execution and verification of Five Quality Fixes:
   - `public/css/style.css`
   - `server/tests/hero-modernization.test.js`
 - **Verification Result**: 298/298 Vitest tests passing (4 new tests in `server/tests/hero-modernization.test.js`), 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
+- **Commit Hash**: `fa4a284`
+- **Undo Command**: `git revert fa4a284`
+
+
+## Phase 4 Fix 32: Mohakhali Geofence Coordinate Correction & Dhaka Dining Belts Expansion
+- **Status**: Completed & Verified
+- **Problem**:
+  - `services/traffic-dispatch/src/main/java/com/khabokothay/geofence/DhakaGeofenceManager.java` contained a critical coordinate typo on line 104 (`new Coordinates(23.7680, 23.3950)`), setting longitude to `23.3950` instead of `90.3950`. This distorted the ray-casting Jordan Curve algorithm for the Mohakhali arterial corridor.
+  - The geofence model was restricted to only 4 zones (Gulshan-1, Gulshan-2, Banani, Mohakhali), lacking key Dhaka dining districts like Dhanmondi, Uttara, and Mirpur.
+- **Fix**:
+  - Corrected longitude coordinate for Mohakhali arterial boundary from `23.3950` to `90.3950`.
+  - Added new geofence polygons for Dhanmondi (Satmasjid Road), Uttara (Sector Hub), and Mirpur (Central Dining Hub) with calibrated baseline congestion indices.
+  - Updated `TrafficApp.java` demonstration points to resolve Dhanmondi and out-of-zone baseline points.
+  - Added 6 new unit assertions in `TrafficDispatchTest.java` verifying Mohakhali arterial detection, municipal flyover rickshaw restrictions, and spatial resolution for Dhanmondi, Uttara, and Mirpur.
+- **Files**:
+  - `services/traffic-dispatch/src/main/java/com/khabokothay/geofence/DhakaGeofenceManager.java`
+  - `services/traffic-dispatch/src/main/java/com/khabokothay/TrafficApp.java`
+  - `services/traffic-dispatch/src/test/java/com/khabokothay/TrafficDispatchTest.java`
+  - `docs/FIXLOG.md`
+- **Verification Result**: 18/18 Java unit tests passing in `TrafficDispatchTest`, 298/298 Vitest tests passing, 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
 - **Commit Hash**: PENDING
 - **Undo Command**: `git revert <hash>`

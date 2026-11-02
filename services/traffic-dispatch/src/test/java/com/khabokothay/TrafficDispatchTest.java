@@ -25,6 +25,8 @@ public class TrafficDispatchTest {
         testCoordinatesValidation();
         testGeofenceRayCasting();
         testRickshawMunicipalRestrictions();
+        testMohakhaliGeofenceAndFlyoverRestriction();
+        testExpandedDhakaZones();
         testPeakHourSurgeCurve();
         testMonsoonSurgeImpact();
         testMultiModeDispatchQuote();
@@ -93,6 +95,37 @@ public class TrafficDispatchTest {
 
         boolean permittedFar = gm.isTransitPermitted(TransitMode.RICKSHAW, banani, farPoint);
         assertTrue("Long trip (>5km) must restrict rickshaws", !permittedFar);
+    }
+
+    private static void testMohakhaliGeofenceAndFlyoverRestriction() {
+        DhakaGeofenceManager gm = new DhakaGeofenceManager();
+        Coordinates mohakhali = new Coordinates(23.7780, 90.3990);
+        var zone = gm.findZone(mohakhali);
+        assertTrue("Ray-casting should identify Mohakhali arterial corridor",
+                zone.isPresent() && zone.get().id().equals("mohakhali_arterial"));
+        assertTrue("Mohakhali arterial must restrict rickshaws on flyover corridor",
+                zone.get().rickshawRestrictedCorridor());
+        boolean rickshawPermitted = gm.isTransitPermitted(TransitMode.RICKSHAW, mohakhali, new Coordinates(23.7790, 90.4000));
+        assertTrue("Rickshaw transit must be blocked within Mohakhali flyover arterial", !rickshawPermitted);
+    }
+
+    private static void testExpandedDhakaZones() {
+        DhakaGeofenceManager gm = new DhakaGeofenceManager();
+        Coordinates dhanmondi = new Coordinates(23.7465, 90.3760);
+        Coordinates uttara = new Coordinates(23.8650, 90.4000);
+        Coordinates mirpur = new Coordinates(23.8100, 90.3650);
+
+        var dZone = gm.findZone(dhanmondi);
+        assertTrue("Should identify Dhanmondi dining corridor",
+                dZone.isPresent() && dZone.get().id().equals("dhanmondi"));
+
+        var uZone = gm.findZone(uttara);
+        assertTrue("Should identify Uttara sector hub",
+                uZone.isPresent() && uZone.get().id().equals("uttara"));
+
+        var mZone = gm.findZone(mirpur);
+        assertTrue("Should identify Mirpur dining hub",
+                mZone.isPresent() && mZone.get().id().equals("mirpur"));
     }
 
     private static void testPeakHourSurgeCurve() {

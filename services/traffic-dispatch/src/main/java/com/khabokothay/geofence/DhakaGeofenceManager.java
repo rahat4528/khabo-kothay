@@ -101,13 +101,55 @@ public class DhakaGeofenceManager {
                 "mohakhali_arterial",
                 "Mohakhali Flyover Arterial Corridor",
                 List.of(
-                        new Coordinates(23.7680, 23.3950),
+                        new Coordinates(23.7680, 90.3950),
                         new Coordinates(23.7840, 90.3950),
                         new Coordinates(23.7840, 90.4050),
                         new Coordinates(23.7680, 90.4050)
                 ),
                 2.10,
                 true // Non-motorized rickshaws restricted by municipal law
+        ));
+
+        // Dhanmondi Culinary & Cultural Corridor (Satmasjid Road)
+        zones.put("dhanmondi", new GeofenceZone(
+                "dhanmondi",
+                "Dhanmondi Satmasjid Road Corridor",
+                List.of(
+                        new Coordinates(23.7350, 90.3650),
+                        new Coordinates(23.7600, 90.3650),
+                        new Coordinates(23.7600, 90.3850),
+                        new Coordinates(23.7350, 90.3850)
+                ),
+                1.60,
+                false
+        ));
+
+        // Uttara Sector Hub (Rabindra Sarani & Jasimuddin Avenue)
+        zones.put("uttara", new GeofenceZone(
+                "uttara",
+                "Uttara Sector Hub",
+                List.of(
+                        new Coordinates(23.8500, 90.3850),
+                        new Coordinates(23.8850, 90.3850),
+                        new Coordinates(23.8850, 90.4150),
+                        new Coordinates(23.8500, 90.4150)
+                ),
+                1.40,
+                false
+        ));
+
+        // Mirpur Culinary Hub (Mirpur 1, 2, 10, 11)
+        zones.put("mirpur", new GeofenceZone(
+                "mirpur",
+                "Mirpur Central Dining Hub",
+                List.of(
+                        new Coordinates(23.7950, 90.3500),
+                        new Coordinates(23.8300, 90.3500),
+                        new Coordinates(23.8300, 90.3800),
+                        new Coordinates(23.7950, 90.3800)
+                ),
+                1.50,
+                false
         ));
     }
 

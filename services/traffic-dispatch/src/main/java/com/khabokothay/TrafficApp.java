@@ -25,15 +25,17 @@ public class TrafficApp {
 
         // 1. Zone Geofence Spatial Lookups
         System.out.println("\n[1/3] Spatial Zone Resolution (Jordan Curve Ray-Casting)...");
-        Coordinates ptGulshan2 = new Coordinates(23.7937, 90.4150); // North End Gulshan-2
-        Coordinates ptBanani = new Coordinates(23.7915, 90.4030);   // Banani 11 Cafe Corridor
+        Coordinates ptGulshan2 = new Coordinates(23.7937, 90.4150); // Gulshan-2 Diplomatic Corridor
+        Coordinates ptBanani = new Coordinates(23.7915, 90.4030);   // Banani 11 Dining Strip
         Coordinates ptMohakhali = new Coordinates(23.7780, 90.3990); // Mohakhali Arterial
-        Coordinates ptDhanmondi = new Coordinates(23.7465, 90.3760); // Out-of-zone baseline
+        Coordinates ptDhanmondi = new Coordinates(23.7465, 90.3760); // Dhanmondi Satmasjid Road
+        Coordinates ptKeraniganj = new Coordinates(23.6800, 90.3800); // Out-of-zone baseline
 
         System.out.printf("  Point %s -> %s\n", ptGulshan2, geofenceManager.resolveAreaName(ptGulshan2));
         System.out.printf("  Point %s -> %s\n", ptBanani, geofenceManager.resolveAreaName(ptBanani));
         System.out.printf("  Point %s -> %s\n", ptMohakhali, geofenceManager.resolveAreaName(ptMohakhali));
         System.out.printf("  Point %s -> %s\n", ptDhanmondi, geofenceManager.resolveAreaName(ptDhanmondi));
+        System.out.printf("  Point %s -> %s\n", ptKeraniganj, geofenceManager.resolveAreaName(ptKeraniganj));
 
         // 2. Real-Time Dynamic Trip Quotations
         System.out.println("\n[2/3] Multi-Modal Dispatch Quotations (Banani 11 -> Gulshan-2)...");
