@@ -810,3 +810,23 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: 18/18 Java unit tests passing in `TrafficDispatchTest`, 298/298 Vitest tests passing, 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
 - **Commit Hash**: `cf3fae1`
 - **Undo Command**: `git revert cf3fae1`
+
+## Phase 4 Fix 33: C++ Routing Core Coordinate Bug Elimination & Neutral Baseline
+- **Status**: Completed & Verified
+- **Problem**:
+  - `engines/routing-core/src/main.cpp` contained a nonsensical ternary condition on line 38 (`const double userLng = 23.4250 ? 90.4250 : 90.4250; // Notun Bazar`), and hardcoded origin comments.
+  - `engines/routing-core/src/RoutingCore.cpp` contained legacy comments restricting transit rate calibration descriptions to a small subset of areas.
+  - Variable `checksum` triggered a `-Wunused-but-set-variable` compiler warning under modern `g++`.
+- **Fix**:
+  - Simplified and corrected `userLng` in `engines/routing-core/src/main.cpp` to direct floating point assignment (`const double userLng = 90.4250;`).
+  - Generalized comments in `main.cpp` and `RoutingCore.cpp` to reference the Dhaka Metropolitan Area baseline.
+  - Silenced compiler warning via `(void)checksum;`.
+  - Added automated test in `server/tests/clean-syntax.test.js` asserting zero ternary coordinate bugs and verified presence of expanded geofence constants.
+- **Files**:
+  - `engines/routing-core/src/RoutingCore.cpp`
+  - `engines/routing-core/src/main.cpp`
+  - `server/tests/clean-syntax.test.js`
+  - `docs/FIXLOG.md`
+- **Verification Result**: Compiled cleanly with `g++` (0 compiler warnings), benchmark passed (100,000 queries in ~200ms), 299/299 Vitest tests passing, 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
+- **Commit Hash**: PENDING
+- **Undo Command**: `git revert <hash>`

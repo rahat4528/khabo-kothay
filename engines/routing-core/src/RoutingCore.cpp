@@ -5,7 +5,7 @@
 namespace KhaboKothay {
 
 RoutingCore::RoutingCore() : congestionFactor(1.15) {
-    // Calibrated rates for Gulshan / Banani / Baridhara / Notun Bazar
+    // Calibrated transit rates for Dhaka Metropolitan Area baseline
     parameters[static_cast<int>(VehicleMode::Walking)] = {
         "Walking", 0.0, 0.0, 4.5, 0.0
     };

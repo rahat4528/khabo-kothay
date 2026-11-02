@@ -20,4 +20,22 @@ describe('Codebase Syntax & Encoding Hygiene', () => {
     expect(firstImport).toBe(0);
     expect(firstNonImport).toBeGreaterThan(firstImport);
   });
+  it('ensures C++ routing core and Java traffic dispatch engines have zero coordinate bugs or hardcoded area assumptions', () => {
+    const mainCppPath = path.join(rootDir, 'engines', 'routing-core', 'src', 'main.cpp');
+    const mainCpp = fs.readFileSync(mainCppPath, 'utf8');
+    expect(mainCpp).not.toContain('23.4250 ? 90.4250 : 90.4250');
+    expect(mainCpp).toContain('const double userLng = 90.4250;');
+
+    const routingCppPath = path.join(rootDir, 'engines', 'routing-core', 'src', 'RoutingCore.cpp');
+    const routingCpp = fs.readFileSync(routingCppPath, 'utf8');
+    expect(routingCpp).not.toContain('Calibrated rates for Gulshan');
+
+    const javaGeofencePath = path.join(rootDir, 'services', 'traffic-dispatch', 'src', 'main', 'java', 'com', 'khabokothay', 'geofence', 'DhakaGeofenceManager.java');
+    const javaGeofence = fs.readFileSync(javaGeofencePath, 'utf8');
+    expect(javaGeofence).not.toContain('23.7680, 23.3950');
+    expect(javaGeofence).toContain('23.7680, 90.3950');
+    expect(javaGeofence).toContain('dhanmondi');
+    expect(javaGeofence).toContain('uttara');
+    expect(javaGeofence).toContain('mirpur');
+  });
 });

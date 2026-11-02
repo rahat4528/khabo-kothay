@@ -33,9 +33,9 @@ int main() {
     kdTree.build(dataset);
     std::cout << "    Indexed " << kdTree.size() << " locations in memory.\n\n";
 
-    // 2. Query nearest restaurants from Notun Bazar starting point
+    // 2. Query nearest restaurants from Dhaka user origin point
     const double userLat = 23.7975;
-    const double userLng = 23.4250 ? 90.4250 : 90.4250; // Notun Bazar
+    const double userLng = 90.4250;
     std::cout << "[2] Finding 3 Nearest Restaurants to User (" << userLat << ", " << userLng << "):\n";
     auto nearest3 = kdTree.findKNearest(userLat, userLng, 3);
     for (size_t i = 0; i < nearest3.size(); ++i) {
@@ -79,6 +79,7 @@ int main() {
     auto start = std::chrono::high_resolution_clock::now();
 
     volatile double checksum = 0.0;
+    (void)checksum;
     for (int i = 0; i < benchmarkIterations; ++i) {
         const double qLat = 23.7700 + (i % 300) * 0.0001;
         const double qLng = 90.4000 + (i % 300) * 0.0001;
