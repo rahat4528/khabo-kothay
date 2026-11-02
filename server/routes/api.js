@@ -29,6 +29,7 @@ import { recordConsent, recordCrashReport, recordProblemReport, getDiagnosticsOv
 import { evaluateFlags, updateFlag, getAllFlags } from '../services/flags.js';
 import { getLatestRelease, getPublishedReleases, getAllReleases, createReleaseDraft, publishRelease, withdrawRelease, validateDownloadUrl } from '../services/releases.js';
 import { getAuditLogs } from '../services/audit.js';
+import { searchDhakaLocations, getAllDhakaLocations, findClosestDhakaLocation, getDhakaLocationByName } from '../services/locations.js';
 
 import preferencesConfig from '../config/preferences.json' with { type: 'json' };
 import featureFlags from '../config/featureFlags.js';
@@ -45,7 +46,8 @@ const EXEMPT_VERSION_ENDPOINTS = new Set([
   '/download-info',
   '/apk/meta',
   '/qr',
-  '/config'
+  '/config',
+  '/locations'
 ]);
 
 // Server-side version enforcement middleware (HTTP 426 Upgrade Required)
@@ -262,6 +264,24 @@ router.get('/config', (req, res) => {
     googleBrowserKey: process.env.GOOGLE_BROWSER_KEY || '',
     useMockData: isMock,
     presetLocations: PRESET_LOCATIONS
+  });
+});
+
+/**
+ * GET /api/locations
+ * Dynamic search across all 118 verified Dhaka locations.
+ * Query params:
+ *   q: string (search prefix or query)
+ *   limit: number (optional, default 30)
+ */
+router.get('/locations', (req, res) => {
+  const q = req.query.q !== undefined ? String(req.query.q).trim() : '';
+  const limit = req.query.limit ? Math.min(Math.max(1, parseInt(req.query.limit, 10) || 30), 150) : 30;
+  const results = searchDhakaLocations(q, { limit });
+  res.json({
+    query: q,
+    count: results.length,
+    locations: results
   });
 });
 

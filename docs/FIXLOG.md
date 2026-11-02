@@ -661,3 +661,21 @@ Tracking the execution and verification of Five Quality Fixes:
 
 
 
+
+
+## Phase 4 Fix 27: Dynamic Dhaka Locations API & Search Engine
+- **Status**: Completed & Verified
+- **Problem**:
+  - The application previously relied on a rigid, hardcoded list of 10 spots, without allowing users to search dynamically across all Dhaka neighborhoods or query by letter (e.g. typing "A" returning all areas starting with A).
+- **Fix**:
+  - Created `server/services/locations.js` leveraging `server/data/dhaka-locations.json` (118 verified locations) providing prefix-prioritized multi-tier search (exact prefix matching on English standardized names, Bangla names, word boundaries, and fuzzy/alternative names).
+  - Added `GET /api/locations` endpoint supporting dynamic prefix queries (`?q=`) and limit parameters.
+  - Added `findClosestDhakaLocation(lat, lng)` helper using Haversine calculation to map GPS coordinates to the nearest neighborhood.
+  - Added unit test suite in `server/tests/locations-dynamic.test.js` (9 tests) verifying prefix queries for letter "A" (Abdullahpur, Adabor, Aftabnagar, etc.), "B", "M", "U", Bangla queries, case-insensitivity, and distance calculation.
+- **Files**:
+  - `server/services/locations.js`
+  - `server/routes/api.js`
+  - `server/tests/locations-dynamic.test.js`
+- **Verification Result**: 279/279 Vitest tests passing (9 new tests in `server/tests/locations-dynamic.test.js`), 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
+- **Commit Hash**: PENDING
+- **Undo Command**: `git revert <hash>`
