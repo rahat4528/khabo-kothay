@@ -677,8 +677,8 @@ Tracking the execution and verification of Five Quality Fixes:
   - `server/routes/api.js`
   - `server/tests/locations-dynamic.test.js`
 - **Verification Result**: 279/279 Vitest tests passing (9 new tests in `server/tests/locations-dynamic.test.js`), 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
-- **Commit Hash**: PENDING
-- **Undo Command**: `git revert <hash>`
+- **Commit Hash**: `793ebb8`
+- **Undo Command**: `git revert 793ebb8`
 
 
 ## Phase 4 Fix 28: Dynamic Location Search Combobox & Automatic GPS Detection (Web)
@@ -700,8 +700,8 @@ Tracking the execution and verification of Five Quality Fixes:
   - `public/js/app.js`
   - `server/tests/gps-auto-detect.test.js`
 - **Verification Result**: 284/284 Vitest tests passing (5 new tests in `server/tests/gps-auto-detect.test.js`), 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
-- **Commit Hash**: PENDING
-- **Undo Command**: `git revert <hash>`
+- **Commit Hash**: `0c0158e`
+- **Undo Command**: `git revert 0c0158e`
 
 
 ## Phase 4 Fix 29: Elimination of Hardcoded Gulshan & Notun Bazar Defaults Across Web & Mobile
@@ -738,8 +738,8 @@ Tracking the execution and verification of Five Quality Fixes:
   - `server/services/weather.js`
   - `server/tests/neutral-locations.test.js`
 - **Verification Result**: 289/289 Vitest tests passing (5 new tests in `server/tests/neutral-locations.test.js`), 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
-- **Commit Hash**: PENDING
-- **Undo Command**: `git revert <hash>`
+- **Commit Hash**: `75e8652`
+- **Undo Command**: `git revert 75e8652`
 
 
 ## Phase 4 Fix 30: Brand Logo Vector Redesign & High-Definition Geometry
@@ -808,5 +808,5 @@ Tracking the execution and verification of Five Quality Fixes:
   - `services/traffic-dispatch/src/test/java/com/khabokothay/TrafficDispatchTest.java`
   - `docs/FIXLOG.md`
 - **Verification Result**: 18/18 Java unit tests passing in `TrafficDispatchTest`, 298/298 Vitest tests passing, 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
-- **Commit Hash**: PENDING
-- **Undo Command**: `git revert <hash>`
+- **Commit Hash**: `cf3fae1`
+- **Undo Command**: `git revert cf3fae1`
