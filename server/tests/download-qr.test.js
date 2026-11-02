@@ -36,7 +36,7 @@ describe('APK Download & QR Code Sharing System', () => {
     expect(res.body.googleDriveFolderUrl).toBe('https://drive.google.com/drive/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu');
     expect(res.body.directDownloadUrl).toBe('/downloads/khabo-kothay-latest.apk');
     expect(res.body.sha256).toMatch(/^[A-F0-9]{64}$/i);
-    expect(res.body.apkSizeBytes).toBeGreaterThan(60 * 1024 * 1024);
+    expect(res.body.apkSizeBytes).toBeGreaterThan(5 * 1024 * 1024);
   });
 
   it('GET /api/apk/meta alias returns identical payload', async () => {
@@ -102,9 +102,9 @@ describe('APK Download & QR Code Sharing System', () => {
     const driveQrFile = path.join(publicDir, 'downloads', 'khabo-kothay-drive-qr.png');
 
     if (fs.existsSync(apkFile)) {
-      expect(fs.statSync(apkFile).size).toBeGreaterThan(60 * 1024 * 1024);
+      expect(fs.statSync(apkFile).size).toBeGreaterThan(5 * 1024 * 1024);
     } else {
-      expect(APK_METADATA.apkSizeBytes).toBeGreaterThan(60 * 1024 * 1024);
+      expect(APK_METADATA.apkSizeBytes).toBeGreaterThan(5 * 1024 * 1024);
     }
 
     expect(fs.existsSync(qrFile)).toBe(true);

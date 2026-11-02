@@ -104,6 +104,8 @@ async function initApp() {
     initFeedbackCard();
     initPwaInstall();
     initModeTabs();
+    initMobileNavigation();
+    initFooter();
     initMealTimeUI({
       containerId: 'mealTimeControlPanel',
       resultsContainerId: 'resultsContainer',
@@ -846,6 +848,71 @@ function initModeTabs() {
     panelStd?.classList.add('hidden');
     panelMeal?.classList.remove('hidden');
   });
+}
+
+
+function initMobileNavigation() {
+  const menuBtn = document.getElementById('mobileMenuBtn');
+  const drawer = document.getElementById('mobileNavDrawer');
+  const backdrop = document.getElementById('mobileNavBackdrop');
+  const closeBtn = document.getElementById('closeMobileNavBtn');
+  const links = drawer ? drawer.querySelectorAll('.mobile-nav-link') : [];
+  const mobileLangBtn = document.getElementById('mobileLangToggleBtn');
+  const mobileThemeBtn = document.getElementById('mobileThemeToggleBtn');
+  const langToggleBtn = document.getElementById('langToggleBtn');
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+
+  function openDrawer() {
+    drawer?.removeAttribute('hidden');
+    menuBtn?.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    drawer?.setAttribute('hidden', '');
+    menuBtn?.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  menuBtn?.addEventListener('click', () => {
+    const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
+    if (isExpanded) {
+      closeDrawer();
+    } else {
+      openDrawer();
+    }
+  });
+
+  backdrop?.addEventListener('click', closeDrawer);
+  closeBtn?.addEventListener('click', closeDrawer);
+
+  links.forEach(link => {
+    link.addEventListener('click', () => {
+      closeDrawer();
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && drawer && !drawer.hasAttribute('hidden')) {
+      closeDrawer();
+      menuBtn?.focus();
+    }
+  });
+
+  mobileLangBtn?.addEventListener('click', () => {
+    langToggleBtn?.click();
+  });
+
+  mobileThemeBtn?.addEventListener('click', () => {
+    themeToggleBtn?.click();
+  });
+}
+
+function initFooter() {
+  const currentYearEl = document.getElementById('currentYear');
+  if (currentYearEl) {
+    currentYearEl.textContent = new Date().getFullYear();
+  }
 }
 
 document.addEventListener('DOMContentLoaded', initApp);

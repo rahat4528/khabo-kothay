@@ -192,6 +192,11 @@ app.get(['/download', '/apk'], (req, res) => {
   res.sendFile(path.join(publicDir, 'download.html'));
 });
 
+// Branded Custom 404 Error Page
+app.get('/404', (req, res) => {
+  res.status(404).sendFile(path.join(publicDir, '404.html'));
+});
+
 // Alias /manifest.json to /manifest.webmanifest for backward compatibility
 app.get('/manifest.json', (req, res) => {
   res.type('application/manifest+json').sendFile(path.join(publicDir, 'manifest.webmanifest'));

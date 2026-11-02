@@ -1,16 +1,16 @@
 import * as Location from 'expo-location';
 
 export const PRESET_LOCATIONS = {
-  'Notun Bazar': { lat: 23.7975, lng: 90.4234, name: 'Notun Bazar Bus Stand' },
-  'Gulshan 1': { lat: 23.7785, lng: 90.4178, name: 'Gulshan 1 Circle' },
-  'Gulshan 2': { lat: 23.7925, lng: 90.4150, name: 'Gulshan 2 Circle' },
+  'Bailey Road': { lat: 23.7410, lng: 90.4072, name: 'Bailey Road' },
   'Banani': { lat: 23.7937, lng: 90.4046, name: 'Banani Road 11' },
   'Baridhara': { lat: 23.7998, lng: 90.4215, name: 'Baridhara Diplomatic Zone' },
-  'Dhanmondi': { lat: 23.7465, lng: 90.3760, name: 'Dhanmondi Road 27' },
-  'Uttara': { lat: 23.8728, lng: 90.3984, name: 'Uttara Sector 3' },
   'Bashundhara R/A': { lat: 23.8164, lng: 90.4278, name: 'Bashundhara R/A Gate' },
+  'Dhanmondi': { lat: 23.7465, lng: 90.3760, name: 'Dhanmondi Road 27' },
+  'Gulshan 1': { lat: 23.7785, lng: 90.4178, name: 'Gulshan 1 Circle' },
+  'Gulshan 2': { lat: 23.7925, lng: 90.4150, name: 'Gulshan 2 Circle' },
   'Mirpur': { lat: 23.8071, lng: 90.3686, name: 'Mirpur 10 Circle' },
-  'Bailey Road': { lat: 23.7410, lng: 90.4072, name: 'Bailey Road' }
+  'Notun Bazar': { lat: 23.7975, lng: 90.4234, name: 'Notun Bazar Bus Stand' },
+  'Uttara': { lat: 23.8728, lng: 90.3984, name: 'Uttara Sector 3' }
 };
 
 export const DEFAULT_LOCATION = { lat: 23.8103, lng: 90.4125, name: 'Dhaka' };

@@ -12,6 +12,16 @@
   <link rel="alternate icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="canonical" href="https://khabo-kothay-backend.onrender.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Khabo Kothay? – Dhaka Dining Intelligence &amp; Food Finder">
+  <meta property="og:description" content="Discover where to eat right now across Dhaka neighborhoods with live traffic-aware travel times, transport fares, and AI personalization.">
+  <meta property="og:url" content="https://khabo-kothay-backend.onrender.com/">
+  <meta property="og:image" content="https://khabo-kothay-backend.onrender.com/img/icon.svg">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Khabo Kothay? – Dhaka Dining Intelligence">
+  <meta name="twitter:description" content="Discover where to eat across 100+ Dhaka neighborhoods with real-time transit times &amp; fares.">
+  <meta name="twitter:image" content="https://khabo-kothay-backend.onrender.com/img/icon.svg">
   <link rel="stylesheet" href="/css/theme.css">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -22,13 +32,13 @@
   <!-- Header / Navigation -->
   <header class="app-header">
     <div class="header-inner container">
-      <div class="brand">
+      <a href="/" class="brand" aria-label="Khabo Kothay home" style="text-decoration: none;">
         <img id="brandLogoImg" src="/img/icon.svg" alt="Khabo Kothay? Logo" class="brand-logo" width="38" height="38">
         <div class="brand-text">
           <h1>Khabo Kothay? <span class="bn-title">খাবো কোথায়?</span></h1>
           <span class="brand-tagline">Dhaka Dining Intelligence</span>
         </div>
-      </div>
+      </a>
 
       <!-- Center Minimal Navigation (STOA Editorial Inspired) -->
       <nav class="header-nav" aria-label="Quick Section Navigation">
@@ -78,8 +88,38 @@
           <span>📜</span> History
         </button>
       </div>
+    
+      <!-- Mobile Hamburger Menu Button (Item 3) -->
+      <button id="mobileMenuBtn" class="mobile-menu-btn" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileNavDrawer">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
     </div>
   </header>
+
+  <!-- Accessible Mobile Navigation Drawer (Item 3) -->
+  <aside id="mobileNavDrawer" class="mobile-nav-drawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation" hidden>
+    <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+    <div class="mobile-nav-panel">
+      <div class="mobile-nav-header">
+        <div class="mobile-nav-title">Navigation</div>
+        <button id="closeMobileNavBtn" class="mobile-nav-close-btn" type="button" aria-label="Close navigation menu">✕</button>
+      </div>
+      <nav class="mobile-nav-links" aria-label="Mobile section navigation">
+        <a href="#heroSection" class="mobile-nav-link"><span>🏠</span> Overview</a>
+        <a href="#controlPanelSection" class="mobile-nav-link"><span>🔍</span> Search &amp; Location</a>
+        <a href="#topPicksContainer" class="mobile-nav-link"><span>⭐</span> Top Picks</a>
+        <a href="#filterOptionsSidebar" class="mobile-nav-link"><span>🎛️</span> Filters</a>
+        <a href="#mapContainer" class="mobile-nav-link"><span>🗺️</span> Live Map</a>
+        <a href="/download" class="mobile-nav-link highlight"><span>📥</span> Download Android APK</a>
+      </nav>
+      <div class="mobile-nav-footer">
+        <button id="mobileLangToggleBtn" class="btn btn-secondary btn-sm" type="button" style="width: 100%; margin-bottom: 8px;">🌐 বাংলা / English</button>
+        <button id="mobileThemeToggleBtn" class="btn btn-secondary btn-sm" type="button" style="width: 100%;">🌓 Switch Theme</button>
+      </div>
+    </div>
+  </aside>
 
   <!-- Offline Status Banner -->
   <aside id="offlineBanner" class="server-wakeup-banner offline-banner hidden" role="status" aria-live="polite">
@@ -789,6 +829,49 @@
       <div id="mealEstimatorBody" class="modal-body"></div>
     </div>
   </div>
+
+  <!-- Application Semantic Footer (Items 7, 9, 17, 18, 19) -->
+  <footer class="app-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand-col">
+          <a href="/" class="brand footer-brand" aria-label="Khabo Kothay home" style="text-decoration: none;">
+            <img src="/img/icon.svg" alt="Khabo Kothay? Logo" width="32" height="32" class="footer-logo">
+            <span class="footer-brand-title">Khabo Kothay?</span>
+          </a>
+          <p class="footer-brand-desc">
+            Dhaka's premier real-time dining intelligence platform. Traffic-aware transit times, calibrated Rickshaw &amp; CNG fare calculations, and intelligent culinary discovery across 100+ neighborhoods.
+          </p>
+        </div>
+
+        <div class="footer-links-col">
+          <h4 class="footer-heading">Quick Navigation</h4>
+          <ul class="footer-links-list">
+            <li><a href="#heroSection" class="footer-link">Overview</a></li>
+            <li><a href="#controlPanelSection" class="footer-link">Search &amp; Recommendations</a></li>
+            <li><a href="#topPicksContainer" class="footer-link">Curated Top Picks</a></li>
+            <li><a href="#mapContainer" class="footer-link">Dhaka Dining Map</a></li>
+            <li><a href="/download" class="footer-link">Download Android APK</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-contact-col">
+          <h4 class="footer-heading">Direct Contact</h4>
+          <ul class="footer-links-list">
+            <li><a href="mailto:support@khabokothay.com" class="footer-link"><span>✉️</span> support@khabokothay.com</a></li>
+            <li><a href="tel:+8801711522244" class="footer-link"><span>📞</span> +880 1711-522244</a></li>
+            <li><span class="footer-meta-text">📍 Dhaka Metropolitan Area, Bangladesh</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copyright">
+          © <span id="currentYear">2026</span> Khabo Kothay? (খাবো কোথায়?). All rights reserved. Built with precision for Dhaka food lovers.
+        </p>
+      </div>
+    </div>
+  </footer>
 
   <!-- App Script Modules -->
   <script type="module" src="/js/app.js"></script>

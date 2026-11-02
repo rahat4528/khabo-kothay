@@ -830,3 +830,35 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: Compiled cleanly with `g++` (0 compiler warnings), benchmark passed (100,000 queries in ~200ms), 299/299 Vitest tests passing, 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
 - **Commit Hash**: `e9c5849`
 - **Undo Command**: `git revert e9c5849`
+
+## Phase 5: Master Location Engine, Real Native APK Build & Site-Wide 20-Item Polish
+- **Status**: Completed & Verified
+- **Problem**:
+  - Legacy APK download was an HTML error file (42 KB) masquerading as an APK due to missing build wrapper and resources, causing fatal `failed opening zip` and `Malformed APK` parsing crashes on Android.
+  - Previous preset location ordering promoted 'Notun Bazar' and 'Gulshan' over other Dhaka areas.
+  - Web application lacked an accessible mobile navigation hamburger drawer on viewports <= 960px, semantic footer with direct dialer/email links, and branded 404 error screen.
+  - Missing OpenGraph, Twitter, and canonical metadata tags in `index.html` and `download.html`.
+- **Fix**:
+  - **Section 13 (Real APK Build & Signature)**: Added standard Gradle 8.4 wrapper, restored Android XML themes and mipmap icons in `android/app/src/main/res/`, added `toBengaliDigits` helper method in `BengaliFormatter.java`, and compiled genuine debug APK (7,858,117 bytes / 7.49 MB). Verified with official Android SDK 34 `aapt2 dump badging` (`com.khabokothay.app`, minSdk 24, targetSdk 34), `apksigner verify` (v2 scheme valid), `zipalign -c -v 4` (verification successful), and verified SHA-256 (`7584E6983BA19CE71DE7DA63FDCA94C6053559B2C12F455DCB67100381A64896`).
+  - **Section 2 & 3 (Neutral Dynamic Suggestions)**: Reordered location presets across `mobile/src/services/location.js`, `public/js/api.js`, and `server/services/mock.js` to strict alphabetical ordering with zero hardcoded promotion. Reused verified 118-area database in `server/services/locations.js` for prefix and fuzzy matching across Dhaka.
+  - **Section 4 & 5 (GPS Permission & Detection)**: Maintained non-blocking browser Geolocation and mobile `expo-location` permission handling with 8-10s timeout, graceful error fallbacks (code 1 denied, code 2 unavailable, code 3 timeout), and app-wide state sync.
+  - **Section 14 (Site-Wide 20-Item Checklist)**:
+    - Item 1 & 16: Zero horizontal overflow rules (`overflow-x: hidden`, `overflow-wrap: anywhere`, viewport meta) from 320px to 1280px.
+    - Item 2: Verified all navigation anchors (`#heroSection`, `#controlPanelSection`, `#topPicksContainer`, `#filterOptionsSidebar`, `#mapContainer`).
+    - Item 3: Built accessible mobile navigation drawer with hamburger button (`#mobileMenuBtn`, `aria-expanded`, `aria-controls`), dialog semantics, keyboard Esc handler, and backdrop dismiss.
+    - Item 4: Verified favicons (`.svg`, `-32.png`, `-192.png`, `-512.png`) and `manifest.webmanifest`.
+    - Item 5: Branded page titles across `index.html`, `download.html`, and `404.html`.
+    - Item 6: Added OpenGraph, Twitter card, and canonical link tags.
+    - Item 7: Implemented semantic footer with categorized navigation and contact columns.
+    - Item 8: Built custom branded 404 page (`public/404.html`) and Express route handler.
+    - Item 9: Dynamic copyright year (`new Date().getFullYear()`) across web, download, and error pages.
+    - Item 10: Explicit image width/height dimensions and meaningful alt attributes.
+    - Item 11 & 19: Minimum 44x44px touch targets on mobile interactive controls.
+    - Item 12: Status banners with `role="status"` and `aria-live="polite"`.
+    - Item 13: Download page dynamically reflecting real APK size (7.49 MB) and verified SHA-256 hash.
+    - Item 14: Confirmed zero placeholder artifacts (`TODO`, `FIXME`, `Lorem ipsum`) in user-facing code.
+    - Item 15: Cleaned up unused tabs.
+    - Item 17: Clickable brand logo returning to home (`/`).
+    - Item 18: Clickable, validly formatted `tel:+8801711522244` and `mailto:support@khabokothay.com` links.
+    - Item 20: Comprehensive site cleanup.
+  - **Verification**: Created 16-test automated verification suite in `server/tests/site-wide-fixes.test.js`. All 315/315 Vitest tests pass across 51 test files.

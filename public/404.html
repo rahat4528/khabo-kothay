@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Page Not Found | Khabo Kothay?</title>
+  <meta name="description" content="The page you are looking for does not exist on Khabo Kothay. Return to home to discover where to eat across Dhaka.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/png" href="/favicon-32.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .error-page-container {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 32px 16px;
+    }
+    .error-code {
+      font-size: 5rem;
+      font-weight: 800;
+      color: var(--color-brand-primary, #FF6E40);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .error-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-main, #1E2229);
+      margin-bottom: 12px;
+    }
+    .error-desc {
+      font-size: 1.05rem;
+      color: var(--text-muted, #706C66);
+      max-width: 480px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+    }
+    .error-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body class="error-page">
+  <header class="app-header">
+    <div class="header-inner container">
+      <a href="/" class="brand" aria-label="Khabo Kothay home" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+        <img src="/img/icon.svg" alt="Khabo Kothay? Logo" class="brand-logo" width="38" height="38">
+        <div class="brand-text">
+          <h1 style="font-size: 1.25rem; font-weight: 700; margin: 0; color: var(--text-main, #1E2229);">Khabo Kothay? <span class="bn-title">খাবো কোথায়?</span></h1>
+          <span class="brand-tagline" style="font-size: 0.75rem; color: var(--text-muted, #706C66);">Dhaka Dining Intelligence</span>
+        </div>
+      </a>
+    </div>
+  </header>
+
+  <main class="container error-page-container" role="main">
+    <div class="error-code" aria-hidden="true">404</div>
+    <h2 class="error-title">Page Not Found / পেজটি পাওয়া যায়নি</h2>
+    <p class="error-desc">
+      We couldn't find the page or dining spot you were looking for. It might have been moved or doesn't exist.
+      <br>
+      <span style="font-size: 0.95rem; color: var(--color-brand-primary, #FF6E40);">চলুন মূল পেজে ফিরে যাই এবং ঢাকার সেরা খাবারের সন্ধান করি।</span>
+    </p>
+    <div class="error-actions">
+      <a href="/" class="btn btn-primary" style="padding: 12px 24px; text-decoration: none;">
+        <span>🏠</span> Back to Home
+      </a>
+      <a href="/#controlPanelSection" class="btn btn-secondary" style="padding: 12px 24px; text-decoration: none;">
+        <span>🔍</span> Search Restaurants
+      </a>
+    </div>
+  </main>
+
+  <footer class="app-footer" style="margin-top: auto; padding: 24px 0; border-top: 1px solid var(--border-color, rgba(0,0,0,0.1)); text-align: center; font-size: 0.85rem; color: var(--text-muted, #706C66);">
+    <div class="container">
+      <p>© <span id="errCurrentYear">2026</span> Khabo Kothay? (খাবো কোথায়?). All rights reserved.</p>
+    </div>
+  </footer>
+  <script>
+    const el = document.getElementById('errCurrentYear');
+    if (el) el.textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

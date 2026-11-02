@@ -4,9 +4,9 @@ const DEFAULT_METADATA = {
   appName: 'KHABO KOTHAY?',
   appNameBn: 'খাবো কোথায়?',
   version: '1.1.0',
-  apkSize: '64.98 MB',
-  apkSizeBytes: 64024956,
-  sha256: '40238FEF2107530877B65E76B7444E4F5A3C2F93CC7DF0A6E69AFFF319F62C3C',
+  apkSize: '7.49 MB',
+  apkSizeBytes: 7858117,
+  sha256: '7584E6983BA19CE71DE7DA63FDCA94C6053559B2C12F455DCB67100381A64896',
   packageId: 'com.khabokothay.app',
   googleDriveFolderUrl: 'https://drive.google.com/drive/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu',
   googleDriveUserUrl: 'https://drive.google.com/drive/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu',
@@ -18,7 +18,7 @@ const I18N = {
     backToApp: '← Back to App',
     tagline: 'Dhaka Traffic-Aware Dining Recommendation Engine & Personal Food Assistant',
     badgeRelease: 'v1.1.0 Release',
-    badgeSize: '64.98 MB',
+    badgeSize: '7.49 MB',
     badgeAndroid: 'Android 8.0+',
     badgeVerified: 'Verified SHA-256',
     driveTitle: 'Official Google Drive Hosting',
@@ -27,7 +27,7 @@ const I18N = {
     copyDrive: 'Copy Drive Link',
     directTitle: 'Direct Server Mirror',
     directDesc: 'Fast direct download from our application server (Port 3000 / LAN).',
-    btnDirect: 'Direct APK Download (61 MB)',
+    btnDirect: 'Direct APK Download (7.49 MB)',
     copyDirect: 'Copy Direct Link',
     qrTitle: 'QR Code Sharing',
     qrSubtitle: 'Scan this QR code with any smartphone camera to open the download page or get the APK.',
@@ -53,7 +53,7 @@ const I18N = {
     backToApp: '← মূল অ্যাপে ফিরুন',
     tagline: 'ঢাকার ট্রাফিক সচেতন রেস্তোরাঁ ও ক্যাফে সন্ধানকারী পার্সোনাল ফুড অ্যাসিস্ট্যান্ট',
     badgeRelease: 'v১.১.০ রিলিজ',
-    badgeSize: '৬১.০৬ মেগাবাইট',
+    badgeSize: '৭.৪৯ মেগাবাইট',
     badgeAndroid: 'অ্যান্ড্রয়েড ৮.০+',
     badgeVerified: 'যাচাইকৃত SHA-256',
     driveTitle: 'অফিসিয়াল গুগল ড্রাইভ হোস্টিং',
@@ -62,7 +62,7 @@ const I18N = {
     copyDrive: 'ড্রাইভ লিংক কপি করুন',
     directTitle: 'ডিরেক্ট সার্ভার ডাউনলোড',
     directDesc: 'লোকাল অ্যাপ সার্ভার থেকে সরাসরি হাই-স্পিড APK ডাউনলোড।',
-    btnDirect: 'ডিরেক্ট APK ডাউনলোড (৬১ MB)',
+    btnDirect: 'ডিরেক্ট APK ডাউনলোড (৭.৫ MB)',
     copyDirect: 'ডিরেক্ট লিংক কপি করুন',
     qrTitle: 'QR কোড শেয়ারিং',
     qrSubtitle: 'ফোনের ক্যামেরা দিয়ে QR কোড স্ক্যান করে ডাউনলোড পেজটি খুলুন বা APK ডাউনলোড করুন।',
@@ -91,6 +91,7 @@ let activeQrMode = 'page'; // 'page' or 'drive'
 let appMeta = { ...DEFAULT_METADATA };
 
 document.addEventListener('DOMContentLoaded', async () => {
+  const yr = document.getElementById("dlCurrentYear"); if (yr) yr.textContent = new Date().getFullYear();
   initTheme();
   initLanguage();
   await loadMetadata();

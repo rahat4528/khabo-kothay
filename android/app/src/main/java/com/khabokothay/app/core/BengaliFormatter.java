@@ -8,6 +8,14 @@ public final class BengaliFormatter {
 
     private BengaliFormatter() {}
 
+    public static String toBengaliDigits(String input) {
+        return toBanglaDigits(input);
+    }
+
+    public static String toBengaliDigits(long number) {
+        return toBanglaDigits(number);
+    }
+
     public static String toBanglaDigits(long number) {
         return toBanglaDigits(String.valueOf(number));
     }
