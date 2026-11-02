@@ -1,24 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="pinGradTrans" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6E40"/>
+      <stop offset="50%" stop-color="#FF5722"/>
+      <stop offset="100%" stop-color="#E64A19"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Geolocation Pin -->
+  <path d="M 512 840 C 470 770 300 550 300 400 C 300 256 395 150 512 150 C 629 150 724 256 724 400 C 724 550 554 770 512 840 Z" fill="url(#pinGradTrans)"/>
   
-  <g transform="scale(2)">
-    <path d="M 163 198
-    C 134 165 122 147 122 128
-    C 122 105 140 88 163 88
-    C 186 88 204 105 204 128
-    C 204 147 192 165 163 198 Z
-    M 163 114
-    A 14 14 0 1 0 163 142
-    A 14 14 0 1 0 163 114 Z" fill="#FF5722" fill-rule="evenodd"/>
-    <path d="M 135 204
-    L 191 204
-    L 191 246
-    L 366 110
-    L 366 186
-    L 224 282
-    L 372 386
-    L 304 386
-    L 191 316
-    L 135 386
-    Z" fill="#FFFFFF"/>
-  </g>
+  <!-- Inner Pure White Pin Aperture -->
+  <circle cx="512" cy="400" r="170" fill="#FFFFFF"/>
+
+  <!-- Cloche Serving Dome -->
+  <path d="M 416 460 C 416 385 455 330 512 330 C 569 330 608 385 608 460 Z" fill="#FF5722"/>
+  <!-- Cloche Handle / Knob -->
+  <circle cx="512" cy="316" r="16" fill="#FF5722"/>
+  <!-- Platter Serving Tray Base -->
+  <rect x="390" y="468" width="244" height="18" rx="9" fill="#1E1C1A"/>
+  <!-- Platter Rim Highlight -->
+  <rect x="410" y="472" width="204" height="6" rx="3" fill="#FF6E40"/>
+  
+  <!-- Warm Aroma Steam Curves -->
+  <path d="M 470 292 C 462 274 466 256 476 242" fill="none" stroke="#FF6E40" stroke-width="8" stroke-linecap="round"/>
+  <path d="M 512 284 C 504 266 508 248 518 232" fill="none" stroke="#FF5722" stroke-width="9" stroke-linecap="round"/>
+  <path d="M 554 292 C 546 274 550 256 560 242" fill="none" stroke="#FF6E40" stroke-width="8" stroke-linecap="round"/>
 </svg>

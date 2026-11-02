@@ -1,24 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
-  <rect width="128" height="128" rx="28.16" fill="#171717"/>
-  <g transform="scale(0.25)">
-    <path d="M 163 198
-    C 134 165 122 147 122 128
-    C 122 105 140 88 163 88
-    C 186 88 204 105 204 128
-    C 204 147 192 165 163 198 Z
-    M 163 114
-    A 14 14 0 1 0 163 142
-    A 14 14 0 1 0 163 114 Z" fill="#FF5722" fill-rule="evenodd"/>
-    <path d="M 135 204
-    L 191 204
-    L 191 246
-    L 366 110
-    L 366 186
-    L 224 282
-    L 372 386
-    L 304 386
-    L 191 316
-    L 135 386
-    Z" fill="#FFFFFF"/>
-  </g>
+  <defs>
+    <linearGradient id="favPin" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6E40"/>
+      <stop offset="100%" stop-color="#E64A19"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#171717"/>
+  <path d="M 64 105 C 59 96 38 69 38 50 C 38 32 50 19 64 19 C 78 19 90 32 90 50 C 90 69 69 96 64 105 Z" fill="url(#favPin)"/>
+  <circle cx="64" cy="50" r="21" fill="#FFFFFF"/>
+  <path d="M 52 57 C 52 48 57 41 64 41 C 71 41 76 48 76 57 Z" fill="#FF5722"/>
+  <circle cx="64" cy="39" r="2.5" fill="#FF5722"/>
+  <rect x="49" y="58" width="30" height="3" rx="1.5" fill="#171717"/>
 </svg>

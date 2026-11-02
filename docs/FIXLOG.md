@@ -740,3 +740,31 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: 289/289 Vitest tests passing (5 new tests in `server/tests/neutral-locations.test.js`), 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
 - **Commit Hash**: PENDING
 - **Undo Command**: `git revert <hash>`
+
+
+## Phase 4 Fix 30: Brand Logo Vector Redesign & High-Definition Geometry
+- **Status**: Completed & Verified
+- **Problem**:
+  - The previous logo and icon files contained rough, jagged, stepped polygon paths (`L 366 110 L 366 186 L 224 282 L 372 386`) inside awkward arbitrary scale transforms (`scale(2)`, `scale(0.25)`, `scale(0.10546875)`).
+  - The visual mark lacked professional balance, sharpness, and clean geometry across high-DPI desktop and mobile screens.
+- **Fix**:
+  - Re-engineered the brand icon into a high-definition 1024x1024 vector mark featuring a smooth, mathematically symmetrical geolocation pin in radiant brand gradients (`#FF6E40` to `#FF5722`), an inner pure white aperture, and an elegant dining cloche with aroma steam curves.
+  - Crafted an ultra-sharp 128x128 favicon (`public/favicon.svg`) with thick, crisp contours that render distinctly down to 16x16 tab resolutions.
+  - Crafted horizontal brand logos (`public/img/logo.svg`, `logo-dark.svg`, `mobile/assets/logo.svg`, `logo-dark.svg`) featuring a 54x54 icon tile with crisp typography and brand coral question mark accent.
+  - Added automated test suite `server/tests/logo-sharpness.test.js` (5 tests) enforcing SVG XML validity, standard viewBox coordinates, and complete elimination of legacy jagged polygons.
+- **Files**:
+  - `public/img/icon.svg`
+  - `public/img/icon-transparent.svg`
+  - `public/favicon.svg`
+  - `public/img/logo.svg`
+  - `public/img/logo-dark.svg`
+  - `brand/logo/icon.svg`
+  - `brand/logo/icon-transparent.svg`
+  - `mobile/assets/icon.svg`
+  - `mobile/assets/icon-transparent.svg`
+  - `mobile/assets/logo.svg`
+  - `mobile/assets/logo-dark.svg`
+  - `server/tests/logo-sharpness.test.js`
+- **Verification Result**: 294/294 Vitest tests passing (5 new tests in `server/tests/logo-sharpness.test.js`), 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
+- **Commit Hash**: PENDING
+- **Undo Command**: `git revert <hash>`
