@@ -165,27 +165,35 @@
 
       <!-- Location Selector -->
       <div class="control-group">
-        <label class="control-label">📍 Where are you right now?</label>
+        <label class="control-label" id="locationLabel">📍 Where are you right now?</label>
         <div class="location-inputs">
-          <button id="useLocationBtn" class="btn btn-outline loc-btn" type="button">
-            <span>📡</span> Use Current GPS
+          <button id="useLocationBtn" class="btn btn-outline loc-btn" type="button" aria-label="Detect current location via device GPS">
+            <span>📡</span> <span id="useLocationBtnText">Use Current GPS</span>
           </button>
-          <div class="select-wrapper">
-            <select id="locationSelect" class="form-select" aria-label="Select starting spot in Dhaka">
-              <option value="Notun Bazar" selected>Notun Bazar Bus Stand</option>
-              <option value="Gulshan 1">Gulshan 1 Circle</option>
-              <option value="Gulshan 2">Gulshan 2 Circle</option>
-              <option value="Banani">Banani Road 11</option>
-              <option value="Baridhara">Baridhara Diplomatic Zone</option>
-              <option value="Dhanmondi">Dhanmondi Road 27</option>
-              <option value="Uttara">Uttara Sector 3</option>
-              <option value="Bashundhara R/A">Bashundhara R/A Gate</option>
-              <option value="Mirpur">Mirpur 10 Circle</option>
-              <option value="Bailey Road">Bailey Road</option>
+          <div class="location-combobox-wrapper" id="locationCombobox" role="combobox" aria-expanded="false" aria-haspopup="listbox">
+            <div class="location-input-container">
+              <span class="location-search-icon" aria-hidden="true">🔍</span>
+              <input
+                type="text"
+                id="locationSearchInput"
+                class="form-input location-search-input"
+                placeholder="Search area across Dhaka (type 'A', 'Dhanmondi', 'উত্তরা')..."
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="Search area across Dhaka"
+                aria-autocomplete="list"
+                aria-controls="locationSuggestions"
+              >
+              <button type="button" id="clearLocationSearchBtn" class="location-clear-btn hidden" aria-label="Clear location search">✕</button>
+            </div>
+            <div id="locationSuggestions" class="location-suggestions-dropdown hidden" role="listbox" aria-label="Dhaka area suggestions"></div>
+            <!-- Hidden fallback select for backward compatibility -->
+            <select id="locationSelect" class="sr-only" aria-hidden="true" tabindex="-1">
+              <option value="Dhaka" selected>Dhaka Central</option>
             </select>
           </div>
         </div>
-        <div id="locationStatus" class="location-status-text">Starting from: Notun Bazar</div>
+        <div id="locationStatus" class="location-status-text" aria-live="polite">Starting from: Dhaka</div>
       </div>
 
       <!-- Standard Search Panel Wrapper -->

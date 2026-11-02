@@ -679,3 +679,26 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: 279/279 Vitest tests passing (9 new tests in `server/tests/locations-dynamic.test.js`), 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
 - **Commit Hash**: PENDING
 - **Undo Command**: `git revert <hash>`
+
+
+## Phase 4 Fix 28: Dynamic Location Search Combobox & Automatic GPS Detection (Web)
+- **Status**: Completed & Verified
+- **Problem**:
+  - The web application relied on a static HTML `<select>` with 10 hardcoded spots (defaulting to Notun Bazar), without dynamic search autocomplete across Dhaka's neighborhoods or keyboard navigation.
+  - The app did not automatically request device GPS permissions on launch to detect the user's location and recommend nearby dining spots.
+- **Fix**:
+  - Replaced static select with an accessible dynamic combobox in `public/index.html` (`#locationSearchInput`, `#locationCombobox`, `#locationSuggestions`, `#clearLocationSearchBtn`, and `#useLocationBtn`).
+  - Styled responsive, high-contrast combobox components in `public/css/style.css` with 0 WCAG contrast failures and 0 raw hex color violations.
+  - Added `fetchLocations(query, limit)` in `public/js/api.js` querying `/api/locations`.
+  - Implemented dynamic autocomplete in `public/js/app.js` with match highlighting, live suggestions, and keyboard navigation (ArrowDown, ArrowUp, Enter, Escape).
+  - Implemented automatic GPS permission request and location detection on app launch (`requestAndApplyGpsLocation({ auto: true })`) with graceful non-blocking manual fallback for denied/timeout states.
+  - Added automated test suite `server/tests/gps-auto-detect.test.js` (5 tests) verifying combobox markup, styling, autocomplete API integration, and GPS error fallback flows.
+- **Files**:
+  - `public/index.html`
+  - `public/css/style.css`
+  - `public/js/api.js`
+  - `public/js/app.js`
+  - `server/tests/gps-auto-detect.test.js`
+- **Verification Result**: 284/284 Vitest tests passing (5 new tests in `server/tests/gps-auto-detect.test.js`), 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
+- **Commit Hash**: PENDING
+- **Undo Command**: `git revert <hash>`

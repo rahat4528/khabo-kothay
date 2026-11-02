@@ -1,7 +1,7 @@
 import { esc } from './escape.js';
 import { state } from './state.js';
 import { appStorage } from './storage.js';
-import { fetchConfig, fetchWeather, fetchRecommendations, pingWarmUp } from './api.js';
+import { fetchConfig, fetchWeather, fetchRecommendations, pingWarmUp, fetchLocations } from './api.js';
 import { mapController } from './map.js';
 import { ui } from './ui.js';
 import { initMoodUI } from './mood-ui.js';
@@ -94,7 +94,7 @@ async function initApp() {
       executeSearch({ mood: selectedMood });
     });
     initTasteUI();
-    initLocationControls(config.presetLocations);
+    const locationController = initLocationControls(config.presetLocations);
     initFilterChips();
     initFilterUI();
     initModals();
@@ -116,7 +116,10 @@ async function initApp() {
       }
     });
 
-    // 5. Run Initial Search
+    // 5. Run Initial Search & Auto-detect device GPS location
+    if (locationController && typeof locationController.requestAndApplyGpsLocation === 'function') {
+      locationController.requestAndApplyGpsLocation({ auto: true });
+    }
     await executeSearch();
   } catch (err) {
     console.error('App initialization error:', err);
@@ -154,62 +157,258 @@ function updateWeatherPill(weather) {
   }
 }
 
+function highlightQuery(text, query) {
+  if (!query || !text) return esc(text);
+  const q = String(query).trim();
+  const lowerText = text.toLowerCase();
+  const lowerQ = q.toLowerCase();
+  const idx = lowerText.indexOf(lowerQ);
+  if (idx === -1) return esc(text);
+  const before = text.slice(0, idx);
+  const matched = text.slice(idx, idx + q.length);
+  const after = text.slice(idx + q.length);
+  return `${esc(before)}<mark>${esc(matched)}</mark>${esc(after)}`;
+}
+
 function initLocationControls(presets = {}) {
+  const searchInput = document.getElementById('locationSearchInput');
+  const combobox = document.getElementById('locationCombobox');
+  const suggestionsBox = document.getElementById('locationSuggestions');
+  const clearBtn = document.getElementById('clearLocationSearchBtn');
   const select = document.getElementById('locationSelect');
   const gpsBtn = document.getElementById('useLocationBtn');
   const status = document.getElementById('locationStatus');
 
-  if (select) {
-    select.value = state.currentLocation.name;
-    select.addEventListener('change', (e) => {
-      const name = e.target.value;
-      const spot = presets[name];
-      if (spot) {
-        state.setLocation(spot.lat, spot.lng, name);
-        if (status) status.textContent = `Starting from: ${name}`;
-        executeSearch();
+  let currentSuggestions = [];
+  let activeIndex = -1;
+  let debounceTimer = null;
+
+  // Initialize input value from state
+  if (searchInput) {
+    searchInput.value = state.currentLocation?.name || 'Dhaka';
+    if (searchInput.value && clearBtn) clearBtn.classList.remove('hidden');
+  }
+
+  function hideSuggestions() {
+    if (suggestionsBox) suggestionsBox.classList.add('hidden');
+    if (combobox) combobox.setAttribute('aria-expanded', 'false');
+    activeIndex = -1;
+  }
+
+  function renderSuggestions(locations, query) {
+    if (!suggestionsBox) return;
+    currentSuggestions = locations || [];
+    activeIndex = -1;
+
+    if (!locations || locations.length === 0) {
+      suggestionsBox.innerHTML = `
+        <div class="location-empty-state" style="padding: 10px; color: var(--text-muted); font-size: 0.85rem; text-align: center;">
+          No matching Dhaka areas found for "${esc(query)}". Try another letter or neighborhood.
+        </div>
+      `;
+      suggestionsBox.classList.remove('hidden');
+      if (combobox) combobox.setAttribute('aria-expanded', 'true');
+      return;
+    }
+
+    const html = locations.map((loc, idx) => `
+      <div
+        class="location-item"
+        role="option"
+        id="locationOption-${idx}"
+        data-index="${idx}"
+        data-lat="${loc.lat}"
+        data-lng="${loc.lng}"
+        data-name="${esc(loc.standardizedName)}"
+        aria-selected="false"
+      >
+        <div class="location-item-main">
+          <span class="location-item-name">${highlightQuery(loc.standardizedName, query)}</span>
+          <span class="location-item-bn">${esc(loc.name || '')} ${loc.thana ? '• ' + esc(loc.thana) : ''}</span>
+        </div>
+        <span class="location-item-type">${esc(loc.type || 'Area')}</span>
+      </div>
+    `).join('');
+
+    suggestionsBox.innerHTML = html;
+    suggestionsBox.classList.remove('hidden');
+    if (combobox) combobox.setAttribute('aria-expanded', 'true');
+
+    // Attach click events to suggestion items
+    suggestionsBox.querySelectorAll('.location-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const idx = parseInt(item.dataset.index, 10);
+        selectLocation(currentSuggestions[idx]);
+      });
+    });
+  }
+
+  function selectLocation(loc) {
+    if (!loc) return;
+    state.setLocation(loc.lat, loc.lng, loc.standardizedName);
+    if (searchInput) {
+      searchInput.value = loc.standardizedName;
+      if (clearBtn) clearBtn.classList.remove('hidden');
+    }
+    if (select) {
+      select.value = loc.standardizedName;
+    }
+    if (status) {
+      status.textContent = `📍 Starting from: ${loc.standardizedName}`;
+    }
+    hideSuggestions();
+    executeSearch();
+  }
+
+  function updateActiveOption(newIndex) {
+    if (!suggestionsBox || currentSuggestions.length === 0) return;
+    const items = suggestionsBox.querySelectorAll('.location-item');
+    items.forEach(el => {
+      el.classList.remove('selected');
+      el.setAttribute('aria-selected', 'false');
+    });
+
+    if (newIndex >= 0 && newIndex < items.length) {
+      activeIndex = newIndex;
+      const target = items[activeIndex];
+      target.classList.add('selected');
+      target.setAttribute('aria-selected', 'true');
+      target.scrollIntoView({ block: 'nearest' });
+      if (combobox) combobox.setAttribute('aria-activedescendant', target.id);
+    } else {
+      activeIndex = -1;
+      if (combobox) combobox.removeAttribute('aria-activedescendant');
+    }
+  }
+
+  async function performSearch(query) {
+    const q = String(query || '').trim();
+    if (clearBtn) {
+      if (q.length > 0) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+    }
+    const locs = await fetchLocations(q, 30);
+    renderSuggestions(locs, q);
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(debounceTimer);
+      const val = e.target.value;
+      debounceTimer = setTimeout(() => {
+        performSearch(val);
+      }, 100);
+    });
+
+    searchInput.addEventListener('focus', () => {
+      performSearch(searchInput.value);
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+      if (suggestionsBox && !suggestionsBox.classList.contains('hidden')) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const next = activeIndex + 1 < currentSuggestions.length ? activeIndex + 1 : 0;
+          updateActiveOption(next);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const prev = activeIndex - 1 >= 0 ? activeIndex - 1 : currentSuggestions.length - 1;
+          updateActiveOption(prev);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (activeIndex >= 0 && currentSuggestions[activeIndex]) {
+            selectLocation(currentSuggestions[activeIndex]);
+          } else if (currentSuggestions.length > 0) {
+            selectLocation(currentSuggestions[0]);
+          }
+        } else if (e.key === 'Escape') {
+          hideSuggestions();
+        }
       }
     });
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+        clearBtn.classList.add('hidden');
+        performSearch('');
+      }
+    });
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (combobox && !combobox.contains(e.target)) {
+      hideSuggestions();
+    }
+  });
+
+  // GPS Location handler
+  async function requestAndApplyGpsLocation({ auto = false } = {}) {
+    if (!navigator.geolocation) {
+      if (status) status.textContent = '⚠️ Geolocation not supported by your browser. Please search or select an area in Dhaka manually.';
+      return;
+    }
+
+    if (!auto && gpsBtn) {
+      gpsBtn.disabled = true;
+      gpsBtn.innerHTML = '<span>⏳</span> Locating...';
+    }
+    if (status) {
+      status.textContent = auto
+        ? 'Requesting device GPS permission to detect your current location...'
+        : 'Acquiring GPS fix in Dhaka...';
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        if (gpsBtn) {
+          gpsBtn.disabled = false;
+          gpsBtn.innerHTML = '<span>📡</span> Use Current GPS';
+        }
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        const gpsLabel = `Current GPS (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+        state.setLocation(lat, lng, gpsLabel);
+        if (searchInput) {
+          searchInput.value = 'Current GPS Location';
+          if (clearBtn) clearBtn.classList.remove('hidden');
+        }
+        if (status) {
+          status.textContent = `📍 Starting from: GPS (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+        }
+        executeSearch();
+      },
+      (err) => {
+        if (gpsBtn) {
+          gpsBtn.disabled = false;
+          gpsBtn.innerHTML = '<span>📡</span> Use Current GPS';
+        }
+        console.warn('Geolocation denied or failed, using Dhaka preset location.', err);
+        let reasonMsg = 'GPS unavailable. Please search or choose your area in Dhaka manually.';
+        if (err.code === 1) reasonMsg = 'GPS permission denied. Please search or select your area in Dhaka manually.';
+        else if (err.code === 2) reasonMsg = 'Position unavailable. Please search or select your area in Dhaka manually.';
+        else if (err.code === 3) reasonMsg = 'GPS timed out. Please search or select your area in Dhaka manually.';
+
+        if (status) status.textContent = `ℹ️ ${reasonMsg}`;
+        if (!auto && searchInput) {
+          searchInput.focus();
+        }
+      },
+      { timeout: 8000, enableHighAccuracy: true, maximumAge: 30000 }
+    );
   }
 
   if (gpsBtn) {
     gpsBtn.addEventListener('click', () => {
-      if (!navigator.geolocation) {
-        if (status) status.innerHTML = '⚠️ Geolocation not supported by your browser. Please choose an area from the dropdown.';
-        return;
-      }
-      gpsBtn.disabled = true;
-      gpsBtn.innerHTML = '<span>⏳</span> Locating...';
-      if (status) status.textContent = 'Acquiring GPS fix in Dhaka...';
-
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          gpsBtn.disabled = false;
-          gpsBtn.innerHTML = '<span>📡</span> Use Current GPS';
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-          state.setLocation(lat, lng, 'Current GPS Spot');
-          if (status) status.textContent = `📍 Starting from: GPS (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
-          executeSearch();
-        },
-        (err) => {
-          gpsBtn.disabled = false;
-          gpsBtn.innerHTML = '<span>📡</span> Use Current GPS';
-          console.warn('Geolocation denied or failed, using Dhaka preset location.', err);
-          let reasonMsg = 'GPS unavailable. Selected default Dhaka area: Notun Bazar';
-          if (err.code === 1) reasonMsg = 'GPS permission denied. Using selected area from dropdown.';
-          else if (err.code === 2) reasonMsg = 'Position unavailable. Using selected area from dropdown.';
-          else if (err.code === 3) reasonMsg = 'GPS timed out. Using selected area from dropdown.';
-
-          if (status) status.textContent = `ℹ️ ${reasonMsg}`;
-          if (select) {
-            select.focus();
-          }
-        },
-        { timeout: 8000, enableHighAccuracy: true, maximumAge: 30000 }
-      );
+      requestAndApplyGpsLocation({ auto: false });
     });
   }
+
+  return { requestAndApplyGpsLocation };
 }
 
 function initFilterChips() {

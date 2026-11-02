@@ -44,6 +44,23 @@ export async function pingWarmUp(onStatusChange = null, maxWaitMs = 60000) {
   return { ok: false, error: 'Warmup timeout' };
 }
 
+/**
+ * Fetch dynamic Dhaka locations based on user query prefix or keyword.
+ */
+export async function fetchLocations(query = '', limit = 30) {
+  try {
+    const q = encodeURIComponent(query || '');
+    const res = await fetch(`/api/locations?q=${q}&limit=${limit}`);
+    if (res.ok) {
+      const data = await res.json();
+      return Array.isArray(data.locations) ? data.locations : [];
+    }
+  } catch (err) {
+    console.warn('Failed to fetch locations dynamically:', err);
+  }
+  return [];
+}
+
 export const DEFAULT_PRESET_CONFIG = {
   googleBrowserKey: '',
   useMockData: true,
