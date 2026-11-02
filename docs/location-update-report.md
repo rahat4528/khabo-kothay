@@ -166,3 +166,4 @@ zipalign -c -v 4 android/app/build/outputs/apk/debug/app-debug.apk
 npm start
 # Open http://localhost:3000 in your browser
 ```
+

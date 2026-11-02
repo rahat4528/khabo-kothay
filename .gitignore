@@ -56,6 +56,7 @@ captures/
 
 # Packaging binaries
 *.apk
+!public/downloads/khabo-kothay-latest.apk
 *.aab
 /release/
 

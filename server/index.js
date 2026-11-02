@@ -3,6 +3,7 @@
 import 'dotenv/config';
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -186,6 +187,18 @@ app.use('/api', authCheckMiddleware);
 // Root Liveness & Readiness Probes (for orchestrators, load balancers, and monitoring)
 app.get('/health', healthHandler);
 app.get('/ready', readyHandler);
+
+// Explicit APK binary download handler with verified MIME headers and Cloud Mirror fallback
+app.get(['/downloads/khabo-kothay-latest.apk', '/download/apk', '/khabo-kothay-latest.apk'], (req, res) => {
+  const apkPath = path.join(publicDir, 'downloads', 'khabo-kothay-latest.apk');
+  if (fs.existsSync(apkPath) && fs.statSync(apkPath).size > 1000000) {
+    res.setHeader('Content-Type', 'application/vnd.android.package-archive');
+    return res.download(apkPath, 'khabo-kothay-latest.apk');
+  }
+  // Cloud Mirror fallback on Google Drive if binary is ever unavailable
+  const cloudMirror = 'https://drive.google.com/drive/folders/1IqB-z_mpcQlKE4fgXzq5ZukaP2k9QTnu';
+  return res.redirect(302, cloudMirror);
+});
 
 // APK Download & QR Sharing Landing Pages
 app.get(['/download', '/apk'], (req, res) => {

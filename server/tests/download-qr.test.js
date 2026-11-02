@@ -3,29 +3,12 @@ import request from 'supertest';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import express from 'express';
-import apiRouter, { APK_METADATA } from '../routes/api.js';
+import { APK_METADATA } from '../routes/api.js';
+import app from '../index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const publicDir = path.join(__dirname, '..', '..', 'public');
-
-// Create test app mounting static, api, and SPA fallback matching server/index.js
-const app = express();
-app.use(express.json());
-app.get(['/download', '/apk'], (req, res) => {
-  res.sendFile(path.join(publicDir, 'download.html'));
-});
-app.use(express.static(publicDir));
-app.use('/api', apiRouter);
-
-// Match server/index.js SPA fallback
-app.get('*', (req, res) => {
-  if (req.path.startsWith('/api') || path.extname(req.path)) {
-    return res.status(404).json({ error: 'Not found' });
-  }
-  res.sendFile(path.join(publicDir, 'index.html'));
-});
 
 describe('APK Download & QR Code Sharing System', () => {
   it('GET /api/download-info returns valid APK metadata and verified Google Drive URL', async () => {
@@ -112,5 +95,12 @@ describe('APK Download & QR Code Sharing System', () => {
 
     expect(fs.existsSync(driveQrFile)).toBe(true);
     expect(fs.statSync(driveQrFile).size).toBeGreaterThan(1000);
+  });
+
+  it('GET /downloads/khabo-kothay-latest.apk serves binary APK with correct MIME type', async () => {
+    const res = await request(app).get('/downloads/khabo-kothay-latest.apk');
+    expect(res.status).toBe(200);
+    expect(res.headers['content-type']).toContain('application/vnd.android.package-archive');
+    expect(res.headers['content-disposition']).toContain('attachment; filename="khabo-kothay-latest.apk"');
   });
 });
