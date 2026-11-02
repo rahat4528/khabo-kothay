@@ -635,6 +635,27 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Undo Command**: `git revert 72cacaa`
 
 
+## Phase 3 Fix 26: API Dockerfile Hardening & Dependency Pinning
+- **Status**: Completed & Verified
+- **Problem**:
+  - `api/Dockerfile` ran the container as root user and omitted a `HEALTHCHECK` directive.
+  - `api/requirements.txt` included test dependencies (`pytest`, `httpx`, `pytest-asyncio`) with loose/unpinned version constraints in production requirements.
+- **Fix**:
+  - Hardened `api/Dockerfile` to create and run as dedicated non-root user `appuser` (UID 10001) in `appgroup` (GID 10001).
+  - Added a container `HEALTHCHECK` probing `http://localhost:8000/api/v1/health` with retry and timeout parameters.
+  - Pinned exact production requirements in `api/requirements.txt` and separated testing tools into `api/requirements-dev.txt`.
+  - Added unit test suite in `server/tests/dockerfile-hardening.test.js` validating non-root user execution, presence of healthcheck, and strict production/development dependency separation.
+- **Files**:
+  - `api/Dockerfile`
+  - `api/requirements.txt`
+  - `api/requirements-dev.txt`
+  - `server/tests/dockerfile-hardening.test.js`
+- **Verification Result**: Verified with 270/270 passing Vitest tests (3 new tests in `server/tests/dockerfile-hardening.test.js`), passing security check, clean i18n keys parity, and 0 secret leaks.
+- **Commit Hash**: `88fde4f`
+- **Undo Command**: `git revert 88fde4f`
+
+
+
 
 
 
