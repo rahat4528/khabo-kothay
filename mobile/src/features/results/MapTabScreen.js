@@ -11,7 +11,7 @@ const { width, height } = Dimensions.get('window');
 
 export default function MapTabScreen({ navigation, theme }) {
   const mapRef = useRef(null);
-  const [location, setLocation] = useState({ lat: 23.7925, lng: 90.4150, name: 'Gulshan' });
+  const [location, setLocation] = useState({ lat: 23.8103, lng: 90.4125, name: 'Dhaka' });
   const [restaurants, setRestaurants] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [statusBanner, setStatusBanner] = useState(null);

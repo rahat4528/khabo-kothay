@@ -257,7 +257,7 @@ export function initMealTimeUI({
           const saved = getSavedPlaces();
           if (!saved[destType]) {
             // Friendly prompt to store locally on this device
-            const spotName = prompt(`Enter the area for your ${destType.toUpperCase()} (saved only on this device):`, 'Gulshan 2');
+            const spotName = prompt(`Enter the area for your ${destType.toUpperCase()} (saved only on this device):`, 'Dhaka');
             if (spotName) {
               const presets = presetsGetter();
               const spot = resolveArea(spotName, presets);
@@ -302,7 +302,7 @@ export function initMealTimeUI({
 
   // Search Action
   document.getElementById('executeMealTimeSearchBtn')?.addEventListener('click', async () => {
-    const origin = originGetter ? originGetter() : { lat: 23.7785, lng: 90.4178, name: 'Gulshan 1' };
+    const origin = originGetter ? originGetter() : { lat: 23.8103, lng: 90.4125, name: 'Dhaka' };
     
     // Resolve leaveAt if time input provided
     let leaveAtIso = null;

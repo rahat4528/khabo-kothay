@@ -66,7 +66,7 @@ class MobileStorage {
       cuisine: 'All',
       priority: 'Best Overall',
       budget: 2,
-      locationPreset: 'Notun Bazar',
+      locationPreset: 'Dhaka',
       language: 'en',
       themeMode: 'system' // 'system' | 'light' | 'dark'
     };

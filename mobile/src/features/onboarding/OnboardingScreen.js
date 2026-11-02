@@ -61,7 +61,7 @@ export default function OnboardingScreen({ navigation, theme }) {
               accessibilityLabel="Skip location for now"
             >
               <Text style={[styles.secondaryBtnText, { color: theme.colors.textMuted }]}>
-                Skip & Use Notun Bazar Preset
+                Skip & Use Default Location (Dhaka)
               </Text>
             </TouchableOpacity>
           </View>

@@ -823,7 +823,7 @@ router.post('/feedback', (req, res) => {
 
     const record = {
       timestamp: new Date().toISOString(),
-      areaName: typeof areaName === 'string' ? areaName.slice(0, 80) : 'Gulshan / Banani',
+      areaName: typeof areaName === 'string' ? areaName.slice(0, 80) : 'Dhaka',
       cuisine: typeof cuisine === 'string' ? cuisine.slice(0, 40) : 'All',
       priority: typeof priority === 'string' ? priority.slice(0, 40) : 'Best Overall',
       topPickId: typeof topPickId === 'string' ? topPickId.slice(0, 256) : null,
@@ -895,7 +895,7 @@ router.post('/meal-time/search', async (req, res) => {
     }
 
     // Resolve origin
-    let originCoords = { lat: 23.7785, lng: 90.4178, name: 'Gulshan 1' };
+    let originCoords = { lat: 23.8103, lng: 90.4125, name: 'Dhaka' };
     if (origin) {
       if (typeof origin === 'object') {
         const c = parseCoords(origin.lat, origin.lng);

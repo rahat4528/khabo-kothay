@@ -702,3 +702,41 @@ Tracking the execution and verification of Five Quality Fixes:
 - **Verification Result**: 284/284 Vitest tests passing (5 new tests in `server/tests/gps-auto-detect.test.js`), 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
 - **Commit Hash**: PENDING
 - **Undo Command**: `git revert <hash>`
+
+
+## Phase 4 Fix 29: Elimination of Hardcoded Gulshan & Notun Bazar Defaults Across Web & Mobile
+- **Status**: Completed & Verified
+- **Problem**:
+  - The application previously contained hardcoded mentions of Gulshan and Notun Bazar across marketing meta descriptions, hero pills, map centroids, default location state, storage preferences, notifications, weather banners, and service fallbacks.
+- **Fix**:
+  - Replaced hardcoded "Gulshan, Banani, Baridhara, and Notun Bazar" meta descriptions and hero badges with "100+ Dhaka Neighborhoods" and "across all Dhaka neighborhoods".
+  - Standardized web `state.js` and `storage.js` defaults from `'Notun Bazar'` to neutral Dhaka centroid (`{ lat: 23.8103, lng: 90.4125, name: 'Dhaka' }`).
+  - Standardized mobile `location.js`, `storage.js`, `HomeScreen.js`, and `OnboardingScreen.js` from `'Notun Bazar'` to `{ lat: 23.8103, lng: 90.4125, name: 'Dhaka' }`.
+  - Updated server `routes/api.js`, `services/mealtime.js`, `places.js`, and `weather.js` default coordinates and query strings to neutral Dhaka.
+  - Updated English and Bangla bilingual i18n dictionaries maintaining 100% key parity (141 keys).
+  - Added automated test suite `server/tests/neutral-locations.test.js` (5 tests) enforcing zero hardcoded defaults to Gulshan or Notun Bazar in web markup, client state, mobile configs, server fallbacks, and i18n copy.
+- **Files**:
+  - `public/index.html`
+  - `public/manifest.webmanifest`
+  - `public/js/i18n.js`
+  - `public/js/state.js`
+  - `public/js/storage.js`
+  - `public/js/map.js`
+  - `public/js/mealtime-ui.js`
+  - `mobile/src/services/location.js`
+  - `mobile/src/services/storage.js`
+  - `mobile/src/features/home/HomeScreen.js`
+  - `mobile/src/features/onboarding/OnboardingScreen.js`
+  - `mobile/src/features/results/MapTabScreen.js`
+  - `mobile/src/features/results/ResultsScreen.js`
+  - `mobile/src/features/restaurant/RestaurantDetailScreen.js`
+  - `mobile/src/i18n/en.js`
+  - `mobile/src/services/notifications.js`
+  - `server/routes/api.js`
+  - `server/services/mealtime.js`
+  - `server/services/places.js`
+  - `server/services/weather.js`
+  - `server/tests/neutral-locations.test.js`
+- **Verification Result**: 289/289 Vitest tests passing (5 new tests in `server/tests/neutral-locations.test.js`), 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
+- **Commit Hash**: PENDING
+- **Undo Command**: `git revert <hash>`

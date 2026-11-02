@@ -38,7 +38,7 @@ export async function scheduleMealNudges(enableLunch = true, enableDinner = true
     await Notifications.scheduleNotificationAsync({
       content: {
         title: 'Hungry? 🍱',
-        body: 'Check out the fastest lunch spots in Gulshan with light traffic right now!',
+        body: 'Check out the fastest lunch spots in Dhaka with light traffic right now!',
         data: { screen: 'Home' }
       },
       trigger: {

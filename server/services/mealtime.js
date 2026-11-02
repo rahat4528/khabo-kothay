@@ -602,7 +602,7 @@ export async function searchMealTime({
   mode = 'lunch',
   availableMinutes = 45,
   leaveAt = null,
-  origin = { lat: 23.7785, lng: 90.4178, name: 'Gulshan 1' },
+  origin = { lat: 23.8103, lng: 90.4125, name: 'Dhaka' },
   destination = 'same-as-origin',
   transport = 'car',
   diningStyle = 'dine_in',

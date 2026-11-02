@@ -4,9 +4,9 @@ class AppState {
   constructor() {
     const prefs = appStorage.getPreferences();
     this.currentLocation = {
-      lat: 23.7975,
-      lng: 90.4234,
-      name: prefs.locationPreset || 'Notun Bazar'
+      lat: 23.8103,
+      lng: 90.4125,
+      name: prefs.locationPreset || 'Dhaka'
     };
     this.cuisine = prefs.cuisine || 'All';
     this.mood = null;

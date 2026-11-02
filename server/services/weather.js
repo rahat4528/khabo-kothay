@@ -35,7 +35,7 @@ export async function getWeatherContext(lat = 23.7925, lng = 90.4150) {
       tempC,
       precipitationMm: rain,
       condition: isRaining ? 'Rainy' : (tempC > 32 ? 'Hot' : 'Clear'),
-      note: isRaining ? 'Monsoon / rain in Gulshan: Rickshaw or car recommended over walking.' : null
+      note: isRaining ? 'Monsoon / rain in Dhaka: Rickshaw or car recommended over walking.' : null
     };
 
     globalCache.set(cacheKey, result, 900); // 15 min TTL

@@ -1,7 +1,7 @@
 {
   "name": "Khabo Kothay? – Food Finder (খাবো কোথায়?)",
   "short_name": "Khabo Kothay?",
-  "description": "Traffic-aware restaurant & cafe recommendations for Gulshan, Banani, and Baridhara in Dhaka",
+  "description": "Traffic-aware restaurant & cafe recommendations across Dhaka neighborhoods",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#111111",

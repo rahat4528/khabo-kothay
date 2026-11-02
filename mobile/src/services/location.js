@@ -13,7 +13,7 @@ export const PRESET_LOCATIONS = {
   'Bailey Road': { lat: 23.7410, lng: 90.4072, name: 'Bailey Road' }
 };
 
-export const DEFAULT_LOCATION = PRESET_LOCATIONS['Notun Bazar'];
+export const DEFAULT_LOCATION = { lat: 23.8103, lng: 90.4125, name: 'Dhaka' };
 
 /**
  * Robust device GPS location retriever:

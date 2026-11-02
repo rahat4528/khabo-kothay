@@ -81,7 +81,7 @@ class MapController {
   }
 
   async initGoogleMap() {
-    const center = { lat: 23.7925, lng: 90.4150 }; // Gulshan 2
+    const center = { lat: 23.8103, lng: 90.4125 }; // Dhaka Centroid
     const isDark = this.isDarkModeActive();
 
     let styles = [];
@@ -106,7 +106,7 @@ class MapController {
         this.mapInstance.remove();
       }
 
-      const defaultCenter = [23.7925, 90.4150]; // Gulshan 2
+      const defaultCenter = [23.8103, 90.4125]; // Dhaka Centroid
       this.mapInstance = L.map(this.container, {
         center: defaultCenter,
         zoom: 14,

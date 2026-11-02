@@ -481,7 +481,7 @@ export default function ResultsScreen({ route, navigation, theme }) {
               {filteredResults.length} matches found
             </Text>
             <Text style={{ fontSize: 11, color: theme.colors.textMuted }}>
-              Dhaka • Gulshan & Nearby
+              Dhaka • All Neighborhoods
             </Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>

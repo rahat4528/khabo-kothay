@@ -48,7 +48,7 @@ const COMPANIONS = [
 export default function HomeScreen({ navigation, theme }) {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [location, setLocation] = useState(PRESET_LOCATIONS['Notun Bazar']);
+  const [location, setLocation] = useState(DEFAULT_LOCATION);
   const [selectedMood, setSelectedMood] = useState(null);
   const [selectedCuisine, setSelectedCuisine] = useState('All');
   const [selectedPriority, setSelectedPriority] = useState('Best Overall');

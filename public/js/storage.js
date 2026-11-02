@@ -82,7 +82,7 @@ class AppStorage {
       cuisine: 'All',
       priority: 'Best Overall',
       budget: 2,
-      locationPreset: 'Notun Bazar'
+      locationPreset: 'Dhaka'
     };
   }
 

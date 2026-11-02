@@ -65,7 +65,7 @@ export async function searchRestaurants({ lat, lng, cuisine = 'All', radiusMeter
     const queryInfo = getCuisineQuery(cuisine);
 
     const requestBody = {
-      textQuery: `${queryInfo.keyword} restaurant in Gulshan Banani Dhaka`,
+      textQuery: `${queryInfo.keyword} restaurant in Dhaka`,
       locationBias: {
         circle: {
           center: { latitude: Number(lat), longitude: Number(lng) },
@@ -108,7 +108,7 @@ export async function searchRestaurants({ lat, lng, cuisine = 'All', radiusMeter
         return {
           id: place.id,
           displayName,
-          formattedAddress: place.formattedAddress || 'Gulshan / Banani, Dhaka',
+          formattedAddress: place.formattedAddress || 'Dhaka, Bangladesh',
           location: place.location ? {
             latitude: place.location.latitude,
             longitude: place.location.longitude
@@ -229,8 +229,8 @@ export async function getPlaceDetails(placeId, useMock = false) {
     // Fallback to minimal info
     return {
       id: placeId,
-      displayName: 'Gulshan Restaurant',
-      formattedAddress: 'Gulshan, Dhaka',
+      displayName: 'Dhaka Restaurant',
+      formattedAddress: 'Dhaka, Bangladesh',
       rating: 4.5,
       priceLevel: 2,
       openNow: true,

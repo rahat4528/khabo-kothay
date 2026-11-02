@@ -23,7 +23,7 @@ export default {
     surpriseMe: 'Surprise Me',
     updatedAgo: 'Updated %{mins} min ago',
     offlineBanner: 'Showing cached results from %{mins} min ago',
-    rainBanner: '🌧️ Monsoon rain detected in Gulshan: rickshaws and rides recommended.',
+    rainBanner: '🌧️ Monsoon rain detected in Dhaka: rickshaws and rides recommended.',
     standardMode: 'Standard',
     viewRankedList: 'View Ranked List'
   },

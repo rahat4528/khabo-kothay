@@ -71,7 +71,7 @@ export default function RestaurantDetailScreen({ route, navigation, theme }) {
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `Check out ${details.displayName} in Gulshan (${details.cuisine}): ${details.reason}`,
+        message: `Check out ${details.displayName} in Dhaka (${details.cuisine}): ${details.reason}`,
         title: details.displayName
       });
     } catch (e) {}

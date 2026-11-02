@@ -28,9 +28,9 @@ export const TRANSLATIONS = {
     heroCategory: 'Restaurant Intelligence & Discovery',
     heroTitleLine1: 'Decide where',
     heroTitleLine2: 'to eat in Dhaka.',
-    heroDesc: 'Real-time traffic-aware dining recommendations, live travel times, accurate Rickshaw & CNG fares, and actual menu budget filters across Gulshan, Banani, and Dhaka.',
+    heroDesc: 'Real-time traffic-aware dining recommendations, live travel times, accurate Rickshaw & CNG fares, and actual menu budget filters across all Dhaka neighborhoods.',
     heroExplore: 'Explore recommendations',
-    heroAreasBadge: 'Gulshan • Banani • Baridhara',
+    heroAreasBadge: '100+ Dhaka Neighborhoods',
     heroLiveBadge: '● Live Traffic & Fares',
     heroMeta: 'Dhaka dining intelligence.',
 
@@ -84,7 +84,7 @@ export const TRANSLATIONS = {
     resultsShowing: 'Showing matches',
     resultsCount: '%{count} places ranked',
     interactiveMap: 'Interactive Area Map',
-    mapSub: 'Gulshan • Banani • Baridhara',
+    mapSub: 'All Dhaka Areas',
 
     // Top Picks
     topPicksTitle: 'For you right now',
@@ -173,9 +173,9 @@ export const TRANSLATIONS = {
     heroCategory: 'রেস্তোরাঁ ইন্টেলিজেন্স ও ডিসকভারি',
     heroTitleLine1: 'এখন কোথায়',
     heroTitleLine2: 'খাবেন ঢাকায়?',
-    heroDesc: 'রিয়েল-টাইম ট্রাফিক পরিস্থিতি, ভ্রমণের প্রকৃত সময়, সঠিক রিকশা ও সিএনজি ভাড়া এবং নির্ভরযোগ্য মেনু বাজেট সহ গুলশান ও বনানীর রেস্তোরাঁ নির্দেশিকা।',
+    heroDesc: 'রিয়েল-টাইম ট্রাফিক পরিস্থিতি, ভ্রমণের প্রকৃত সময়, সঠিক রিকশা ও সিএনজি ভাড়া এবং নির্ভরযোগ্য মেনু বাজেট সহ সমগ্র ঢাকার রেস্তোরাঁ নির্দেশিকা।',
     heroExplore: 'সুপারিশগুলো দেখুন',
-    heroAreasBadge: 'গুলশান • বনানী • বারিধারা',
+    heroAreasBadge: '১০০+ ঢাকার এলাকা',
     heroLiveBadge: '● লাইভ ট্রাফিক ও ভাড়া',
     heroMeta: 'ঢাকার সেরা খাবার সহায়িকা।',
 
@@ -229,7 +229,7 @@ export const TRANSLATIONS = {
     resultsShowing: 'ফলাফল প্রদর্শিত',
     resultsCount: '%{count} টি স্থান তালিকাভুক্ত',
     interactiveMap: 'ইন্টারেক্টিভ এরিয়া ম্যাপ',
-    mapSub: 'গুলশান • বনানী • বারিধারা',
+    mapSub: 'ঢাকার সকল এলাকা',
 
     // Top Picks
     topPicksTitle: 'আপনার জন্য এই মুহূর্তের সেরা পছন্দ',
