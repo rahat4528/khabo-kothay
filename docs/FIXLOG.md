@@ -828,5 +828,5 @@ Tracking the execution and verification of Five Quality Fixes:
   - `server/tests/clean-syntax.test.js`
   - `docs/FIXLOG.md`
 - **Verification Result**: Compiled cleanly with `g++` (0 compiler warnings), benchmark passed (100,000 queries in ~200ms), 299/299 Vitest tests passing, 0 security check issues, 141 i18n keys parity, 0 secret scan findings.
-- **Commit Hash**: PENDING
-- **Undo Command**: `git revert <hash>`
+- **Commit Hash**: `e9c5849`
+- **Undo Command**: `git revert e9c5849`
