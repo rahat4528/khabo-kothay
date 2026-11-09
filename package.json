@@ -37,7 +37,7 @@
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "^5.0.5",
+    "@vitest/coverage-v8": "^5.1.0",
     "opentype.js": "^2.0.0",
     "sharp": "^0.35.5",
     "supertest": "^7.0.0",
