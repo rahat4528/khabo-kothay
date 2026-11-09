@@ -136,4 +136,4 @@ The application serves Dhaka diners in Gulshan, Banani, Baridhara, Notun Bazar, 
 * **Phase 5**: Convenience: F9 Lunch-Break Reminder, F10 Share My Trip, F11 Pay-Me Line, F12 Simple Mode, F13 Food Story.
 * **Phase 6**: Hardening: Security verification, RBAC, regression suites, Android build checks, privacy matrix.
 * **Phase 7**: Roadmap: Documentation for future features (`docs/ROADMAP.md`).
-* **Phase 8**: GitHub Publication: Pre-push safety checks, clean conventional commits, push to `Rahat69x/khabo-kothay`.
+* **Phase 8**: GitHub Publication: Pre-push safety checks, clean conventional commits, push to `rahat4528/khabo-kothay`.

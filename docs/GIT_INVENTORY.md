@@ -10,11 +10,11 @@
 | :--- | :--- | :---: |
 | **Current Branch** | `main` | OK |
 | **Upstream Tracking** | `origin/main` (in sync) | OK |
-| **Remote Origin URL** | `https://github.com/Rahat69x/khabo-kothay.git` | OK |
+| **Remote Origin URL** | `https://github.com/rahat4528/khabo-kothay.git` | OK |
 | **Total Commit Count** | `29` commits | OK |
 | **Object Count & Size** | `1,034` objects / `4.48 MiB` | OK |
 | **Configured User Name** | `Mahamudul Hasan Rahat` | OK |
-| **Configured User Email**| `187889218+Rahat69x@users.noreply.github.com` | OK |
+| **Configured User Email**| `187889218+rahat4528@users.noreply.github.com` | OK |
 
 ---
 

@@ -23,7 +23,7 @@ public class UpdateCheckerTest {
 
     @Test
     public void isApprovedDownloadUrl_validatesHostAndScheme() {
-        assertTrue(UpdateChecker.isApprovedDownloadUrl("https://github.com/Rahat69x/khabo-kothay/releases/download/v4/app.apk"));
+        assertTrue(UpdateChecker.isApprovedDownloadUrl("https://github.com/rahat4528/khabo-kothay/releases/download/v4/app.apk"));
         assertTrue(UpdateChecker.isApprovedDownloadUrl("https://khabo-kothay-backend.onrender.com/apk/latest.apk"));
         assertFalse(UpdateChecker.isApprovedDownloadUrl("http://github.com/insecure.apk"));
         assertFalse(UpdateChecker.isApprovedDownloadUrl("https://phishing.site/app.apk"));

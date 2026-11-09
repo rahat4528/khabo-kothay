@@ -5,7 +5,7 @@
 ---
 
 ## 1. Remote & Repository Metadata
-- **Repository Remote URL**: `https://github.com/Rahat69x/khabo-kothay`
+- **Repository Remote URL**: `https://github.com/rahat4528/khabo-kothay`
 - **Remote Host**: GitHub
 - **Active Branch**: `main` (Default branch)
 - **Repository Tracking**: `origin/main`

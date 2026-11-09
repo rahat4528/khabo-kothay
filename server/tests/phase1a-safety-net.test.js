@@ -62,7 +62,7 @@ describe('Phase 1A: Safety Net — F14 Remote Feature Flags & F1 Update Checker'
 
   describe('F1 Update Checker & Release Management', () => {
     it('validates download URLs against approved hosts and HTTPS protocol', () => {
-      expect(validateDownloadUrl('https://github.com/Rahat69x/khabo-kothay/releases/download/v4/app.apk').valid).toBe(true);
+      expect(validateDownloadUrl('https://github.com/rahat4528/khabo-kothay/releases/download/v4/app.apk').valid).toBe(true);
       expect(validateDownloadUrl('http://github.com/insecure.apk').valid).toBe(false);
       expect(validateDownloadUrl('https://malicious-site.com/app.apk').valid).toBe(false);
     });
@@ -94,7 +94,7 @@ describe('Phase 1A: Safety Net — F14 Remote Feature Flags & F1 Update Checker'
           latestVersionName: '5.0.0',
           latestVersionCode: 5,
           minimumSupportedVersionCode: 10,
-          downloadUrl: 'https://github.com/Rahat69x/khabo-kothay/releases/download/v5/app.apk'
+          downloadUrl: 'https://github.com/rahat4528/khabo-kothay/releases/download/v5/app.apk'
         });
       }).toThrow('minimumSupportedVersionCode cannot exceed latestVersionCode');
     });
@@ -107,7 +107,7 @@ describe('Phase 1A: Safety Net — F14 Remote Feature Flags & F1 Update Checker'
         latestVersionName: '5.0.0',
         latestVersionCode: 15,
         minimumSupportedVersionCode: 10,
-        downloadUrl: 'https://github.com/Rahat69x/khabo-kothay/releases/download/v5/app.apk'
+        downloadUrl: 'https://github.com/rahat4528/khabo-kothay/releases/download/v5/app.apk'
       }, { who: 'test-admin' });
       publishRelease(draft.id, { who: 'test-admin' });
 

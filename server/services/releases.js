@@ -27,7 +27,7 @@ const INITIAL_RELEASES = [
     latestVersionCode: 4,
     minimumSupportedVersionCode: 1,
     minimumSupportedVersionName: '1.0.0',
-    downloadUrl: 'https://github.com/Rahat69x/khabo-kothay/releases/download/v4.0.0/khabo-kothay-1.1.0.apk',
+    downloadUrl: 'https://github.com/rahat4528/khabo-kothay/releases/download/v4.0.0/khabo-kothay-1.1.0.apk',
     checksumSha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
     signingCertSha256: 'B6:E2:81:4A:9C:20:84:7D:6F:05:41:88:62:3C:D0:A2:4E:91:20:94:FA:21:64:25:7C:E3:69:B8:20:01:DF:74',
     releaseNotes: {

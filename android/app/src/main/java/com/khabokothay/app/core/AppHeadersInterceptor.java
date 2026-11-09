@@ -49,7 +49,7 @@ public final class AppHeadersInterceptor implements Interceptor {
             if (upgradeListener != null) {
                 upgradeListener.onUpgradeRequired(
                     "This version of the app is no longer supported.",
-                    "https://github.com/Rahat69x/khabo-kothay/releases/latest"
+                    "https://github.com/rahat4528/khabo-kothay/releases/latest"
                 );
             }
         }

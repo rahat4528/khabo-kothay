@@ -27,7 +27,7 @@ public final class FoodStoryHelper {
         sb.append("🍛 পছন্দের খাবার: ").append(summary.topCuisine != null ? summary.topCuisine : "বিরিয়ানি ও ক্যাফে").append("\n");
         sb.append("🔖 পছন্দের রেস্তোরাঁ সংখ্যা: ").append(BengaliFormatter.toBengaliDigits(String.valueOf(summary.totalSavedSpots))).append(" টি\n");
         sb.append("✨ চেখে দেখা খাবারের পদ: ").append(BengaliFormatter.toBengaliDigits(String.valueOf(summary.totalExploredDishes))).append(" টি\n\n");
-        sb.append("খুঁজে নিন আপনার পছন্দের খাবার: https://github.com/Rahat69x/khabo-kothay");
+        sb.append("খুঁজে নিন আপনার পছন্দের খাবার: https://github.com/rahat4528/khabo-kothay");
         return sb.toString();
     }
 }
